@@ -1,0 +1,20 @@
+{
+  "name": "ecommerce-pg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "PuppetAJ",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "passport": "^0.7.0",
+    "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
