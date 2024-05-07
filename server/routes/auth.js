@@ -1,6 +1,6 @@
 const authRouter = require("express").Router();
 const pool = require("../pool/pool");
-const { comparePassword, hashPassword } = require("../utils/passwordHash");
+const { hashPassword, comparePassword } = require("../utils/passwordHash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
@@ -21,6 +21,7 @@ passport.use(
         }
         const user = result.rows[0];
         const isValid = await comparePassword(password, user.password_hash);
+        console.log(isValid);
         if (!isValid) {
           return done(null, false, { message: "Invalid password" });
         }
@@ -55,9 +56,14 @@ const isAuthenticated = (req, res, next) => {
   res.status(401).json({ message: "Unauthorized" });
 };
 
-authRouter.get("/logout", (req, res) => {
-  req.logout();
-  res.json({ message: "Logout successful" });
+authRouter.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.json({ message: "Logout successful" });
+  });
+  // res.json({ message: "Logout successful" });
 });
 
 authRouter.post("/register", async (req, res, next) => {
@@ -76,14 +82,28 @@ authRouter.post("/register", async (req, res, next) => {
 
 authRouter.post(
   "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-  }),
+  passport.authenticate(
+    "local"
+    // {
+    //   successRedirect: "/",
+    //   failureRedirect: "/login",
+    // }
+  ),
   (req, res) => {
     res.json({ message: "Login successful", user: req.user });
   }
 );
+
+authRouter.get("/me", isAuthenticated, (req, res) => {
+  res.json(req.user);
+});
+
+authRouter.use((error, req, res, next) => {
+  if (error) {
+    console.error("Error: ", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = {
   authRouter,

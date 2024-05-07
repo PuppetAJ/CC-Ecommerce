@@ -14,14 +14,10 @@ const hashPassword = async (password) => {
 
 const comparePassword = async (password, hash) => {
   try {
-    bcrypt.compare(password, hash, (error, result) => {
-      if (error) {
-        throw error;
-      }
-      return result;
-    });
+    return await bcrypt.compare(password, hash);
   } catch (error) {
     console.error("Error: ", error);
+    throw error;
   }
 };
 
