@@ -21,7 +21,6 @@ passport.use(
         }
         const user = result.rows[0];
         const isValid = await comparePassword(password, user.password_hash);
-        console.log(isValid);
         if (!isValid) {
           return done(null, false, { message: "Invalid password" });
         }
@@ -56,6 +55,18 @@ const isAuthenticated = (req, res, next) => {
   res.status(401).json({ message: "Unauthorized" });
 };
 
+const isAdministrator = (req, res, next) => {
+  if (req.isAuthenticated() && req.user.is_admin) {
+    // console.log("User is admin");
+    return next();
+  }
+  res.status(401).json({ message: "Unauthorized" });
+};
+
+// authRouter.get("/admin", isAdministrator, (req, res) => {
+//   res.json({ message: "Admin route" });
+// });
+
 authRouter.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -63,7 +74,6 @@ authRouter.get("/logout", (req, res, next) => {
     }
     res.json({ message: "Logout successful" });
   });
-  // res.json({ message: "Logout successful" });
 });
 
 authRouter.post("/register", async (req, res, next) => {
@@ -74,7 +84,23 @@ authRouter.post("/register", async (req, res, next) => {
       "INSERT INTO users(username, password_hash) VALUES($1, $2) RETURNING *",
       [username, hashedPassword]
     );
-    res.json(result.rows);
+    const user = result.rows[0];
+    const user_id = user.id;
+
+    await pool.query("INSERT INTO carts(user_id) VALUES($1) RETURNING *", [
+      user_id,
+    ]);
+
+    // Authenticate user after registration
+    req.login(user, function (err) {
+      if (err) {
+        return next(err);
+      }
+      return res.json({
+        message: "Authenticated after registration",
+        user: result.rows[0],
+      }); // Redirect to dashboard upon successful login
+    });
   } catch (error) {
     next(error);
   }
@@ -108,4 +134,5 @@ authRouter.use((error, req, res, next) => {
 module.exports = {
   authRouter,
   isAuthenticated,
+  isAdministrator,
 };
