@@ -18,17 +18,44 @@ cartRouter.get("/", isAuthenticated, async (req, res, next) => {
 cartRouter.post("/", isAuthenticated, async (req, res, next) => {
   try {
     const user = req.user;
-    const { product_id, quantity } = req.body;
-    if (!product_id || !quantity) {
+    const { product_id, quantity, items } = req.body;
+
+    if ((!product_id || !quantity) & !items) {
+      return res.status(400).json({
+        message: "Product ID and quantity are required, or an array of items",
+      });
+    }
+
+    if (quantity && quantity <= 0) {
       return res
         .status(400)
-        .json({ message: "Product ID and quantity are required" });
+        .json({ message: "Quantity must be greater than 0" });
     }
-    const result = await pool.query(
-      "INSERT INTO user_items (user_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *",
-      [user.id, product_id, quantity]
-    );
-    res.json(result.rows);
+
+    if (items && items.length === 0) {
+      return res.status(400).json({ message: "Items array is empty" });
+    }
+
+    if (items && items.length > 0) {
+      const results = await Promise.all(
+        items.map((item) =>
+          pool.query(
+            "INSERT INTO user_items (user_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *",
+            [user.id, item.product_id, item.quantity]
+          )
+        )
+      );
+
+      return res.json(results.map((result) => result.rows[0]));
+    }
+
+    if (product_id && quantity && !items) {
+      const result = await pool.query(
+        "INSERT INTO user_items (user_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *",
+        [user.id, product_id, quantity]
+      );
+      return res.json(result.rows);
+    }
   } catch (error) {
     next(error);
   }
