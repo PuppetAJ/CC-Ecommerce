@@ -17,7 +17,7 @@ productsRouter.get("/:id", async (req, res, next) => {
     const result = await pool.query("SELECT * FROM products WHERE id = $1", [
       id,
     ]);
-    res.json(result.rows);
+    res.json(result.rows[0]);
   } catch (error) {
     next(error);
   }
@@ -37,7 +37,7 @@ productsRouter.post("/", isAdministrator, async (req, res, next) => {
         "INSERT INTO products (name, price, stock_quantity, category) VALUES ($1, $2, $3, $4) RETURNING *",
         [name, price, stock_quantity, category]
       );
-      return res.json(result.rows);
+      return res.json(result.rows[0]);
     }
   } catch (error) {
     next(error);

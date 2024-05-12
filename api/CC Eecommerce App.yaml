@@ -1,0 +1,1049 @@
+openapi: 3.1.0
+info:
+  title: CC Ecommerce App - OpenAPI 3.1
+  description: |-
+    This is a simple ecommerce api made for codecademy's full stack ecommerce project challenge. This documentation was created using the OpenAPI 3.1 specification. You can find out more about the project [here](https://github.com/PuppetAJ/CC-Ecommerce)
+  contact:
+    email: adrianj.web@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+tags:
+  - name: orders
+    description: Everything about orders
+  - name: checkout
+    description: Checkout endpoint
+  - name: cart
+    description: Everything about a user's cart
+  - name: products
+    description: Everything about products
+  - name: auth
+    description: Everything related to authentication
+  - name: users
+    description: Everything related to users
+paths:
+  /orders:
+    get:
+      tags:
+        - orders
+      summary: Get all orders related to a user
+      description: Get all orders related to a user's id. Must be authenticated for this route to work.
+      operationId: getOrders
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Order'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /order/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Get an order by id
+      description: Get a specific order by id as long as it is a part of a user's orders (must match their id as well).
+      operationId: getOrder
+      parameters: 
+        - name: orderId
+          in: path
+          description: The order id to fetch
+          required: true
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /order/{orderId}/details:
+    get:
+      tags:
+        - orders
+      summary: Get an order's details by id
+      description: Get a specific order's details by id as long as it is a part of a user's orders 
+      operationId: getOrderDetails
+      parameters: 
+        - name: orderId
+          in: path
+          description: The order id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order_Details'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /checkout:
+    post:
+      tags:
+        - checkout
+      summary: checkout with items in cart
+      description: checks out a user as long as they have items in their cart, and are authenticated. This process adds their order to the orders table.
+      operationId: checkout
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: string
+                    format: price
+                    examples: ["65.49"]
+                  message:
+                    type: string
+                    examples: ["Checkout successful"]
+                  cart:
+                    type: array
+                    examples: [[]]
+                  order: 
+                    $ref: '#/components/schemas/Order'
+        '401':
+          description: Bad request
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Cart is empty"]
+        '400':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /cart:
+    get:
+      tags:
+        - cart
+      summary: Get all items in cart
+      description: Get all the items the user has currently added to their cart.
+      operationId: getCart
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Cart_Item'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    post:
+      tags:
+        - cart
+      summary: Add item to cart
+      description: Adds an item specified in the request body to the cart
+      operationId: addToCart
+      requestBody:
+        description: Item and quantity to add to cart
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  format: int32
+                  examples: [7]
+                quantity:
+                  type: integer
+                  format: int32
+                  examples: [3]
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Cart_Item'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    delete:
+      tags:
+        - cart
+      summary: Delete all cart items
+      description: Removes all currently added items from the cart.
+      operationId: deleteAllFromCart
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /cart/{productId}:
+    put:
+      tags:
+        - cart
+      summary: Update a cart item's quantity
+      description: Updates the cart item's quantity by the amount specified in the request body.
+      operationId: updateCartItem
+      parameters: 
+        - name: productId
+          in: path
+          description: The product id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      requestBody:
+        description: Item and quantity to add to cart
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  format: int32
+                  examples: [3]
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart_Item'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: ["Quantity is required"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    delete:
+      tags:
+        - cart
+      summary: Delete a cart item from cart
+      description: Removes the specified item id in the path from the cart.
+      operationId: deleteCartItem
+      parameters: 
+        - name: productId
+          in: path
+          description: The product id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart_Item'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /products:
+    get:
+      tags: 
+        - products
+      summary: Get all products
+      description: Gets all products currently stored within the database and returns them in an array.
+      operationId: getProducts
+      responses:
+        '200':
+          description: Successful operation
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    post:
+      tags:
+        - products
+      summary: Create a new product
+      description: Allows a user with administrator rights to create a new product within the database.
+      operationId: createProduct
+      requestBody:
+        description: Item to add to database
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  examples: [T-Shirt]
+                description:
+                  type: string
+                  examples: [A basic white t-shirt!]
+                price:
+                  type: integer
+                  format: double
+                  examples: [10.99]
+                stock_quantity:
+                  type: integer
+                  format: int32
+                  examples: [10]
+                category:
+                  type: string
+                  examples: [clothes]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["User is not authorized or is not an administrator"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /products/{productId}:
+    get:
+      tags:
+        - products
+      summary: Gets a product
+      description: Gets product specified in path from the database.
+      operationId: getProduct
+      parameters: 
+        - name: productId
+          in: path
+          description: The product id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    put:
+      tags:
+        - products
+      summary: Updates a product
+      description: Updates product specified in path from the database.
+      operationId: updateProduct
+      parameters: 
+        - name: productId
+          in: path
+          description: The product id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      requestBody:
+        description: Data to update item with
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  examples: [T-Shirt]
+                description:
+                  type: string
+                  examples: [A basic white t-shirt!]
+                price:
+                  type: integer
+                  format: double
+                  examples: [10.99]
+                stock_quantity:
+                  type: integer
+                  format: int32
+                  examples: [10]
+                category:
+                  type: string
+                  examples: [clothes]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["User is not authorized or is not an administrator"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    delete:
+      tags:
+        - products
+      summary: Deletes a product
+      description: Updates product specified in path from the database.
+      operationId: deleteProduct
+      parameters: 
+        - name: productId
+          in: path
+          description: The product id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["User is not authorized or is not an administrator"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Logs in a user
+      description: Logs in a user using the username and password specified in the request body.
+      operationId: logInUser
+      requestBody:
+        description: User data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  examples: [testuser]
+                password:
+                  type: string
+                  examples: [test]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: [Login successful]
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Invalid username"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /auth/me:
+    get:
+      tags:
+        - auth
+      summary: Get your own user data
+      description: Returns the user data of the user currently logged in.
+      operationId: authMe
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Unauthorized"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /auth/logout:
+    get:
+      tags:
+        - auth
+      summary: Log out a user
+      description: Logs out the user that is currently logged in.
+      operationId: logOutUser
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: [Logout successful]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register a user
+      description: Creates a new user using the credentials specified and logs the user in
+      operationId: registerUser
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: [Authenticated after registration]
+                  user:
+                    $ref: '#/components/schemas/User'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /users: 
+    get:
+      tags:
+        - users
+      summary: Get all users
+      description: Gets a list of all users in the database.
+      operationId: getUsers
+      responses: 
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Gets a user
+      description: Gets a specific user from the database.
+      operationId: getUser
+      parameters: 
+        - name: userId
+          in: path
+          description: The user id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      responses: 
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    put:
+      tags:
+        - users
+      summary: Updates a user's username
+      description: Updates the username of the user specified in the path to the username specified in the request body as long as you are an administrator.
+      operationId: updateUsername
+      parameters: 
+        - name: userId
+          in: path
+          description: The user id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      requestBody:
+        description: Data to update item with
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  examples: [testuser]
+      responses: 
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["User is not authorized or is not an administrator"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+    delete:
+      tags:
+        - users
+      summary: Deletes a user
+      description: Deletes the user specified in the path from the database as long as you are an administrator.
+      operationId: deleteUser
+      parameters: 
+        - name: userId
+          in: path
+          description: The user id to fetch
+          required: true
+          explode: false
+          schema:
+            type: integer
+      responses: 
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["User is not authorized or is not an administrator"]
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  message: 
+                    type: string
+                    examples: ["Internal Server Error"]
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          examples: [10]
+        user_id:
+          type: integer
+          format: int32
+          examples: [25]
+        order_date:
+          type: string
+          format: date-time
+        total_amount:
+          type: string
+          format: price
+          examples: ["10.99"]
+    Order_Details:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int32
+          examples: [25]
+        order_id:
+          type: integer
+          format: int32
+          examples: [12]
+        product_id:
+          type: integer
+          format: int32
+          examples: [5]
+        order_date:
+          type: string
+          format: date-time
+        quantity: 
+          type: integer
+          format: int32
+          examples: [3]
+        price: 
+          type: string
+          format: price
+          examples: ["10.99"]
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          examples: [25]
+        username:
+          type: string
+          examples: ["testuser"]
+        is_admin:
+          type: boolean
+          examples: [false]
+    Cart_Item:
+      type: object
+      properties:
+        user_id: 
+          type: integer
+          format: int32
+          examples: [25]
+        product_id:
+          type: integer
+          format: int32
+          examples: [7]
+        quantity:
+          type: integer
+          format: int32
+          examples: [3]
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          examples: [5]
+        name:
+          type: string
+          examples: ["T-Shirt"]
+        description:
+          type: string
+          examples: ["A basic black t-shirt!"]
+        stock_quantity:
+          type: integer
+          format: int32
+          examples: [10]
+        category:
+          type: string
+          examples: ["clothes"]
+        price:
+          type: string
+          format: price
+          examples: ["10.99"]

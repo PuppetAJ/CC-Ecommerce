@@ -4,7 +4,7 @@ const pool = require("../pool/pool");
 
 usersRouter.get("/", async (req, res, next) => {
   try {
-    const result = await pool.query("SELECT * FROM users");
+    const result = await pool.query("SELECT id, username, is_admin FROM users");
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -14,8 +14,11 @@ usersRouter.get("/", async (req, res, next) => {
 usersRouter.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-    res.json(result.rows);
+    const result = await pool.query(
+      "SELECT id, username, is_admin FROM users WHERE id = $1",
+      [id]
+    );
+    res.json(result.rows[0]);
   } catch (error) {
     next(error);
   }

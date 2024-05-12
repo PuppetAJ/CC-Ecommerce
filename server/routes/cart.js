@@ -100,7 +100,7 @@ cartRouter.delete("/:id", isAuthenticated, async (req, res, next) => {
       "DELETE FROM user_items WHERE product_id = $1 AND user_id = $2 RETURNING *",
       [id, user.id]
     );
-    res.json(result.rows);
+    res.json(result.rows[0]);
   } catch (error) {
     next(error);
   }

@@ -22,7 +22,7 @@ ordersRouter.get("/:id", isAuthenticated, async (req, res, next) => {
       "SELECT * FROM orders WHERE user_id = $1 AND id = $2",
       [user.id, orderId]
     );
-    res.json(result.rows);
+    res.json(result.rows[0]);
   } catch (error) {
     next(error);
   }

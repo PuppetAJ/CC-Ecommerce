@@ -29,7 +29,6 @@ checkoutRouter.post("/", isAuthenticated, async (req, res, next) => {
     const orderDetails = [];
 
     subtotal.rows.forEach((item) => {
-      console.log(item);
       orderDetails.push({
         order_id: orderId,
         product_id: item.product_id,
@@ -54,7 +53,7 @@ checkoutRouter.post("/", isAuthenticated, async (req, res, next) => {
       total: totalResult.rows[0].total,
       message: "Checkout successful",
       cart: cartDelete.rows,
-      order: order.rows,
+      order: order.rows[0],
     });
   } catch (error) {
     next(error);
