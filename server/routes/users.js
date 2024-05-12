@@ -27,8 +27,20 @@ usersRouter.get("/:id", async (req, res, next) => {
 usersRouter.delete("/:id", isAdministrator, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await pool.query("DELETE FROM users WHERE id = $1", [id]);
-    res.json(result.rows);
+    if (req.user.id === parseInt(id)) {
+      return req.logout(async (err) => {
+        if (err) {
+          return next(err);
+        }
+        const result = await pool.query("DELETE FROM users WHERE id = $1", [
+          id,
+        ]);
+        return res.json(result.rows);
+      });
+    } else {
+      const result = await pool.query("DELETE FROM users WHERE id = $1", [id]);
+      res.json(result.rows);
+    }
   } catch (error) {
     next(error);
   }
@@ -37,9 +49,9 @@ usersRouter.delete("/:id", isAdministrator, async (req, res, next) => {
 usersRouter.put("/:id", isAdministrator, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { username, password } = req.body;
+    const { username } = req.body;
 
-    if (username && !password) {
+    if (username) {
       const result = await pool.query(
         "UPDATE users SET username = $1 WHERE id = $2",
         [username, id]
@@ -47,19 +59,17 @@ usersRouter.put("/:id", isAdministrator, async (req, res, next) => {
       return res.json(result.rows);
     }
 
-    if (!username || !password) {
-      return res
-        .status(400)
-        .json({ message: "Username and password are required" });
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
     }
 
-    if (username && password) {
-    }
-    const result = await pool.query(
-      "UPDATE users SET username = $1, password = $2 WHERE id = $3",
-      [username, password, id]
-    );
-    res.json(result.rows);
+    // if (username && password) {
+    // }
+    // const result = await pool.query(
+    //   "UPDATE users SET username = $1, password = $2 WHERE id = $3",
+    //   [username, password, id]
+    // );
+    // res.json(result.rows);
   } catch (error) {
     next(error);
   }
