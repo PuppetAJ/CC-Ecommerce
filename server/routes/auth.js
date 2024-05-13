@@ -117,16 +117,6 @@ authRouter.post("/register", async (req, res, next) => {
   }
 });
 
-// authRouter.post(
-//   "/login",
-//   passport.authenticate("local", {}, (err, user, options) => {
-//     console.log(options);
-//   }),
-//   (req, res) => {
-//     res.json({ message: "Login successful", user: req.user });
-//   }
-// );
-
 authRouter.post(
   "/login",
   (req, res, next) => {
