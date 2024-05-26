@@ -2,6 +2,64 @@ const pool = require('../../models/database');
 const { hashPassword, comparePassword } = require('../../utils/passwordHash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const GoogleStrategy = require('passport-google-oidc');
+const { uuid } = require('uuidv4');
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env['GOOGLE_CLIENT_ID'],
+      clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
+      callbackURL: 'api/auth/oauth2/redirect/google',
+      scope: ['profile'],
+    },
+    async (issuer, profile, done) => {
+      console.log(issuer);
+      console.log(profile);
+      try {
+        const result = await pool.query(
+          'SELECT * FROM federated_credentials WHERE provider = $1 AND subject = $2',
+          [issuer, profile.id]
+        );
+
+        if (result.rows.length === 0) {
+          console.log('User not found, creating new user');
+          const generatedUser = `federated-${uuid()}`;
+
+          const insertUser = await pool.query(
+            'INSERT INTO users(username, is_federated) VALUES($1) RETURNING *',
+            [generatedUser, true]
+          );
+
+          console.log(insertUser.rows[0]);
+          const id = insertUser.rows[0].id;
+
+          console.log(profile);
+          const result = await pool.query(
+            'INSERT INTO federated_credentials(provider, subject, name, user_id) VALUES($1, $2, $3, $4) RETURNING *',
+            [issuer, profile.id, profile.displayName, id]
+          );
+
+          // const federated_id = result.rows[0].id;
+
+          // // update user with federated ID
+          // await pool.query(
+          //   'UPDATE users SET federated_id = $1 WHERE id = $2 RETURNING *',
+          //   [federated_id, id]
+          // );
+
+          const user = result.rows[0];
+          return done(null, user);
+        }
+
+        const user = result.rows[0];
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
 
 passport.use(
   new LocalStrategy(
@@ -12,7 +70,7 @@ passport.use(
     async (username, password, done) => {
       try {
         const result = await pool.query(
-          'SELECT id, username, is_admin FROM users WHERE username = $1',
+          'SELECT id, username, is_admin, is_federated FROM users WHERE username = $1',
           [username]
         );
 
@@ -24,6 +82,11 @@ passport.use(
         if (result.rows.length === 0 || password_hash_query.rows.length === 0) {
           console.log('Invalid username');
           return done(null, false, { message: 'Invalid username' });
+        }
+
+        if (result.rows[0].is_federated) {
+          console.log('User is federated');
+          return done(null, false, { message: 'User is federated' });
         }
 
         const user = result.rows[0];
@@ -45,16 +108,42 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  console.log('Serializing user:', user);
+  if (user.user_id) {
+    console.log('Serializing federated user:', user.user_id);
+    return done(null, { id: user.user_id, is_federated: true });
+  }
+  done(null, { id: user.id });
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (userObj, done) => {
+  console.log(userObj);
   try {
-    const result = await pool.query(
-      'SELECT id, username, is_admin FROM users WHERE id = $1',
-      [id]
-    );
-    done(null, result.rows[0]);
+    let deserializedResult;
+    if (!userObj.is_federated) {
+      deserializedResult = await pool.query(
+        'SELECT id, username, is_admin, is_federated FROM users WHERE id = $1',
+        [userObj.id]
+      );
+    } else {
+      deserializedResult = await pool.query(
+        'SELECT is_federated, user_id, username, is_admin, provider, subject, name FROM users LEFT JOIN federated_credentials ON users.id = federated_credentials.user_id WHERE users.id = $1',
+        [userObj.id]
+      );
+    }
+
+    // console.log('Deserializing user:', result.rows[0]);
+    // if (result.rows.federated_id === 0) {
+    //   const result = await pool.query(
+    //     'SELECT federated_id, user_id, username, is_admin, provider, subject, name FROM users LEFT JOIN federated_credentials ON users.federated_id = federated_credentials.id WHERE users.id = $1',
+    //     [id]
+    //   );
+
+    //   console.log('Deserializing federated user:', result.rows[0]);
+    //   return done(null, result.rows[0]);
+    // }
+    console.log(deserializedResult.rows[0]);
+    done(null, deserializedResult.rows[0]);
   } catch (error) {
     done(error);
   }
@@ -140,6 +229,13 @@ exports.login = (req, res, next) => {
     });
   })(req, res, next); // Execute passport.authenticate() middleware
 };
+
+exports.googleLogin = passport.authenticate('google');
+
+exports.googleRedirect = passport.authenticate('google', {
+  successReturnToOrRedirect: 'http://localhost:3000/dashboard',
+  failureRedirect: '/login',
+});
 
 exports.me = (req, res) => {
   res.json(req.user);

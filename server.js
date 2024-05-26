@@ -4,9 +4,17 @@ const apiRouter = require('./routes/api');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // <-- location of the react app were connecting to
+    credentials: true,
+  })
+);
 
 app.use(
   session({

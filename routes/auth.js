@@ -5,6 +5,8 @@ const {
   register,
   login,
   me,
+  googleLogin,
+  googleRedirect,
 } = require('../controllers/auth');
 
 authRouter.get('/logout', logout);
@@ -17,6 +19,10 @@ authRouter.post('/login', login, (req, res) => {
 });
 
 authRouter.get('/me', isAuthenticated, me);
+
+authRouter.use('/login/federated/google', googleLogin);
+
+authRouter.use('/oauth2/redirect/google', googleRedirect);
 
 authRouter.use((error, req, res, next) => {
   if (error) {

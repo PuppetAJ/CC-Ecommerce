@@ -1,3 +1,1 @@
-// Continue migrating the route logic to controllers (will be a bit of work).
-// test to see if the routes are working as expected
-// if not functioning try disabling the cookie settings
+// Redesign database to insert a new user whenever a fedarated user logs in with a new property, is_federated set to true.
