@@ -1,18 +1,16 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login/Login';
-import Dashboard from './pages/Dashboard/Dashboard';
+import Home from './pages/Home/Home';
+import Register from './pages/Register/Register';
 
 function App() {
   return (
-    <div>
-      <header className='App-header'>
-        <h1>React App</h1>
-      </header>
+    <div className='main'>
       <Routes>
-        <Route path='/' element={<div>test</div>} />
+        <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/register' element={<Register />} />
       </Routes>
     </div>
   );

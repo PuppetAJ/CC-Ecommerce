@@ -1,13 +1,230 @@
-body {
+/* Universal Styles Reset */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Global Styles */
+:root {
+  font-size: 16px;
+  --light-gray: rgb(230, 230, 230);
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 1200px;
+  /* background-color: red; */
+  width: 100%;
+}
+
+/* Fonts */
+.montserrat-medium {
+  font-family: 'Montserrat', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Header Styles */
+
+.app-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* justify-content: space-between; */
+  /* align-items: center; */
+  margin: 1.5rem;
+  /* background-color: red; */
+}
+
+.header-nav {
+  grid-column: span 2;
+  align-self: center;
+  justify-self: center;
+}
+
+.header-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 3rem;
+  padding: 0;
+}
+
+.header-nav ul li a {
+  text-decoration: none;
+  color: #181717;
+  font-weight: 400;
+  font-size: 1.1rem;
+}
+
+.login-header-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.login-button {
+  cursor: pointer;
+  border: none;
+  background-color: rgb(255, 164, 44);
+  padding: 0.5rem 1rem;
+  border-radius: 50vh;
+  color: white;
+  font-weight: 00;
+  font-family: 'Montserrat', sans-serif;
+  transition: 0.2s;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.register-button {
+  cursor: pointer;
+  border: 2px solid rgb(255, 164, 44);
+  padding: 0.5rem 1rem;
+  border-radius: 50vh;
+  color: rgb(255, 164, 44);
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  transition: 0.2s;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.login-button:hover {
+  background-color: rgb(247, 134, 5);
+}
+
+.register-button:hover {
+  background-color: rgb(247, 134, 44);
+  border: 2px solid rgb(247, 134, 44);
+  color: white;
+}
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  background-color: #f5f5f5;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+}
+
+.login-container {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  width: 50rem;
+  height: 30rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+}
+
+.login-image {
+  height: 100%;
+  max-width: 45%;
+  border-top-right-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  object-fit: cover;
+  filter: brightness(0.8);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 55%;
+  width: 100%;
+  padding: 0 3.5rem;
+}
+
+.login-form h1 {
+  font-size: 2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.input-control {
+  border: none;
+  /* padding-left: 1rem; */
+  font-size: 0.9rem;
+}
+
+.input-control:focus {
+  outline: none;
+}
+
+.form-input {
+  display: flex;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.form-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: 1rem;
+}
+
+.form-button {
+  background-color: rgb(255, 164, 44);
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-bottom: 1rem;
+}
+
+.form-button:hover {
+  background-color: rgb(247, 134, 5);
+}
+
+.google-btn-wrapper {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+}
+
+.google-link-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  text-decoration: none;
+  color: black;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-footer a {
+  text-decoration: none;
+  color: black;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  border-bottom: 1px solid red;
+}
+
+.error input::placeholder {
+  color: red;
 }

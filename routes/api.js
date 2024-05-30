@@ -7,6 +7,7 @@ const productsRouter = require('./products');
 const cartRouter = require('./cart');
 const checkoutRouter = require('./checkout');
 const ordersRouter = require('./orders');
+const swaggerRouter = require('./swagger');
 
 // users route for debug purposes
 apiRouter.use('/users', usersRouter);
@@ -15,5 +16,6 @@ apiRouter.use('/products', productsRouter);
 apiRouter.use('/cart', cartRouter);
 apiRouter.use('/checkout', checkoutRouter);
 apiRouter.use('/orders', ordersRouter);
+apiRouter.use('/docs', swaggerRouter);
 
 module.exports = apiRouter;

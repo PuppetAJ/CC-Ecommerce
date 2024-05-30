@@ -2,7 +2,9 @@ const pool = require('../../models/database');
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const result = await pool.query('SELECT id, username, is_admin FROM users');
+    const result = await pool.query(
+      'SELECT id, username, is_admin, is_federated FROM users'
+    );
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -13,7 +15,7 @@ exports.getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      'SELECT id, username, is_admin FROM users WHERE id = $1',
+      'SELECT id, username, is_admin, is_federated FROM users WHERE id = $1',
       [id]
     );
     res.json(result.rows[0]);

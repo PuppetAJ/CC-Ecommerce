@@ -3,7 +3,7 @@ const { hashPassword, comparePassword } = require('../../utils/passwordHash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oidc');
-const { uuid } = require('uuidv4');
+const { v4: uuidv4 } = require('uuid');
 
 passport.use(
   new GoogleStrategy(
@@ -14,8 +14,8 @@ passport.use(
       scope: ['profile'],
     },
     async (issuer, profile, done) => {
-      console.log(issuer);
-      console.log(profile);
+      // console.log(issuer);
+      // console.log(profile);
       try {
         const result = await pool.query(
           'SELECT * FROM federated_credentials WHERE provider = $1 AND subject = $2',
@@ -23,30 +23,22 @@ passport.use(
         );
 
         if (result.rows.length === 0) {
-          console.log('User not found, creating new user');
-          const generatedUser = `federated-${uuid()}`;
+          // console.log('User not found, creating new user');
+          const generatedUser = `federated-${uuidv4()}`;
 
           const insertUser = await pool.query(
-            'INSERT INTO users(username, is_federated) VALUES($1) RETURNING *',
+            'INSERT INTO users(username, is_federated) VALUES($1, $2) RETURNING *',
             [generatedUser, true]
           );
 
-          console.log(insertUser.rows[0]);
+          // console.log(insertUser.rows[0]);
           const id = insertUser.rows[0].id;
 
-          console.log(profile);
+          // console.log(profile);
           const result = await pool.query(
             'INSERT INTO federated_credentials(provider, subject, name, user_id) VALUES($1, $2, $3, $4) RETURNING *',
             [issuer, profile.id, profile.displayName, id]
           );
-
-          // const federated_id = result.rows[0].id;
-
-          // // update user with federated ID
-          // await pool.query(
-          //   'UPDATE users SET federated_id = $1 WHERE id = $2 RETURNING *',
-          //   [federated_id, id]
-          // );
 
           const user = result.rows[0];
           return done(null, user);
@@ -84,8 +76,10 @@ passport.use(
           return done(null, false, { message: 'Invalid username' });
         }
 
+        // console.log(result.rows[0]);
+
         if (result.rows[0].is_federated) {
-          console.log('User is federated');
+          // console.log('User is federated');
           return done(null, false, { message: 'User is federated' });
         }
 
@@ -108,16 +102,16 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log('Serializing user:', user);
+  // console.log('Serializing user:', user);
   if (user.user_id) {
-    console.log('Serializing federated user:', user.user_id);
+    // console.log('Serializing federated user:', user.user_id);
     return done(null, { id: user.user_id, is_federated: true });
   }
   done(null, { id: user.id });
 });
 
 passport.deserializeUser(async (userObj, done) => {
-  console.log(userObj);
+  // console.log(userObj);
   try {
     let deserializedResult;
     if (!userObj.is_federated) {
@@ -132,17 +126,7 @@ passport.deserializeUser(async (userObj, done) => {
       );
     }
 
-    // console.log('Deserializing user:', result.rows[0]);
-    // if (result.rows.federated_id === 0) {
-    //   const result = await pool.query(
-    //     'SELECT federated_id, user_id, username, is_admin, provider, subject, name FROM users LEFT JOIN federated_credentials ON users.federated_id = federated_credentials.id WHERE users.id = $1',
-    //     [id]
-    //   );
-
-    //   console.log('Deserializing federated user:', result.rows[0]);
-    //   return done(null, result.rows[0]);
-    // }
-    console.log(deserializedResult.rows[0]);
+    // console.log(deserializedResult.rows[0]);
     done(null, deserializedResult.rows[0]);
   } catch (error) {
     done(error);

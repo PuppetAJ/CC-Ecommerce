@@ -1,12 +1,12 @@
 import React from 'react';
 import LoginForm from '../../components/LoginForm/LoginForm';
 
-function Login() {
+function Register() {
   return (
     <div className='login-wrapper'>
-      <LoginForm formType='login' />
+      <LoginForm formType='register' />
     </div>
   );
 }
 
-export default Login;
+export default Register;
