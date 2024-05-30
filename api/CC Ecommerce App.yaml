@@ -1042,6 +1042,16 @@ components:
           type: integer
           format: int32
           examples: [3]
+        name:
+          type: string
+          examples: ['T-Shirt']
+        price:
+          type: string
+          format: price
+          examples: ['10.99']
+        img_name:
+          type: string
+          examples: ['tshirt.jpg']
     Product:
       type: object
       properties:
@@ -1066,3 +1076,6 @@ components:
           type: string
           format: price
           examples: ['10.99']
+        img_name:
+          type: string
+          examples: ['tshirt.jpg']

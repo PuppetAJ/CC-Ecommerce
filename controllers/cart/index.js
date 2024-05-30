@@ -4,7 +4,7 @@ exports.getCartItems = async (req, res, next) => {
   try {
     const user = req.user;
     const result = await pool.query(
-      'SELECT * FROM user_items WHERE user_id = $1',
+      'SELECT user_id, product_id, quantity, name, category, price, img_name FROM user_items LEFT JOIN products ON user_items.product_id = products.id WHERE user_id = $1',
       [user.id]
     );
     res.json(result.rows);
