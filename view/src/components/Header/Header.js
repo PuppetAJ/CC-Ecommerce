@@ -4,12 +4,10 @@ import { useLoginStore } from '../../store/loggedIn';
 function Header({ loggedIn }) {
   const { checkLoggedIn } = useLoginStore();
   const handleLogOut = async () => {
-    const response = await fetch('/api/auth/logout', {
+    await fetch('/api/auth/logout', {
       credentials: 'include',
     });
-    if (response.status === 200) {
-      checkLoggedIn();
-    }
+    checkLoggedIn();
   };
   return (
     <header className='app-header'>

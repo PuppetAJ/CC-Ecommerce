@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "seed": "node models/seedDatabase.js",
+    "setup": "node models/setupDatabase.js",
     "dev": "concurrently \"nodemon server.js\" \"cd view && npm start\""
   },
   "author": "PuppetAJ",

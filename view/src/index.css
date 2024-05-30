@@ -153,6 +153,7 @@
 .input-control {
   border: none;
   /* padding-left: 1rem; */
+  width: 100%;
   font-size: 0.9rem;
 }
 
