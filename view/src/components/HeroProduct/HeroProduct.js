@@ -14,12 +14,6 @@ function HeroProduct({ productID }) {
     fetchData();
   }, [fetchData, productID]);
 
-  // async function fetchData() {
-  //   const response = await fetch(`/api/products/${productID}`);
-  //   const data = await response.json();
-  //   setProduct(data);
-  // }
-
   return (
     <div className='hero-card'>
       {!product.name && !product.category && (

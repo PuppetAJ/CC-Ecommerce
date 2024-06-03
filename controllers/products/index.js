@@ -2,7 +2,7 @@ const pool = require('../../models/database');
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const result = await pool.query('SELECT * FROM products');
+    const result = await pool.query('SELECT * FROM products ORDER BY id ASC');
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -37,7 +37,7 @@ exports.getCategorizedProducts = async (req, res, next) => {
       return res.status(400).json({ message: 'Category is required' });
     }
     const result = await pool.query(
-      'SELECT * FROM products WHERE UPPER(category) = UPPER($1)',
+      'SELECT * FROM products WHERE UPPER(category) = UPPER($1) ORDER BY id ASC',
       [category]
     );
     res.json(result.rows);
