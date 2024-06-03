@@ -12,10 +12,35 @@ exports.getProducts = async (req, res, next) => {
 exports.getProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
+    if (!id) {
+      console.log('ID is required');
+      return res.status(400).json({ message: 'ID is required' });
+    }
+    if (isNaN(id)) {
+      console.log('ID must be a number');
+      return res.status(400).json({ message: 'ID must be a number' });
+    }
     const result = await pool.query('SELECT * FROM products WHERE id = $1', [
       id,
     ]);
     res.json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getCategorizedProducts = async (req, res, next) => {
+  try {
+    const { category } = req.params;
+    if (!category) {
+      console.log('Category is required');
+      return res.status(400).json({ message: 'Category is required' });
+    }
+    const result = await pool.query(
+      'SELECT * FROM products WHERE UPPER(category) = UPPER($1)',
+      [category]
+    );
+    res.json(result.rows);
   } catch (error) {
     next(error);
   }

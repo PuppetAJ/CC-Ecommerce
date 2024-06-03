@@ -657,6 +657,40 @@ paths:
                   message:
                     type: string
                     examples: ['Internal Server Error']
+  /products/category/{category}:
+    get:
+      tags:
+        - products
+      summary: Gets products by category
+      description: Gets all products in the specified category.
+      operationId: getProductsByCategory
+      parameters:
+        - name: category
+          in: path
+          description: The category to fetch
+          required: true
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: ['Internal Server Error']
   /auth/login:
     post:
       tags:
@@ -1011,6 +1045,15 @@ components:
           type: string
           format: price
           examples: ['10.99']
+        name:
+          type: string
+          examples: ['T-Shirt']
+        img_name:
+          type: string
+          examples: ['tshirt.jpg']
+        category:
+          type: string
+          examples: ['clothes']
     User:
       type: object
       properties:

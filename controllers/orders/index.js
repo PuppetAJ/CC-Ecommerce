@@ -31,7 +31,7 @@ exports.getOrderDetails = async (req, res, next) => {
     const user = req.user;
     const orderId = req.params.id;
     const result = await pool.query(
-      'SELECT user_id, orders.id AS order_id, product_id, order_date, quantity, price FROM orders LEFT JOIN order_details ON orders.id = order_details.order_id WHERE order_id = $1 AND user_id = $2;',
+      'SELECT user_id, orders.id AS order_id, product_id, order_date, quantity, order_details.price, name, img_name, category FROM orders LEFT JOIN order_details ON orders.id = order_details.order_id LEFT JOIN products ON products.id = order_details.product_id WHERE order_id = $1 AND user_id = $2;',
       [orderId, user.id]
     );
     res.json(result.rows);

@@ -1,2 +1,4 @@
 // https://mui.com/material-ui/react-drawer/
-// Turn product into a modal
+// Make header fixed
+// Add drawer
+// Add cart button

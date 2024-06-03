@@ -6,10 +6,10 @@ export const useLoginStore = create((set) => ({
   checkLoggedIn: async () => {
     const response = await fetch('/api/auth/me', { credentials: 'include' });
     if (response.status === 200) {
-      console.log(response);
+      // console.log(response);
       set({ loggedIn: true });
     } else {
-      console.log(response);
+      // console.log(response);
       set({ loggedIn: false });
     }
   },

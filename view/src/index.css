@@ -9,6 +9,8 @@
 :root {
   font-size: 16px;
   --light-gray: rgb(230, 230, 230);
+  --tan: rgb(197, 143, 99);
+  --tan-hover: rgb(201, 110, 57);
 }
 
 .main {
@@ -30,15 +32,39 @@
   font-style: normal;
 }
 
+.mr-de-haviland-regular {
+  font-family: 'Mr De Haviland', cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* Header Styles */
 
+.header-wrapper {
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  /* box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px; */
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  transition: 0.15s;
+}
+
+.header-scroll {
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px;
+}
+
 .app-header {
+  width: 100%;
+  max-width: 1200px;
+  background-color: white;
+  padding: 1.5rem 0rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* justify-content: space-between; */
-  /* align-items: center; */
-  margin: 1.5rem;
-  /* background-color: red; */
 }
 
 .header-nav {
@@ -71,7 +97,7 @@
 .login-button {
   cursor: pointer;
   border: none;
-  background-color: rgb(255, 164, 44);
+  background-color: var(--tan);
   padding: 0.5rem 1rem;
   border-radius: 50vh;
   color: white;
@@ -84,10 +110,10 @@
 
 .register-button {
   cursor: pointer;
-  border: 2px solid rgb(255, 164, 44);
+  border: 2px solid var(--tan);
   padding: 0.5rem 1rem;
   border-radius: 50vh;
-  color: rgb(255, 164, 44);
+  color: var(--tan);
   font-weight: 500;
   font-family: 'Montserrat', sans-serif;
   transition: 0.2s;
@@ -96,14 +122,16 @@
 }
 
 .login-button:hover {
-  background-color: rgb(247, 134, 5);
+  background-color: var(--tan-hover);
 }
 
 .register-button:hover {
-  background-color: rgb(247, 134, 44);
-  border: 2px solid rgb(247, 134, 44);
+  background-color: var(--tan-hover);
+  border: 2px solid var(--tan-hover);
   color: white;
 }
+
+/* Login + Register Page Styles */
 
 .login-wrapper {
   display: flex;
@@ -176,7 +204,7 @@
 }
 
 .form-button {
-  background-color: rgb(255, 164, 44);
+  background-color: var(--tan);
   color: white;
   font-family: 'Montserrat', sans-serif;
   font-weight: 400;
@@ -190,7 +218,7 @@
 }
 
 .form-button:hover {
-  background-color: rgb(247, 134, 5);
+  background-color: var(--tan-hover);
 }
 
 .google-btn-wrapper {
@@ -218,6 +246,11 @@
 .form-footer a {
   text-decoration: none;
   color: black;
+  transition: 0.2s;
+}
+
+.form-footer a:hover {
+  color: var(--tan);
 }
 
 .error {
@@ -228,4 +261,249 @@
 
 .error input::placeholder {
   color: red;
+}
+
+/* Hero Section Styles */
+
+.hero-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 7rem;
+  list-style: none;
+  padding: 0;
+}
+
+.hero-list li {
+  position: relative;
+  background-color: #f1f1f1;
+}
+
+.hero-list-top {
+  height: 25.625rem;
+}
+
+.hero-list-bottom {
+  height: 13.625rem;
+}
+
+.hero-card {
+  overflow: hidden;
+  /* width: 100%;
+  height: 100%; */
+}
+
+.hero-text {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+
+.hero-text h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.hero-text h3:hover {
+  color: var(--tan);
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.hero-img {
+  transition: 0.3s;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-img:hover {
+  transform: scale(1.1);
+}
+
+.hero-img-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Mid Section Styles */
+
+.section-title {
+  margin-top: 6rem;
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.section-text {
+  text-align: center;
+  max-width: 50rem;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+.about-card {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  overflow: hidden;
+  position: relative;
+  background-color: #f5f5f5;
+}
+
+#about-img {
+  transition: 0.3s;
+}
+
+.about-img-container {
+  position: relative;
+  overflow: hidden;
+}
+
+#about-img {
+  width: 100%;
+  height: 100%;
+}
+
+.hover-effect {
+  transform: scale(1.1);
+  filter: brightness(0.5);
+}
+
+.about-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5rem;
+  height: 5rem;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Product List Styles */
+
+.product-list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 4rem;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.category-list li {
+  cursor: pointer;
+}
+
+.category-list li::after {
+  content: '|';
+  margin-left: 1rem;
+  color: black;
+}
+
+.category-list li:last-child::after {
+  content: '';
+}
+
+.selected {
+  color: var(--tan);
+}
+
+.product-list-card {
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #232323;
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 0.2s;
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.product-list-card h3 {
+  margin-top: 1.5rem;
+}
+
+.product-list-card p {
+  color: #898989;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.product-list-card img {
+  width: 18.75rem;
+  height: 18.75rem;
+}
+
+.lds-dual-ring {
+  /* change color here */
+  color: var(--tan);
+  grid-column: span 4;
+  justify-self: center;
+  align-self: center;
+  margin-bottom: 10rem;
+}
+.lds-dual-ring,
+.lds-dual-ring:after {
+  box-sizing: border-box;
+}
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+.lds-dual-ring:after {
+  content: ' ';
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6.4px solid currentColor;
+  border-color: currentColor transparent currentColor transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

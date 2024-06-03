@@ -6,9 +6,12 @@ const {
   addProduct,
   deleteProduct,
   updateProduct,
+  getCategorizedProducts,
 } = require('../controllers/products');
 
 productsRouter.get('/', getProducts);
+
+productsRouter.get('/category/:category', getCategorizedProducts);
 
 productsRouter.get('/:id', getProduct);
 
