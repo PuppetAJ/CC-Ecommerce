@@ -12,7 +12,7 @@ function MidSection() {
     el.classList.remove('hover-effect');
   };
   return (
-    <div>
+    <div id='about'>
       <h2 className='mr-de-haviland-regular section-title'>Furnex Store</h2>
       <p className='section-text'>
         When you start with a portrait and search for a pure form, a clear

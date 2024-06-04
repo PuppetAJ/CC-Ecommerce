@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ProductListCard from '../ProductListCard/ProductListCard';
 
-function ProductList({ mode, setMode }) {
+function ProductList({ mode, setMode, setOpen }) {
   const activeRef = useRef(
     document.querySelector('.category-list li.selected')
   );
@@ -43,7 +43,7 @@ function ProductList({ mode, setMode }) {
   }, [selected]);
 
   return (
-    <div>
+    <div id='products'>
       <div className='product-list-head'>
         <h1>Popular Products</h1>
         <ul className='category-list'>
@@ -119,7 +119,11 @@ function ProductList({ mode, setMode }) {
         {loading && <div className='lds-dual-ring'></div>}
         {!loading &&
           data.map((product) => (
-            <ProductListCard key={product.id} product={product} />
+            <ProductListCard
+              key={product.id}
+              product={product}
+              setOpen={setOpen}
+            />
           ))}
       </div>
     </div>

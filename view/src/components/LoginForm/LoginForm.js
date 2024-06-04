@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PersonIcon, LockClosedIcon } from '@radix-ui/react-icons';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function LoginForm({ formType }) {
   const [username, setUsername] = useState('');
@@ -26,12 +27,6 @@ function LoginForm({ formType }) {
       },
       body: JSON.stringify({ username, password }),
     });
-
-    // console.log(response);
-
-    // console.log(response);
-    // const data = await response.json();
-    // console.log(data);
 
     if (response.status === 200) {
       setError(false);
@@ -97,15 +92,15 @@ function LoginForm({ formType }) {
           </a>
         </div>
         <div className='form-footer'>
-          <a
-            href={formType === 'register' ? '/login' : '/register'}
+          <Link
+            to={formType === 'register' ? '/login' : '/register'}
             className='register-link'
           >
             {formType === 'register' ? 'Login' : 'Register'}
-          </a>
-          <a href='/' className='register-link'>
+          </Link>
+          <Link to='/' className='register-link'>
             Home
-          </a>
+          </Link>
         </div>
       </form>
       <img
