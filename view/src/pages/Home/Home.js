@@ -2,26 +2,33 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../components/Header/Header';
 import Hero from '../../components/Hero/Hero';
 import MidSection from '../../components/MidSection/MidSection';
-import { useLoginStore } from '../../store/loggedIn';
 import ProductList from '../../components/ProductList/ProductList';
 import Blog from '../../components/Blog/Blog';
 import Newsletter from '../../components/Newsletter/Newsletter';
 import Footer from '../../components/Footer/Footer';
+import { useLoginStore } from '../../store/loggedIn';
+import { useCartStore } from '../../store/cart';
 
 function Home() {
-  const { checkLoggedIn } = useLoginStore();
+  const { checkLoggedIn, loggedIn } = useLoginStore();
+  const { checkCart } = useCartStore();
   const [mode, setMode] = useState('All');
-  const [open, setOpen] = useState(false);
   useEffect(() => {
     checkLoggedIn();
   }, [checkLoggedIn]);
 
+  useEffect(() => {
+    if (loggedIn) {
+      checkCart();
+    }
+  }, [loggedIn, checkCart]);
+
   return (
     <div className='container'>
-      <Header open={open} setOpen={setOpen} />
+      <Header />
       <Hero />
       <MidSection />
-      <ProductList setOpen={setOpen} mode={mode} setMode={setMode} />
+      <ProductList mode={mode} setMode={setMode} />
       <Blog />
       <Newsletter />
       <Footer />

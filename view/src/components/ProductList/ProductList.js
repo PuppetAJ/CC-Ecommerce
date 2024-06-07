@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ProductListCard from '../ProductListCard/ProductListCard';
 
-function ProductList({ mode, setMode, setOpen }) {
+function ProductList({ mode, setMode }) {
   const activeRef = useRef(
     document.querySelector('.category-list li.selected')
   );
@@ -119,11 +119,7 @@ function ProductList({ mode, setMode, setOpen }) {
         {loading && <div className='lds-dual-ring'></div>}
         {!loading &&
           data.map((product) => (
-            <ProductListCard
-              key={product.id}
-              product={product}
-              setOpen={setOpen}
-            />
+            <ProductListCard key={product.id} product={product} />
           ))}
       </div>
     </div>

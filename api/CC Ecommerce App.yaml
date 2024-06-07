@@ -148,7 +148,7 @@ paths:
                     type: string
                     examples: ['Internal Server Error']
   /checkout:
-    post:
+    get:
       tags:
         - checkout
       summary: checkout with items in cart
@@ -184,6 +184,76 @@ paths:
                   message:
                     type: string
                     examples: ['Cart is empty']
+        '400':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: ['Unauthorized']
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples: ['Internal Server Error']
+  /checkout/stripe:
+    post:
+      tags:
+        - checkout
+      summary: checkout with stripe
+      description: returns a stripe checkout url for the user to complete their purchase
+      operationId: checkoutStripe
+      requestBody:
+        description: Stripe token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                line_items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      price_data:
+                        type: object
+                        properties:
+                          currency:
+                            type: string
+                            examples: [usd]
+                          product_data:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                examples: [T-Shirt]
+                          unit_amount:
+                            type: integer
+                            format: int32
+                            examples: [1099]
+                      quantity:
+                        type: integer
+                        format: int32
+                        examples: [3]
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    examples: [https://stripe.com/checkout]
         '400':
           description: Unauthorized
           content:

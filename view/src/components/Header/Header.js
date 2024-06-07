@@ -8,19 +8,19 @@ import {
   Cross1Icon,
   TrashIcon,
 } from '@radix-ui/react-icons';
-import { IoPersonOutline, IoBagHandleOutline } from 'react-icons/io5';
+import { IoNewspaperOutline, IoBagHandleOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 
-function Header({ open, setOpen }) {
-  const { checkCart, cart } = useCartStore();
+function Header() {
+  const { checkCart, cart, setCartOpen, cartOpen } = useCartStore();
   const { checkLoggedIn, setLoggedIn } = useLoginStore();
   const loggedIn = useLoginStore((state) => state.loggedIn);
   const headerRef = useRef(null);
   const backToTopRef = useRef(null);
 
   const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
+    setCartOpen(newOpen);
   };
 
   function scrollAnim() {
@@ -69,7 +69,7 @@ function Header({ open, setOpen }) {
 
     if (response.status === 200) {
       await checkCart();
-      setOpen(true);
+      setCartOpen(true);
     } else {
       setLoggedIn(false);
     }
@@ -81,7 +81,7 @@ function Header({ open, setOpen }) {
     });
 
     if (checkMe.status !== 200) {
-      setOpen(false);
+      setCartOpen(false);
       setLoggedIn(false);
       return;
     }
@@ -111,18 +111,18 @@ function Header({ open, setOpen }) {
 
     if (response.status === 200) {
       // checkCart();
-      // setOpen(false);
+      // setCartOpen(false);
       const data = await response.json();
       window.location.href = data.url;
       console.log(data);
     } else {
-      // setOpen(false);
+      // setCartOpen(false);
     }
   };
 
   return (
     <header ref={headerRef} className='header-wrapper'>
-      <Drawer open={open} anchor='right' onClose={toggleDrawer(false)}>
+      <Drawer open={cartOpen} anchor='right' onClose={toggleDrawer(false)}>
         <div className='cart-wrapper'>
           <div className='cart-head'>
             <h1>Cart ({cart.length})</h1>
@@ -161,7 +161,7 @@ function Header({ open, setOpen }) {
                           if (response.status === 200) {
                             checkCart();
                           } else {
-                            setOpen(false);
+                            setCartOpen(false);
                           }
                         }}
                       />
@@ -187,7 +187,7 @@ function Header({ open, setOpen }) {
                             if (response.status === 200) {
                               checkCart();
                             } else {
-                              setOpen(false);
+                              setCartOpen(false);
                             }
                           }
                         }}
@@ -212,7 +212,7 @@ function Header({ open, setOpen }) {
                           if (response.status === 200) {
                             checkCart();
                           } else {
-                            setOpen(false);
+                            setCartOpen(false);
                           }
                         }}
                       />
@@ -276,8 +276,8 @@ function Header({ open, setOpen }) {
         )}
         {loggedIn === true && (
           <div className='login-header-wrapper'>
-            <Link to='/profile' className='header-link'>
-              <IoPersonOutline className='header-icon' />
+            <Link to='/orders' className='header-link'>
+              <IoNewspaperOutline className='header-icon' />
             </Link>
             <button className='header-link' onClick={handleCart}>
               <IoBagHandleOutline className='header-icon' />

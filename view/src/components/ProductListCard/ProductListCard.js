@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { Skeleton } from '@mui/material';
-import { PlusIcon, Cross1Icon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import { IoBagHandleOutline } from 'react-icons/io5';
 import { useCartStore } from '../../store/cart';
 import { useLoginStore } from '../../store/loggedIn';
 import { useNavigate } from 'react-router-dom';
-import Dialog from '@mui/material/Dialog';
-// import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
+import ProductModal from '../ProductModal/ProductModal';
 
-function ProductListCard({ product, setOpen }) {
+function ProductListCard({ product }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { checkCart } = useCartStore();
+  const { checkCart, setCartOpen } = useCartStore();
   const { checkLoggedIn } = useLoginStore();
   const navigate = useNavigate();
 
@@ -30,98 +28,13 @@ function ProductListCard({ product, setOpen }) {
 
   return (
     <>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby='customized-dialog-title'
-        open={openDialog}
-        maxWidth='md'
-      >
-        {/* <DialogTitle>
-          <h2>{product.name}</h2>
-        </DialogTitle> */}
-        <DialogContent>
-          <div className='dialog-content'>
-            <figure className='dialog-figure'>
-              {product.stock_quantity === 0 && isLoaded && (
-                <div className='stock-quantity'>Out of stock</div>
-              )}{' '}
-              <img src={`./images/${product.img_name}`} alt={product.name} />
-            </figure>
-
-            <div className='dialog-meta'>
-              <div className='dialog-meta-head'>
-                <div className='title-exit'>
-                  <h1>{product.name}</h1>
-                  <button
-                    className='close-dialog-btn'
-                    onClick={handleClose}
-                    aria-label='Close dialog'
-                  >
-                    <Cross1Icon />
-                  </button>
-                </div>
-
-                <div className='stock-price'>
-                  <h3>{product.stock_quantity} in stock</h3>
-                  <h3>${product.price}</h3>
-                </div>
-              </div>
-              <div className='desc-cart'>
-                <p>{product.description}</p>
-                <button
-                  disabled={product.stock_quantity === 0 ? true : false}
-                  className={'add-to-cart-btn'}
-                  onClick={async () => {
-                    const cart = await fetch(`/api/cart`, {
-                      credentials: 'include',
-                    });
-
-                    if (cart.status === 401) {
-                      navigate('/login');
-                      return;
-                    }
-
-                    const cartData = await cart.json();
-
-                    const productInCart = cartData.find(
-                      (item) => item.product_id === product.id
-                    );
-
-                    if (productInCart) {
-                      return;
-                    }
-
-                    const response = await fetch(`/api/cart`, {
-                      method: 'POST',
-                      credentials: 'include',
-                      body: JSON.stringify({
-                        product_id: product.id,
-                        quantity: 1,
-                      }),
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                    });
-
-                    if (response.status === 200) {
-                      checkCart();
-                      setOpen(true);
-                      setOpenDialog(false);
-                    } else {
-                      await checkLoggedIn();
-                      if (response.status === 401) {
-                        navigate('/login');
-                      }
-                    }
-                  }}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ProductModal
+        handleClose={handleClose}
+        openDialog={openDialog}
+        isLoaded={isLoaded}
+        product={product}
+        setOpenDialog={setOpenDialog}
+      />
       <div className='product-list-card'>
         <figure className='product-list-figure has-before'>
           {product.stock_quantity === 0 && isLoaded && (
@@ -174,7 +87,7 @@ function ProductListCard({ product, setOpen }) {
 
                   if (response.status === 200) {
                     checkCart();
-                    setOpen(true);
+                    setCartOpen(true);
                   } else {
                     await checkLoggedIn();
                     if (response.status === 401) {
@@ -193,7 +106,7 @@ function ProductListCard({ product, setOpen }) {
                   });
 
                   if (response.status === 200) {
-                    setOpen(true);
+                    setCartOpen(true);
                   } else {
                     await checkLoggedIn();
                     if (response.status === 401) {
