@@ -1,4 +1,5 @@
 const pool = require('../../models/database');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.checkOut = async (req, res, next) => {
   try {
@@ -47,12 +48,38 @@ exports.checkOut = async (req, res, next) => {
       );
     });
 
-    res.json({
-      total: totalResult.rows[0].total,
-      message: 'Checkout successful',
-      cart: cartDelete.rows,
-      order: order.rows[0],
+    // res.json({
+    //   total: totalResult.rows[0].total,
+    //   message: 'Checkout successful',
+    //   cart: cartDelete.rows,
+    //   order: order.rows[0],
+    // });
+    res.redirect(`${process.env.CLIENT_URL}/`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// exports.stripeSuccess = async (req, res, next) => {
+//   // const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
+//   // console.log(session);
+//   const lineItems = await stripe.checkout.sessions.listLineItems(
+//     req.query.session_id
+//   );
+//   console.log(lineItems);
+// };
+
+exports.stripeCheckout = async (req, res, next) => {
+  try {
+    // console.log(req.body.line_items);
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: req.body.line_items,
+      mode: 'payment',
+      success_url: `${process.env.SERVER_URL}/api/checkout/`,
+      cancel_url: `${process.env.CLIENT_URL}/`,
     });
+    res.json({ url: checkoutSession.url });
   } catch (error) {
     next(error);
   }

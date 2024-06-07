@@ -14,7 +14,7 @@ import Drawer from '@mui/material/Drawer';
 
 function Header({ open, setOpen }) {
   const { checkCart, cart } = useCartStore();
-  const { checkLoggedIn } = useLoginStore();
+  const { checkLoggedIn, setLoggedIn } = useLoginStore();
   const loggedIn = useLoginStore((state) => state.loggedIn);
   const headerRef = useRef(null);
   const backToTopRef = useRef(null);
@@ -63,11 +63,60 @@ function Header({ open, setOpen }) {
   };
 
   const handleCart = async () => {
-    await checkLoggedIn();
+    const response = await fetch('/api/auth/me', {
+      credentials: 'include',
+    });
 
-    if (loggedIn === true) {
+    if (response.status === 200) {
       await checkCart();
       setOpen(true);
+    } else {
+      setLoggedIn(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    const checkMe = await fetch('/api/auth/me', {
+      credentials: 'include',
+    });
+
+    if (checkMe.status !== 200) {
+      setOpen(false);
+      setLoggedIn(false);
+      return;
+    }
+
+    const response = await fetch('/api/checkout/stripe', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        line_items: cart.map((el) => {
+          return {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: el.name,
+                images: [`./images/${el.img_name}`],
+              },
+              unit_amount: el.price * 100,
+            },
+            quantity: el.quantity,
+          };
+        }),
+      }),
+    });
+
+    if (response.status === 200) {
+      // checkCart();
+      // setOpen(false);
+      const data = await response.json();
+      window.location.href = data.url;
+      console.log(data);
+    } else {
+      // setOpen(false);
     }
   };
 
@@ -175,12 +224,16 @@ function Header({ open, setOpen }) {
               <div className='cart-total'>
                 <h2>Subtotal:</h2>
                 <h1>
-                  {cart.reduce((acc, currEl) => {
-                    return acc + currEl.price * currEl.quantity;
-                  }, 0)}
+                  {cart
+                    .reduce((acc, currEl) => {
+                      return acc + currEl.price * currEl.quantity;
+                    }, 0)
+                    .toFixed(2)}
                 </h1>
               </div>
-              <button className='cart-checkout'>Checkout</button>
+              <button className='cart-checkout' onClick={handleCheckout}>
+                Checkout
+              </button>
             </>
           )}
         </div>

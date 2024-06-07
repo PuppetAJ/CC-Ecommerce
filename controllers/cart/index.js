@@ -65,9 +65,9 @@ exports.updateCartItemQuantity = async (req, res, next) => {
     const { id } = req.params;
     const { quantity } = req.body;
 
-    console.log('REACHED');
-    console.log(id);
-    console.log(quantity);
+    // console.log('REACHED');
+    // console.log(id);
+    // console.log(quantity);
     if (!quantity) {
       return res.status(400).json({ message: 'Quantity is required' });
     }
