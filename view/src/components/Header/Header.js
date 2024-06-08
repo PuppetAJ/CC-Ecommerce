@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLoginStore } from '../../store/loggedIn';
 import { useCartStore } from '../../store/cart';
 import {
@@ -7,6 +7,7 @@ import {
   MinusIcon,
   Cross1Icon,
   TrashIcon,
+  HamburgerMenuIcon,
 } from '@radix-ui/react-icons';
 import { IoNewspaperOutline, IoBagHandleOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
@@ -18,9 +19,14 @@ function Header() {
   const loggedIn = useLoginStore((state) => state.loggedIn);
   const headerRef = useRef(null);
   const backToTopRef = useRef(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
     setCartOpen(newOpen);
+  };
+
+  const toggleNavDrawer = (newOpen) => () => {
+    setMobileNavOpen(newOpen);
   };
 
   function scrollAnim() {
@@ -122,6 +128,41 @@ function Header() {
 
   return (
     <header ref={headerRef} className='header-wrapper'>
+      <Drawer
+        open={mobileNavOpen}
+        anchor='top'
+        onClose={toggleNavDrawer(false)}
+      >
+        <div className='mobile-nav-wrapper'>
+          <nav className='mobile-nav'>
+            <ul>
+              <li>
+                <button
+                  className='mobile-nav-home nav-hover nav-home'
+                  onClick={handleScroll}
+                >
+                  Home
+                </button>
+              </li>
+              <li>
+                <a className='nav-hover' href='#about'>
+                  About
+                </a>
+              </li>
+              <li>
+                <a className='nav-hover' href='#products'>
+                  Products
+                </a>
+              </li>
+              <li>
+                <a className='nav-hover' href='#blogs'>
+                  Blogs
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </Drawer>
       <Drawer open={cartOpen} anchor='right' onClose={toggleDrawer(false)}>
         <div className='cart-wrapper'>
           <div className='cart-head'>
@@ -272,6 +313,12 @@ function Header() {
             <Link to='/register' className='register-button'>
               Register
             </Link>
+            <button
+              className='mobile-nav-button'
+              onClick={() => setMobileNavOpen(true)}
+            >
+              <HamburgerMenuIcon className='mobile-nav-icon' />
+            </button>
           </div>
         )}
         {loggedIn === true && (
@@ -284,6 +331,12 @@ function Header() {
             </button>
             <button onClick={handleLogOut} className='login-button'>
               Log out
+            </button>
+            <button
+              className='mobile-nav-button'
+              onClick={() => setMobileNavOpen(true)}
+            >
+              <HamburgerMenuIcon className='mobile-nav-icon' />
             </button>
           </div>
         )}

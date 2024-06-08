@@ -129,11 +129,7 @@ function ProductListCard({ product }) {
         )}
         {!isLoaded && (
           <div>
-            <Skeleton
-              variant='rectangular'
-              width={'18.75rem'}
-              height={'18.75rem'}
-            />
+            <Skeleton className='product-skeleton-img' variant='rectangular' />
             <div
               style={{
                 display: 'flex',

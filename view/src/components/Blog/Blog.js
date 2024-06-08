@@ -12,7 +12,7 @@ function Blog() {
         </div>
       </div>
       <ul className='blog-list'>
-        <li>
+        <li className='blog-list-item'>
           <figure className='blog-fig'>
             <img src='./images/blog-1.jpg' alt='blog1' />
             <div className='blog-sticky'>
@@ -30,7 +30,7 @@ function Blog() {
             </li>
           </ul>
         </li>
-        <li>
+        <li className='blog-list-item'>
           <figure className='blog-fig'>
             <img src='./images/blog-2.jpg' alt='blog1' />
             <div className='blog-sticky'>
@@ -48,7 +48,7 @@ function Blog() {
             </li>
           </ul>
         </li>
-        <li>
+        <li className='blog-list-item'>
           <figure className='blog-fig'>
             <img src='./images/blog-3.jpg' alt='blog1' />
             <div className='blog-sticky'>
