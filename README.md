@@ -42,7 +42,7 @@ You must setup a `.env` file at the root of the project containing the following
   SERVER_URL = <Your Server URL>
 ```
 
-Once all environment variables are set up, you can start the api server with `npm start` or run both the client & the server with `npm run dev`.
+Once all environment variables are set up, you can start the server with `npm start` or run both the client & the server with `npm run dev`.
 
 ### API Endpoints
 
