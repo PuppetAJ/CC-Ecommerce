@@ -4,6 +4,7 @@ const { Pool } = pg;
 let pool = null;
 
 if (process.env.DB_URL) {
+  console.log('Connecting to remote database via connection string');
   pool = new Pool({
     connectionString: process.env.DB_URL,
     ssl: {
