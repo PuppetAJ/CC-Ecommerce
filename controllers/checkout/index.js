@@ -36,10 +36,7 @@ exports.checkOut = async (req, res, next) => {
       });
     });
 
-    const cartDelete = await pool.query(
-      'DELETE FROM user_items WHERE user_id = $1',
-      [user.id]
-    );
+    await pool.query('DELETE FROM user_items WHERE user_id = $1', [user.id]);
 
     orderDetails.forEach(async (item) => {
       await pool.query(
@@ -54,7 +51,7 @@ exports.checkOut = async (req, res, next) => {
     //   cart: cartDelete.rows,
     //   order: order.rows[0],
     // });
-    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5000'}`);
   } catch (error) {
     next(error);
   }
@@ -71,13 +68,14 @@ exports.checkOut = async (req, res, next) => {
 
 exports.stripeCheckout = async (req, res, next) => {
   try {
-    // console.log(req.body.line_items);
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: req.body.line_items,
       mode: 'payment',
-      success_url: `${process.env.SERVER_URL}/api/checkout/`,
-      cancel_url: `${process.env.CLIENT_URL}/`,
+      success_url: `${
+        process.env.SERVER_URL || 'http://localhost:5000'
+      }/api/checkout/`,
+      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:5000'}`,
     });
     res.json({ url: checkoutSession.url });
   } catch (error) {

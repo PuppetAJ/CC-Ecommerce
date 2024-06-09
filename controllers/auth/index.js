@@ -217,7 +217,9 @@ exports.login = (req, res, next) => {
 exports.googleLogin = passport.authenticate('google');
 
 exports.googleRedirect = passport.authenticate('google', {
-  successReturnToOrRedirect: `${process.env.CLIENT_URL}`,
+  successReturnToOrRedirect: `${
+    process.env.CLIENT_URL || 'http://localhost:5000'
+  }`,
   failureRedirect: '/login',
 });
 

@@ -56,7 +56,7 @@ Please view api documentation in the .yaml file included in the /api directory. 
 
 ## Credits
 
-- [Design](https://github.com/codewithsadee/woodex)
+- [Base Design](https://github.com/codewithsadee/woodex)
 
 ## Roadmap
 
