@@ -79,6 +79,7 @@ require('dotenv').config();
   try {
     let db;
     if (process.env.DB_URL) {
+      console.log('USING CONNECTION STRING');
       db = new Client({
         connectionString: process.env.DB_URL,
         ssl: {
