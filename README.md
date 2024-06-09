@@ -29,15 +29,26 @@ To use this API, you need to have a Postgres database set up. In order to set up
 You must setup a `.env` file at the root of the project containing the following variables:
 
 ```
+  # Optional (If provided, uses this instead of DB vars below)
+  DB_URL = <Your Postgres URL>
+
+  # DB Vars
   DB_HOST = <Your DB Host>
   DB_USER = <Your DB User>
   DB_PASS = <Your DB Password>
   DB_PORT = <Your DB Port>
+  DB_DATABASE = <Your Postgres Database name>
   SECRET_KEY = <Secret Key for use with Postgres>
+
+  # Google
   GOOGLE_CLIENT_ID= <Your Google Client ID>
   GOOGLE_CLIENT_SECRET= <Your Google Client Secret>
-  PORT = <Port for use in the server>
+
+  # Stripe
   STRIPE_SECRET_KEY = <Your Stripe Key>
+
+  # Client / Server
+  PORT = <Port for use in the server>
   CLIENT_URL = <Your Client URL>
   SERVER_URL = <Your Server URL>
 ```
