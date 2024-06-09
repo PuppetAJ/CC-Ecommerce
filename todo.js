@@ -1,9 +1,5 @@
-// https://mui.com/material-ui/react-drawer/
 // remember federated login link
-// deploy to railway
-// Add proper production stripe key
-
-// ROADMAP:
-// prevent layout shifts
-// Make loading skeletons for product list load properly on lower screen sizes
-// Restyle order list
+// deploy to Render
+// Add proper production stripe key to render environment vars
+// Set up Render postgres database via command line
+// https://github.com/PuppetAJ/deploying-full-stack-with-render-sample/tree/main

@@ -7,7 +7,8 @@
     "start": "node server.js",
     "seed": "node models/seedDatabase.js",
     "setup": "node models/setupDatabase.js",
-    "dev": "concurrently \"nodemon server.js\" \"cd view && npm start\""
+    "dev": "concurrently \"nodemon server.js\" \"cd view && npm start\"",
+    "build:ui": "rm -rf build && cd view && npm run build && cp -r build ../ && cd .."
   },
   "author": "PuppetAJ",
   "license": "ISC",
