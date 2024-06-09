@@ -78,7 +78,11 @@ function LoginForm({ formType }) {
         <div className='google-btn-wrapper'>
           <a
             className='google-link-wrapper'
-            href='http://localhost:5000/api/auth/login/federated/google'
+            href={
+              process.env.NODE_ENV === 'development'
+                ? 'http://localhost:5000/api/auth/login/federated/google'
+                : '/api/auth/login/federated/google'
+            }
           >
             <div className='google-img-wrapper'>
               <img
