@@ -177,13 +177,23 @@ require('dotenv').config();
   ];
 
   try {
-    const db = new Client({
-      user: process.env.DB_USER,
-      host: process.env.DB_HOST,
-      database: 'Ecommerce',
-      password: process.env.DB_PASS,
-      port: process.env.DB_PORT,
-    });
+    let db;
+    if (process.env.DB_URL) {
+      db = new Client({
+        connectionString: process.env.DB_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      });
+    } else {
+      db = new Client({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_DATABASE,
+        password: process.env.DB_PASS,
+        port: process.env.DB_PORT,
+      });
+    }
 
     await db.connect();
 
