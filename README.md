@@ -31,6 +31,7 @@ You must setup a `.env` file at the root of the project containing the following
 ```
   # Optional (If provided, uses this instead of DB vars below)
   DB_URL = <Your Postgres URL>
+  NODE_ENV = <Set to production if trying to secure cookies>
 
   # DB Vars
   DB_HOST = <Your DB Host>
@@ -45,11 +46,11 @@ You must setup a `.env` file at the root of the project containing the following
   GOOGLE_CLIENT_SECRET= <Your Google Client Secret>
 
   # Stripe
-  STRIPE_SECRET_KEY = <Your Stripe Key>
+  STRIPE_SECRET_KEY = <Your Stripe Secret Key>
 
   # Client / Server
   PORT = <Port for use in the server>
-  CLIENT_URL = <Your Client URL>
+  CLIENT_URL = <Your Client URL (Remove variable if serving on same as server url (production))>
   SERVER_URL = <Your Server URL>
 ```
 
