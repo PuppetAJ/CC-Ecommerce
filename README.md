@@ -82,7 +82,6 @@ Here's a list of some future plans to implement if the project sees attention or
 - Prevent layout shifts when loading home page
 - Make loading skeletons for product list load properly on lower screen sizes
 - Restyle order list
-- Make checkout endpoint only accessible after redirect from stripe
 
 ## Contributing
 

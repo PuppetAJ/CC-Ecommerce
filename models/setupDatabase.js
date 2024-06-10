@@ -76,6 +76,15 @@ require('dotenv').config();
     );
   `;
 
+  const sessionTableStmt = `
+    CREATE TABLE IF NOT EXISTS session (
+      sid              VARCHAR NOT NULL,
+      sess             JSON NOT NULL,
+      expire           TIMESTAMP(6) NOT NULL,
+      PRIMARY KEY(sid)
+    );
+  `;
+
   try {
     let db;
     if (process.env.DB_URL) {
@@ -105,6 +114,7 @@ require('dotenv').config();
     await db.query(userItemsTableStmt);
     await db.query(orderDetailsTableStmt);
     await db.query(federatedCredentialsTableStmt);
+    await db.query(sessionTableStmt);
 
     await db.end();
   } catch (err) {

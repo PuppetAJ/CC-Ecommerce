@@ -2,10 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const apiRouter = require('./routes/api');
 const bodyParser = require('body-parser');
-const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
 const path = require('path');
+const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+const pool = require('./models/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,10 +24,15 @@ app.use(
 
 // console.log(`node env set to: ${process.env.NODE_ENV}`);
 
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
 app.use(
   session({
+    store: new pgSession({
+      pool: pool,
+      tableName: 'session',
+      createTableIfMissing: true,
+    }),
     secret: process.env.SECRET_KEY || 'secret',
     resave: false,
     saveUninitialized: false,
