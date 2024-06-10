@@ -1209,10 +1209,6 @@ html {
   align-items: center;
 }
 
-.order-body:nth-last-child(1) {
-  /* border-bottom: none; */
-}
-
 .chevron-right {
   height: 1.25rem;
   width: 1.25rem;
