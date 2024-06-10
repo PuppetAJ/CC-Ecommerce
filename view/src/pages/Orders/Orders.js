@@ -8,15 +8,24 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [ignore, setIgnore] = useState(false);
 
-  const { checkLoggedIn, loggedIn } = useLoginStore();
-  useEffect(() => {
-    checkLoggedIn();
-  }, [checkLoggedIn]);
+  const { setLoggedIn, loggedIn } = useLoginStore();
 
   useEffect(() => {
-    if (!loggedIn) {
-      navigate('/login');
-    }
+    const checkIfLoggedIn = async () => {
+      const response = await fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response.status === 200) {
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
+        navigate('/login');
+      }
+    };
+
+    checkIfLoggedIn();
 
     if (loggedIn) {
       // fetch orders
@@ -25,8 +34,9 @@ function Orders() {
     // eslint-disable-next-line
   }, [loggedIn]);
 
+  // Attach products to orders via order details endpoint
   useEffect(() => {
-    if (orders && !ignore) {
+    if (orders.length && !ignore) {
       orders.forEach(async (order) => {
         const response = await fetch(`/api/orders/${order.id}/details`, {
           method: 'GET',
@@ -38,13 +48,13 @@ function Orders() {
         if (response.status === 200) {
           order.products = data;
           setOrders([...orders]);
-          setIgnore(true);
 
           // console.log(orders);
         }
       });
 
       // console.log(orders);
+      setIgnore(true);
     }
   }, [orders, ignore]);
 
@@ -60,6 +70,8 @@ function Orders() {
       setOrders(data);
     }
   };
+
+  console.log(orders[1]);
   return (
     <div className='order-container'>
       <div className='orders-head'>
@@ -91,7 +103,14 @@ function Orders() {
                 </h3>
                 <h4>
                   Order Date:{' '}
-                  <span className='order-less'>{Date(order.order_date)}</span>
+                  <span className='order-less'>
+                    {new Date(order.order_date).toLocaleDateString('en-us', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>{' '}
                 </h4>
                 <h4>
                   Total:{' '}
@@ -120,10 +139,10 @@ function Orders() {
                     className='order-body-view-products'
                   >
                     <h4>View Products</h4>
-                    <ChevronRightIcon className='chevron-right' />
+                    <ChevronRightIcon className='chevron-right chevron-anim' />
                   </div>
                 </div>
-                <div className='order-products'>
+                <div className='order-products order-products-visible'>
                   {order.products &&
                     order.products.map((product) => (
                       <div key={product.product_id} className='order-product'>

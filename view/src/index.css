@@ -1159,7 +1159,7 @@ html {
 }
 
 .orders-body {
-  border: 1px solid #f1f1f1;
+  /* border: 1px solid #f1f1f1; */
   border-radius: 0.5rem;
   margin-bottom: 1.5rem;
 }
@@ -1191,16 +1191,13 @@ html {
 }
 
 .order {
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.order:last-child {
-  border-bottom: none;
+  border: 1px solid #f1f1f1;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .order-body {
   padding: 1rem;
-  /* border-bottom: 1px solid #f1f1f1; */
 }
 
 .order-body-head {
@@ -1466,14 +1463,6 @@ html {
   }
 }
 
-@media screen and (max-width: 891px) {
-  .order-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-}
-
 @media screen and (max-width: 875px) {
   .product-actions {
     left: 20%;
@@ -1591,6 +1580,14 @@ html {
   .container,
   .app-header {
     margin: 0 1rem;
+  }
+}
+
+@media screen and (max-width: 630px) {
+  .order-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 
