@@ -20,6 +20,8 @@ app.use(
   })
 );
 
+console.log(`node env set to: ${process.env.NODE_ENV}`);
+
 app.use(
   session({
     secret: process.env.SECRET_KEY || 'secret',
@@ -28,6 +30,7 @@ app.use(
     cookie: {
       maxAge: 3600000, // 1 hour
       secure: process.env.NODE_ENV === 'production' ? true : false,
+      // secure: true,
       sameSite: 'lax',
     },
   })
