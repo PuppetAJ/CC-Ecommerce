@@ -20,9 +20,23 @@ authRouter.post('/login', login, (req, res) => {
 
 authRouter.get('/me', isAuthenticated, me);
 
-authRouter.use('/login/federated/google', googleLogin);
+authRouter.use(
+  '/login/federated/google',
+  (req, res, next) => {
+    console.log('Google login route hit');
+    next();
+  },
+  googleLogin
+);
 
-authRouter.use('/oauth2/redirect/google', googleRedirect);
+authRouter.use(
+  '/oauth2/redirect/google',
+  (req, res, next) => {
+    console.log('Google redirect route hit');
+    next();
+  },
+  googleRedirect
+);
 
 authRouter.use((error, req, res, next) => {
   if (error) {

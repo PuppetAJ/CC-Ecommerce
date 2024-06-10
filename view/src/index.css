@@ -1161,7 +1161,7 @@ html {
 .orders-body {
   border: 1px solid #f1f1f1;
   border-radius: 0.5rem;
-  border-bottom: none;
+  margin-bottom: 1.5rem;
 }
 
 .no-orders {
@@ -1190,16 +1190,27 @@ html {
   margin-left: 0.5rem;
 }
 
+.order {
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.order:last-child {
+  border-bottom: none;
+}
+
 .order-body {
   padding: 1rem;
-  border-bottom: 1px solid #f1f1f1;
-  border-radius: 0.5rem;
+  /* border-bottom: 1px solid #f1f1f1; */
 }
 
 .order-body-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.order-body:nth-last-child(1) {
+  /* border-bottom: none; */
 }
 
 .chevron-right {

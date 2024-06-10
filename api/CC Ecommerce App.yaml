@@ -152,28 +152,11 @@ paths:
       tags:
         - checkout
       summary: checkout with items in cart
-      description: checks out a user as long as they have items in their cart, and are authenticated. This process adds their order to the orders table.
+      description: checks out a user as long as they have items in their cart, are authenticated, and have a proper stripe session ID within their query params. This process adds their order to the orders table.
       operationId: checkout
       responses:
         '200':
           description: Succesful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  total:
-                    type: string
-                    format: price
-                    examples: ['65.49']
-                  message:
-                    type: string
-                    examples: ['Checkout successful']
-                  cart:
-                    type: array
-                    examples: [[]]
-                  order:
-                    $ref: '#/components/schemas/Order'
         '401':
           description: Bad request
           content:
