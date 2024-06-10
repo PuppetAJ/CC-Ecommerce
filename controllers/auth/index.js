@@ -121,7 +121,7 @@ passport.deserializeUser(async (userObj, done) => {
       );
     } else {
       deserializedResult = await pool.query(
-        'SELECT is_federated, user_id, username, is_admin, provider, subject, name FROM users LEFT JOIN federated_credentials ON users.id = federated_credentials.user_id WHERE users.id = $1',
+        'SELECT is_federated, user_id AS id, username, is_admin, provider, subject, name FROM users LEFT JOIN federated_credentials ON users.id = federated_credentials.user_id WHERE users.id = $1',
         [userObj.id]
       );
     }

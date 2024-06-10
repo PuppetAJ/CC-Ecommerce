@@ -22,7 +22,7 @@ app.use(
 
 // console.log(`node env set to: ${process.env.NODE_ENV}`);
 
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
 app.use(
   session({
