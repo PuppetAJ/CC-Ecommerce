@@ -18,3 +18,6 @@ build/
 # Ignore operating system files
 .DS_Store
 Thumbs.db
+
+# Ignore local design notes
+docs/
