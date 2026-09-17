@@ -1,4 +1,6 @@
-import { ButtonLink } from '@/components/elements/button'
+import { AnnouncementBadge } from '@/components/elements/announcement-badge'
+import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
 import { PhotoPlaceholder } from '@/components/photo-placeholder'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { Feature, FeaturesThreeColumn } from '@/components/sections/features-three-column'
@@ -9,7 +11,13 @@ export default function HomePage() {
   return (
     <>
       <HeroTwoColumnWithPhoto
-        eyebrow="Furniture & ceramics"
+        eyebrow={
+          <AnnouncementBadge
+            href="/about"
+            text={<>&ldquo;Four winters of daily use, not a chip.&rdquo;</>}
+            cta="Read Maren's story"
+          />
+        }
         headline="Made slowly, to be kept."
         subheadline={
           <p>
@@ -17,7 +25,16 @@ export default function HomePage() {
             batches small enough that we know each piece.
           </p>
         }
-        cta={<ButtonLink href="/shop">Shop the collection</ButtonLink>}
+        cta={
+          <div className="flex flex-wrap items-center gap-2">
+            <ButtonLink href="/shop" size="lg">
+              Shop the collection
+            </ButtonLink>
+            <PlainButtonLink href="/about" size="lg">
+              See how it&rsquo;s made <ArrowNarrowRightIcon />
+            </PlainButtonLink>
+          </div>
+        }
         photo={<PhotoPlaceholder label="Hero photograph" className="aspect-4/3" />}
       />
 

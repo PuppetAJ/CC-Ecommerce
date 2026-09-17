@@ -18,10 +18,6 @@
   --color-olive-900: oklch(22.8% 0.013 107.4);
   --color-olive-950: oklch(15.3% 0.006 107.1);
 
-  --color-berry-400: oklch(70% 0.17 34);
-  --color-berry-500: oklch(63% 0.19 33);
-  --color-berry-600: oklch(56% 0.19 32);
-  --color-berry-700: oklch(48% 0.16 31);
 }
 
 @theme inline {
@@ -80,12 +76,12 @@
   --secondary-foreground: var(--color-olive-950);
   --muted: var(--color-olive-200);
   --muted-foreground: var(--color-olive-600);
-  --accent: var(--color-berry-600);
-  --accent-foreground: #fff;
+  --accent: var(--color-olive-200);
+  --accent-foreground: var(--color-olive-950);
   --destructive: oklch(0.577 0.245 27.325);
   --border: var(--color-olive-300);
   --input: var(--color-olive-300);
-  --ring: var(--color-berry-600);
+  --ring: var(--color-olive-500);
   --tile: var(--color-olive-200);
   --sidebar: var(--color-olive-50);
   --sidebar-foreground: var(--color-olive-950);
@@ -94,7 +90,7 @@
   --sidebar-accent: var(--color-olive-200);
   --sidebar-accent-foreground: var(--color-olive-950);
   --sidebar-border: var(--color-olive-300);
-  --sidebar-ring: var(--color-berry-600);
+  --sidebar-ring: var(--color-olive-500);
 }
 
 .dark {
@@ -110,12 +106,12 @@
   --secondary-foreground: var(--color-olive-50);
   --muted: var(--color-olive-800);
   --muted-foreground: var(--color-olive-400);
-  --accent: var(--color-berry-400);
-  --accent-foreground: var(--color-olive-950);
+  --accent: var(--color-olive-800);
+  --accent-foreground: var(--color-olive-50);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: var(--color-berry-400);
+  --ring: var(--color-olive-400);
   --tile: var(--color-olive-900);
   --sidebar: var(--color-olive-900);
   --sidebar-foreground: var(--color-olive-50);
@@ -124,7 +120,7 @@
   --sidebar-accent: var(--color-olive-800);
   --sidebar-accent-foreground: var(--color-olive-50);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: var(--color-berry-400);
+  --sidebar-ring: var(--color-olive-400);
 }
 
 @layer base {

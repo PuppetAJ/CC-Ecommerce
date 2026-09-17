@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { AccountMenu } from '@/components/account-menu'
 import { CartSheet } from '@/components/cart-sheet'
 import { Container } from '@/components/elements/container'
+import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { MobileNav } from '@/components/mobile-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { navLinks } from '@/lib/nav'
@@ -26,8 +26,14 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />
-          <AccountMenu />
           <CartSheet />
+          {/* Phase 4 swaps these for an account menu once there is a session to read. */}
+          <PlainButtonLink href="/login" className="max-sm:hidden">
+            Log in
+          </PlainButtonLink>
+          <ButtonLink href="/register" size="lg">
+            Sign up
+          </ButtonLink>
           <MobileNav />
         </div>
       </Container>
