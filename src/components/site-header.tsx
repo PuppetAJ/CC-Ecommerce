@@ -31,7 +31,7 @@ export function SiteHeader() {
           <PlainButtonLink href="/login" className="max-sm:hidden">
             Log in
           </PlainButtonLink>
-          <ButtonLink href="/register" size="lg">
+          <ButtonLink href="/register">
             Sign up
           </ButtonLink>
           <MobileNav />

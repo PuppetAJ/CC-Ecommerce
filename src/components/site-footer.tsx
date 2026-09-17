@@ -17,19 +17,27 @@ export function SiteFooter() {
           </FooterCategory>
           <FooterCategory title="Studio">
             <FooterLink href="/about">About</FooterLink>
+            <FooterLink href="/about">How it is made</FooterLink>
+            <FooterLink href="/shop">The collection</FooterLink>
+          </FooterCategory>
+          <FooterCategory title="Help">
+            <FooterLink href="/faq">Shipping</FooterLink>
+            <FooterLink href="/faq">Returns</FooterLink>
+            <FooterLink href="/faq">Care and repair</FooterLink>
             <FooterLink href="/faq">FAQ</FooterLink>
           </FooterCategory>
           <FooterCategory title="Account">
             <FooterLink href="/login">Log in</FooterLink>
-            <FooterLink href="/register">Register</FooterLink>
+            <FooterLink href="/register">Sign up</FooterLink>
             <FooterLink href="/account/orders">Orders</FooterLink>
+            <FooterLink href="/cart">Cart</FooterLink>
           </FooterCategory>
           <FooterCategory title="Legal">
             <FooterLink href="/privacy">Privacy</FooterLink>
           </FooterCategory>
         </>
       }
-      fineprint={<p>© {new Date().getFullYear()} Wicken. A portfolio demo — no real orders are fulfilled.</p>}
+      fineprint="© 2026 Wicken · A portfolio demo — no real orders are fulfilled."
     />
   )
 }
