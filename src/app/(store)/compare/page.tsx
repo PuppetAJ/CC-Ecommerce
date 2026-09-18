@@ -6,12 +6,12 @@ import type { HeroPhoto } from '@/features/landing/hero'
 const options: { photo: HeroPhoto; label: string; note: string }[] = [
   {
     photo: 'teaware',
-    label: 'B — olive wall, 58% column, full frame',
-    note: 'Chanhee Lee. Carries the brand hue but is a soft film scan, so it is shown uncropped and never enlarged.',
+    label: 'B — olive wall, 50/50 column, 13:10 panel',
+    note: 'Chanhee Lee, sharpened by hand. Carries the brand hue. The 13:10 panel keeps B’s height at an even split, trimming 14% off the sides at the same magnification.',
   },
   {
     photo: 'windowsill',
-    label: 'A — windowsill, 50/50 column',
+    label: 'A — windowsill, 50/50 column, text-driven height',
     note: 'Danielle-Claude Bélanger. Sharpest of the shortlist and shows the product, but sits neutral against the palette.',
   },
 ]
