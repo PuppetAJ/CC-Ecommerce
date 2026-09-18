@@ -1,0 +1,5 @@
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+  # The Railway CLI bundles the config file with esbuild, which fetches its binary on install.
+  esbuild: true

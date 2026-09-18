@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: wicken-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wicken
+      POSTGRES_PASSWORD: wicken
+      POSTGRES_DB: wicken
+    ports:
+      # Loopback only. Docker's default of 0.0.0.0 would publish a password-less
+      # dev database on every interface.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Postgres 18 wants the whole directory mounted, not the data subdirectory.
+      - wicken-postgres-data:/var/lib/postgresql
+
+volumes:
+  wicken-postgres-data:

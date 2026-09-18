@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "unicorn", "oxc", "nextjs"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    // The automatic JSX transform means React need not be imported to use JSX.
+    "react/react-in-jsx-scope": "off"
+  },
+  "ignorePatterns": [
+    "**/.next/**",
+    "docs/**",
+    "next-env.d.ts",
+    "src/components/ui/**"
+  ]
+}
