@@ -37,8 +37,8 @@ export default function HomePage() {
         }
         photo={
           <Image
-            src="/images/hero-vases.jpg"
-            alt="A pale ceramic vase holding a single dried palm leaf"
+            src="/images/hero-windowsill.jpg"
+            alt="Two hand-built stoneware vases and a stack of plates on a windowsill"
             width={1600}
             height={1067}
             priority
