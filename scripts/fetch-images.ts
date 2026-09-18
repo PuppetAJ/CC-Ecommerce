@@ -22,6 +22,7 @@ const assignments: { file: string; id: string }[] = [
   { file: 'tall-stem-vase', id: 'r0u8YuXfaho' },
   { file: 'wide-mouth-vessel', id: 'jKg4C87JB3U' },
   { file: 'hero-vases', id: 'yCdCM36X4mc' },
+  { file: 'hero-windowsill', id: '4yYK5SiGj6E' },
   { file: 'hanging-pendant-shade', id: 'aRcwkYv7870' },
   { file: 'wall-sconce', id: '-QrJeaADUBM' },
   { file: 'candle-holder-trio', id: 'X9SuSIoUcJA' },
