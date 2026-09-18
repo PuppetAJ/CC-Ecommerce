@@ -50,12 +50,12 @@ const products: Seed[] = [
     stock_quantity: 60,
   },
   {
-    slug: 'pouring-jug-small',
-    name: 'Pouring Jug, Small',
+    slug: 'stacking-bowl-pair',
+    name: 'Stacking Bowl Pair',
     description:
-      'A cut lip that stops cleanly, tested with cream and with olive oil. Small enough to live on the table rather than in a cupboard.',
+      'Two bowls thrown to nest inside one another, so they take one shelf rather than two. The smaller holds a breakfast portion, the larger a proper one.',
     category: 'tableware',
-    price_cents: 3900,
+    price_cents: 4800,
     stock_quantity: 24,
   },
   {
@@ -178,24 +178,6 @@ const products: Seed[] = [
     price_cents: 36000,
     stock_quantity: 7,
   },
-  {
-    slug: 'open-shelf-unit',
-    name: 'Open Shelf Unit',
-    description:
-      'Four shelves, no back panel, sized for plates and bowls rather than books. Ships flat and goes together with a hex key.',
-    category: 'furniture',
-    price_cents: 68000,
-    stock_quantity: 5,
-  },
-  {
-    slug: 'hall-bench',
-    name: 'Hall Bench',
-    description:
-      'Long enough for two people to put boots on at once. The underside is left unfinished, which is where you will find our mark.',
-    category: 'furniture',
-    price_cents: 54000,
-    stock_quantity: 0,
-  },
 ]
 
 const client = await pool.connect()
@@ -204,9 +186,18 @@ try {
   await client.query('TRUNCATE order_items, orders, cart_items, carts, products RESTART IDENTITY CASCADE')
   for (const p of products) {
     await client.query(
-      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, is_featured)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [p.slug, p.name, p.description, p.category, p.price_cents, p.stock_quantity, p.is_featured ?? false],
+      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, image_url, is_featured)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        p.slug,
+        p.name,
+        p.description,
+        p.category,
+        p.price_cents,
+        p.stock_quantity,
+        `/images/${p.slug}.jpg`,
+        p.is_featured ?? false,
+      ],
     )
   }
   await client.query('COMMIT')

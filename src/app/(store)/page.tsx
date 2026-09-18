@@ -1,7 +1,7 @@
 import { AnnouncementBadge } from '@/components/elements/announcement-badge'
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
-import { PhotoPlaceholder } from '@/components/photo-placeholder'
+import Image from 'next/image'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { Feature, FeaturesThreeColumn } from '@/components/sections/features-three-column'
 import { HeroTwoColumnWithPhoto } from '@/components/sections/hero-two-column-with-photo'
@@ -35,7 +35,16 @@ export default function HomePage() {
             </PlainButtonLink>
           </div>
         }
-        photo={<PhotoPlaceholder label="Hero photograph" className="aspect-4/3" />}
+        photo={
+          <Image
+            src="/images/hero-vases.jpg"
+            alt="A pale ceramic vase holding a single dried palm leaf"
+            width={1600}
+            height={1067}
+            priority
+            className="w-full object-cover"
+          />
+        }
       />
 
       <FeaturesThreeColumn
