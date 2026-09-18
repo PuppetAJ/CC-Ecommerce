@@ -1,4 +1,4 @@
-import { defineRailway, github, postgres, preserve, project, service } from 'railway/iac'
+import { defineRailway, github, postgres, project, service } from 'railway/iac'
 
 /**
  * The Railway project. `railway config apply` shows its plan and asks first.
@@ -25,7 +25,9 @@ export default defineRailway(() => {
     env: {
       NODE_ENV: 'production',
       PORT: '8080',
-      NEXT_PUBLIC_APP_URL: preserve(),
+      NEXT_PUBLIC_APP_URL: 'https://wicken-production.up.railway.app',
+      // Railway resolves this reference to the database's own connection string.
+      DATABASE_URL: '${{Postgres.DATABASE_URL}}',
     },
   })
 
