@@ -15,6 +15,26 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
+    # The query tests run against a real Postgres rather than a mock.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: wicken
+          POSTGRES_PASSWORD: wicken
+          POSTGRES_DB: wicken
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wicken"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://wicken:wicken@127.0.0.1:5432/wicken
+      TEST_DATABASE_URL: postgresql://wicken:wicken@127.0.0.1:5432/wicken_test
+
     steps:
       - uses: actions/checkout@v7
 
@@ -32,6 +52,8 @@ jobs:
       - run: pnpm lint
 
       - run: pnpm typecheck
+
+      - run: pnpm db:migrate
 
       - run: pnpm test
 
