@@ -23,6 +23,8 @@ const assignments: { file: string; id: string }[] = [
   { file: 'wide-mouth-vessel', id: 'jKg4C87JB3U' },
   { file: 'hero-vases', id: 'yCdCM36X4mc' },
   { file: 'hero-windowsill', id: '4yYK5SiGj6E' },
+  // The shipped hero-teaware.jpg is sharpened by hand afterwards; re-running this overwrites that.
+  { file: 'hero-teaware', id: 'Xow_RU8rcv4' },
   { file: 'hanging-pendant-shade', id: 'aRcwkYv7870' },
   { file: 'wall-sconce', id: '-QrJeaADUBM' },
   { file: 'candle-holder-trio', id: 'X9SuSIoUcJA' },

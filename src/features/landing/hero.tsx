@@ -9,23 +9,23 @@ const photos = {
     src: '/images/hero-windowsill.jpg',
     alt: 'Two hand-built stoneware vases and a stack of plates on a windowsill',
     height: 1067,
-    wide: false,
+    tall: false,
   },
   teaware: {
     src: '/images/hero-teaware.jpg',
     alt: 'Stoneware cups and shallow bowls on a table against an olive wall, in low afternoon light',
-    height: 1061,
-    wide: true,
+    height: 1060,
+    tall: true,
   },
 } as const
 
 export type HeroPhoto = keyof typeof photos
 
 export function LandingHero({ photo = 'windowsill' }: { photo?: HeroPhoto }) {
-  const { src, alt, height, wide } = photos[photo]
+  const { src, alt, height, tall } = photos[photo]
   return (
     <HeroTwoColumnWithPhoto
-      wide={wide}
+      tallPhoto={tall}
       eyebrow={
         <AnnouncementBadge
           href="/about"
