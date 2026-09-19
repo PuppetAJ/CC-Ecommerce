@@ -12,14 +12,16 @@ export default function AuthLayout({ children }: LayoutProps<'/'>) {
           <div className="w-full max-w-sm">{children}</div>
         </div>
       </div>
+      {/* The only portrait photograph in the set, so the panel needs no crop. At L*57 it reads
+          as a lit block against the dark theme rather than receding, hence the dimming there. */}
       <div className="relative hidden bg-tile lg:block">
         <Image
-          src="/images/editorial-throwing.jpg"
-          alt="A potter shaping a bowl on the wheel"
+          src="/images/editorial-bench.jpg"
+          alt="A wooden bench and two stools in a plain concrete room"
           fill
           sizes="50vw"
           priority
-          className="object-cover"
+          className="object-cover dark:brightness-[0.8]"
         />
       </div>
     </div>
