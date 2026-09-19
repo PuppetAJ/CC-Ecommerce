@@ -1,7 +1,4 @@
-// A square tile keeps 67% of a 3:2 photograph's width, so most products sit fine centred.
-// These are the horizontal object-position values for the ones that do not, picked by eye
-// against the crop window drawn over each frame. Percentages are of the overflow, so 0 is
-// hard left and 100 hard right. Recalibrated when the tiles went from 4:5 to square.
+// Hand-picked horizontal object-position values, as a percentage of the overflow. See docs/phases/03-catalogue.md.
 const focalX: Record<string, number> = {
   'ash-dining-table': 25,
   'ash-glaze-dinner-plate': 40,

@@ -1,9 +1,4 @@
-/**
- * Runs axe-core over every page and fails on anything at WCAG 2.1 A or AA.
- * Needs the app running. Both themes, because the palette differs between them.
- *
- *   pnpm test:a11y
- */
+// axe-core at WCAG 2.1 A and AA, both themes. Needs the app running; see docs/TESTING.md.
 import { createRequire } from 'node:module'
 import { chromium } from 'playwright'
 import { BASE } from './lib.mjs'

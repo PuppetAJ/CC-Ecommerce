@@ -2,9 +2,7 @@ import 'server-only'
 import { headers } from 'next/headers'
 import { consume } from '@/lib/db/queries/rate-limit'
 
-// Railway terminates TLS, so the socket address belongs to its proxy and the first
-// entry of x-forwarded-for is the client. A determined attacker can rotate that, so
-// this slows brute force down rather than being the only thing stopping it.
+// Behind Railway's proxy the first x-forwarded-for entry is the client; spoofable, so this only slows brute force.
 async function clientId(): Promise<string> {
   const requestHeaders = await headers()
   const forwarded = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim()

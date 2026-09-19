@@ -7,11 +7,7 @@ import { useRef, useState, type MouseEvent } from 'react'
 
 const magnification = 2.2
 
-/**
- * Two ways in. Hovering magnifies in place with the cursor as the anchor, which is how you
- * read a glaze or a grain without leaving the page. Clicking opens the whole frame, which
- * on a square tile is the first sight of the third of the photograph the crop removed.
- */
+/** Hover magnifies under the cursor; clicking opens the frame the square tile crops. */
 export function ProductImage({ src, alt, objectPosition }: { src: string; alt: string; objectPosition: string }) {
   const frame = useRef<HTMLButtonElement>(null)
   const [origin, setOrigin] = useState<string | null>(null)

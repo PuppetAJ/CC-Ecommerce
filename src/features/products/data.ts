@@ -4,9 +4,7 @@ import { getProductBySlug, listFeaturedProducts, listProducts, listRelatedProduc
 import type { Product } from '@/lib/db/types'
 import type { ShopSearch } from './schemas'
 
-// Caching lives here rather than in src/lib/db, which has to stay importable by plain
-// Node for the tests and the seed script. Everything is tagged 'products' so a single
-// revalidateTag in the phase 8 admin clears the whole catalogue.
+// Above src/lib/db, which must stay importable by plain Node. See docs/phases/03-catalogue.md.
 
 // Takes the parsed search params whole, so the URL's `q` cannot drift from the query's
 // `search` the way it silently did once.

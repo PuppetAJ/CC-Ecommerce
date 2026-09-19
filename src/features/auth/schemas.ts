@@ -9,11 +9,7 @@ export const registration = credentials.extend({
   name: z.string().trim().min(1).max(80),
 })
 
-/**
- * A `?next=` value only ever returns a path on this site. Without the checks an
- * attacker could send /login?next=https://evil.example and have us redirect there
- * after a real sign-in, which is what makes the link convincing.
- */
+/** Returns a path on this site or the fallback, so `?next=` cannot be aimed off it. */
 export function safeNext(value: unknown, fallback = '/'): string {
   if (typeof value !== 'string') return fallback
   if (!value.startsWith('/') || value.startsWith('//')) return fallback

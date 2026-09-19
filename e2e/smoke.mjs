@@ -1,12 +1,4 @@
-/**
- * The end-to-end suite. Needs the app running against a migrated, seeded database.
- *
- *   pnpm build && pnpm start
- *   pnpm test:e2e
- *
- * The throttle section is last on purpose: it spends the sign-in budget for this
- * address, so anything needing a working login has to come before it.
- */
+// Needs the app running against a seeded database; see docs/TESTING.md, which also explains the section order.
 import {
   BASE,
   demo,

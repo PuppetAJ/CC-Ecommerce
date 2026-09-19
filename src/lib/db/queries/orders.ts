@@ -40,10 +40,7 @@ export async function getOrderByStripeSession(sessionId: string, userId: string)
   return rows[0] ?? null
 }
 
-/**
- * Snapshots the cart into a pending order. Prices come from the products table,
- * never from the caller, and stock is checked before anything is written.
- */
+/** Snapshots the cart into a pending order, pricing from the products table, never the caller. */
 export async function createPendingOrder(userId: string, cartId: string): Promise<Order> {
   return transaction(async (client) => {
     const { rows: items } = await client.query<{
@@ -93,11 +90,7 @@ export async function attachStripeSession(orderId: number, sessionId: string): P
   await pool.query('UPDATE orders SET stripe_session_id = $1 WHERE id = $2', [sessionId, orderId])
 }
 
-/**
- * Marks a pending order paid, decrements stock and empties the cart, in one
- * transaction. Returns false when the order was already paid, so a replayed
- * Stripe webhook is a no-op rather than double-decrementing stock.
- */
+/** Pays, decrements stock and clears the cart in one transaction; false when already paid, so a replay is a no-op. */
 export async function markOrderPaid(sessionId: string): Promise<boolean> {
   return transaction(async (client) => {
     const { rows } = await client.query<{ id: number; user_id: string }>(

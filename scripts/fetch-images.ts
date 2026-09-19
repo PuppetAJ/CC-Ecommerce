@@ -1,10 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
-/**
- * Downloads the approved photographs at a sensible width and records their
- * credits. Unsplash resizes on their CDN, so no local image pipeline is needed;
- * `next/image` handles format and responsive sizes at request time.
- */
+// Downloads the approved photographs and records their credits; Unsplash resizes on their CDN.
 const meta = JSON.parse(readFileSync('/tmp/imgmeta.json', 'utf8')) as {
   urls: Record<string, string>
   who: Record<string, { name: string; profile: string }>
