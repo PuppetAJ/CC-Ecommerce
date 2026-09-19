@@ -4,28 +4,10 @@ import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon
 import { HeroTwoColumnWithPhoto } from '@/components/sections/hero-two-column-with-photo'
 import Image from 'next/image'
 
-const photos = {
-  windowsill: {
-    src: '/images/hero-windowsill.jpg',
-    alt: 'Two hand-built stoneware vases and a stack of plates on a windowsill',
-    height: 1067,
-    tall: false,
-  },
-  teaware: {
-    src: '/images/hero-teaware.jpg',
-    alt: 'Stoneware cups and shallow bowls on a table against an olive wall, in low afternoon light',
-    height: 1060,
-    tall: true,
-  },
-} as const
-
-export type HeroPhoto = keyof typeof photos
-
-export function LandingHero({ photo = 'windowsill' }: { photo?: HeroPhoto }) {
-  const { src, alt, height, tall } = photos[photo]
+export function LandingHero() {
   return (
     <HeroTwoColumnWithPhoto
-      tallPhoto={tall}
+      tallPhoto
       eyebrow={
         <AnnouncementBadge
           href="/about"
@@ -50,7 +32,16 @@ export function LandingHero({ photo = 'windowsill' }: { photo?: HeroPhoto }) {
           </PlainButtonLink>
         </div>
       }
-      photo={<Image src={src} alt={alt} width={1600} height={height} priority className="w-full" />}
+      photo={
+        <Image
+          src="/images/hero-teaware.jpg"
+          alt="Stoneware cups and shallow bowls on a table against an olive wall, in low afternoon light"
+          width={1600}
+          height={1060}
+          priority
+          className="w-full"
+        />
+      }
     />
   )
 }

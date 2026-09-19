@@ -7,7 +7,7 @@ import { Stat, StatsThreeColumnWithDescription } from '@/components/sections/sta
 export default function HomePage() {
   return (
     <>
-      <LandingHero photo="teaware" />
+      <LandingHero />
 
       <FeaturesThreeColumn
         features={
