@@ -30,9 +30,7 @@ export async function generateMetadata({ params }: PageProps<'/products/[slug]'>
   }
 }
 
-// Silences instant-navigation validation for the uncached lookup. It does not make the
-// route answer 404: with Cache Components the shell is flushed as 200 before notFound()
-// runs, and Next adds robots noindex for that case. See docs/phases/04-auth.md.
+// Silences instant-navigation validation; it does not make the route answer 404 (D17).
 export const instant = false
 
 export default async function ProductPage({ params }: PageProps<'/products/[slug]'>) {

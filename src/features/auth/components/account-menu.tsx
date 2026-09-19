@@ -3,10 +3,7 @@ import { hasRole } from '@/lib/auth/options'
 import { getSession } from '@/lib/auth/session'
 import { AccountDropdown } from './account-dropdown'
 
-/**
- * Async and request-time, which is why the header wraps it in Suspense: the rest
- * of the chrome stays cacheable and only this slot waits for the session.
- */
+/** Request-time, so the header wraps it in Suspense and the rest of the chrome stays cacheable. */
 export async function AccountMenu() {
   const session = await getSession()
 

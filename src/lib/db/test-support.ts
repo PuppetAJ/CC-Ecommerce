@@ -7,8 +7,7 @@ export async function resetDatabase(): Promise<void> {
   )
 }
 
-/** carts.user_id and orders.user_id are real foreign keys since phase 4, so a test
- * that references a user has to create the row first. */
+/** carts.user_id and orders.user_id are real foreign keys, so the row has to exist first. */
 export async function insertUser(id: string, role = 'customer'): Promise<string> {
   await pool.query('INSERT INTO users (id, name, email, role) VALUES ($1, $2, $3, $4)', [
     id,

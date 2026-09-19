@@ -66,10 +66,7 @@ export async function getCartIdForUser(userId: string): Promise<string | null> {
   return rows[0]?.id ?? null
 }
 
-/**
- * Claims a guest cart for a user on login. If the user already had one, the
- * guest items are folded in and the guest cart is dropped.
- */
+/** Claims a guest cart on login, folding it into any cart the user already had. */
 export async function mergeGuestCart(guestCartId: string, userId: string): Promise<string> {
   const client = await pool.connect()
   try {

@@ -3,15 +3,7 @@ import { pool } from '../pool.ts'
 
 export type RateLimitResult = { allowed: boolean; retryAfter: number }
 
-/**
- * Better Auth rate limits its HTTP routes, but a Server Action calls auth.api
- * directly and never passes through that router, so the sign-in action would be
- * unlimited without this. Same table, `action:` prefixed keys so the two cannot
- * collide. See docs/phases/04-auth.md.
- *
- * One statement, because read-then-write lets N concurrent attempts all pass the
- * same stale count. last_request is the window's start, in epoch milliseconds.
- */
+// One statement, or concurrent attempts all pass the same stale count. See docs/phases/04-auth.md.
 export async function consume(key: string, { window, max }: { window: number; max: number }): Promise<RateLimitResult> {
   const now = Date.now()
   const windowStartedAfter = now - window * 1000

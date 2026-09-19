@@ -9,10 +9,7 @@ export async function getSession() {
   return auth.api.getSession({ headers: await headers() })
 }
 
-/**
- * The real gate. `src/proxy.ts` only sees whether a cookie exists, so every page,
- * layout and Server Action behind a login calls this and gets the verified row.
- */
+/** The real gate: the proxy only saw a cookie, this returns the verified row. */
 export async function requireUser(next?: string) {
   const session = await getSession()
   if (!session) redirect(next ? `/login?next=${encodeURIComponent(next)}` : '/login')

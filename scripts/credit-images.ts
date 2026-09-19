@@ -1,10 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 
-/**
- * Unsplash's API guidelines ask that using a photo triggers its download
- * endpoint, which is how photographers are credited with a use. Also fills in
- * any profile link the contact sheet did not record.
- */
+// Unsplash's guidelines ask that using a photo pings its download endpoint.
 const key = process.env.UNSPLASH_ACCESS_KEY
 if (!key) throw new Error('UNSPLASH_ACCESS_KEY is not set')
 const headers = { Authorization: `Client-ID ${key}`, 'Accept-Version': 'v1' }

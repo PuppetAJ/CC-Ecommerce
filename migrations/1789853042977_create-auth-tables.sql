@@ -1,8 +1,6 @@
 -- Up Migration
 
--- Better Auth's own tables. It would create these itself with camelCase names, but
--- the model and field mapping in src/lib/auth/options.ts renames them to match the
--- rest of the schema; "user" is also a reserved word, so the table is "users".
+-- Better Auth's tables, renamed to snake_case plurals by src/lib/auth/options.ts ("user" is reserved).
 CREATE TABLE users (
   id              text        PRIMARY KEY,
   name            text        NOT NULL,

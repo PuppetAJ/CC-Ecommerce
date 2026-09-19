@@ -3,15 +3,10 @@ import { authOptions } from '../src/lib/auth/options.ts'
 import { demoAccounts } from '../src/lib/auth/demo.ts'
 import { pool } from '../src/lib/db/pool.ts'
 
-// No nextCookies plugin: this runs under plain Node, where next/headers does not
-// resolve. That is the whole reason the options live in their own module.
+// No nextCookies plugin: next/headers does not resolve under plain Node.
 const auth = betterAuth(authOptions)
 
-/**
- * Registered visitors are left alone, so a reseed does not log real people out.
- * Only the two demo rows are replaced, which also re-hashes their passwords if the
- * hashing options ever change.
- */
+/** Replaces only the two demo rows, so a reseed does not log real visitors out. */
 export async function seedDemoUsers(): Promise<void> {
   const accounts = Object.values(demoAccounts)
   await pool.query('DELETE FROM users WHERE email = ANY($1)', [accounts.map((a) => a.email)])
