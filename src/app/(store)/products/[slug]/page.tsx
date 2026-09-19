@@ -147,7 +147,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
             More from{' '}
             <Link
               href={`/shop?category=${product.category}`}
-              className="text-olive-500 underline decoration-olive-500/35 decoration-from-font underline-offset-[5px] transition-colors hover:decoration-olive-500 dark:text-olive-400 dark:decoration-olive-400/35 dark:hover:decoration-olive-400"
+              className="text-olive-500 no-underline transition-colors hover:underline hover:decoration-1 hover:underline-offset-[6px] dark:text-olive-400"
             >
               {categoryLabels[product.category].toLowerCase()}
             </Link>
