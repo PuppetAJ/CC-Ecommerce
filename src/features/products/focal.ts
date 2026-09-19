@@ -5,6 +5,8 @@
 const focalX: Record<string, number> = {
   'candle-holder-trio': 85,
   'elm-side-table': 15,
+  // Frames the front plate, which is the product; the stack behind it is context.
+  'everyday-side-plate': 8,
   'hanging-pendant-shade': 90,
   // 21% frames exactly two of the three vases, which is what "Paired" claims.
   'paired-bottle-vases': 21,
