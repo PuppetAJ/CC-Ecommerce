@@ -148,7 +148,6 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 42000,
     stock_quantity: 10,
-    is_featured: true,
   },
   {
     slug: 'ash-dining-table',
