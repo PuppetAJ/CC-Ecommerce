@@ -66,6 +66,23 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
             <p>{product.description}</p>
           </Text>
 
+          {(product.dimensions || product.materials) && (
+            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+              {product.dimensions && (
+                <>
+                  <dt className="text-olive-600 dark:text-olive-400">Dimensions</dt>
+                  <dd className="text-olive-950 dark:text-white">{product.dimensions}</dd>
+                </>
+              )}
+              {product.materials && (
+                <>
+                  <dt className="text-olive-600 dark:text-olive-400">Materials</dt>
+                  <dd className="text-olive-950 dark:text-white">{product.materials}</dd>
+                </>
+              )}
+            </dl>
+          )}
+
           <div className="flex flex-col gap-2">
             {/* Adding to the cart arrives in phase 5; the button states are here so the page is honest now. */}
             <Button size="lg" disabled className="w-56">
@@ -81,25 +98,6 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
           </div>
 
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="details">
-              <AccordionTrigger>Details</AccordionTrigger>
-              <AccordionContent>
-                <dl className="flex flex-col gap-3">
-                  {product.dimensions && (
-                    <div className="flex flex-col gap-0.5">
-                      <dt className="text-olive-600 dark:text-olive-400">Dimensions</dt>
-                      <dd>{product.dimensions}</dd>
-                    </div>
-                  )}
-                  {product.materials && (
-                    <div className="flex flex-col gap-0.5">
-                      <dt className="text-olive-600 dark:text-olive-400">Materials</dt>
-                      <dd>{product.materials}</dd>
-                    </div>
-                  )}
-                </dl>
-              </AccordionContent>
-            </AccordionItem>
             <AccordionItem value="care">
               <AccordionTrigger>Care and repair</AccordionTrigger>
               <AccordionContent>
