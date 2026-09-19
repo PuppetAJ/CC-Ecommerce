@@ -1,11 +1,6 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
-import {
-  getProductBySlug,
-  listFeaturedProducts,
-  listProducts,
-  listRelatedProducts,
-} from '@/lib/db/queries/products'
+import { getProductBySlug, listFeaturedProducts, listProducts, listRelatedProducts } from '@/lib/db/queries/products'
 import type { Product } from '@/lib/db/types'
 import type { ShopSearch } from './schemas'
 

@@ -14,11 +14,7 @@ export function ShopToolbar({ search, count }: { search: ShopSearch; count: numb
           Everything
         </CategoryLink>
         {categories.map((category) => (
-          <CategoryLink
-            key={category}
-            href={shopHref({ ...search, category })}
-            active={search.category === category}
-          >
+          <CategoryLink key={category} href={shopHref({ ...search, category })} active={search.category === category}>
             {categoryLabels[category]}
           </CategoryLink>
         ))}

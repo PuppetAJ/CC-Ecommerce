@@ -36,7 +36,7 @@ export function HeroTwoColumnWithPhoto({
         <div
           className={clsx(
             'flex flex-1 overflow-hidden rounded-xl outline -outline-offset-1 outline-black/5 *:object-cover dark:outline-white/5',
-            tallPhoto && 'xl:aspect-13/10 *:h-full',
+            tallPhoto && '*:h-full xl:aspect-13/10',
           )}
         >
           {photo}

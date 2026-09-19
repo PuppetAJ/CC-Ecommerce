@@ -8,10 +8,5 @@
     // The automatic JSX transform means React need not be imported to use JSX.
     "react/react-in-jsx-scope": "off"
   },
-  "ignorePatterns": [
-    "**/.next/**",
-    "docs/**",
-    "next-env.d.ts",
-    "src/components/ui/**"
-  ]
+  "ignorePatterns": ["**/.next/**", "docs/**", "next-env.d.ts", "src/components/ui/**"]
 }

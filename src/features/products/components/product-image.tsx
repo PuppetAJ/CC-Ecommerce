@@ -6,15 +6,7 @@ import Image from 'next/image'
 
 // The tile crops a 3:2 photograph to a square, so the zoom is not only bigger — it is the
 // first time the visitor sees the whole frame.
-export function ProductImage({
-  src,
-  alt,
-  objectPosition,
-}: {
-  src: string
-  alt: string
-  objectPosition: string
-}) {
+export function ProductImage({ src, alt, objectPosition }: { src: string; alt: string; objectPosition: string }) {
   return (
     <Dialog>
       <DialogTrigger
@@ -32,10 +24,7 @@ export function ProductImage({
           className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
       </DialogTrigger>
-      <DialogContent
-        showCloseButton={false}
-        className="max-w-5xl border-0 bg-transparent p-0 shadow-none sm:max-w-5xl"
-      >
+      <DialogContent showCloseButton={false} className="max-w-5xl border-0 bg-transparent p-0 shadow-none sm:max-w-5xl">
         <DialogTitle className="sr-only">{alt}</DialogTitle>
         <div className="relative overflow-hidden rounded-xl">
           <Image src={src} alt={alt} width={1600} height={1067} className="h-auto w-full" />

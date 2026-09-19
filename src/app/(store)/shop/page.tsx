@@ -15,7 +15,7 @@ export const metadata = {
 
 export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
   return (
-    <Container className="py-16 flex flex-col gap-10">
+    <Container className="flex flex-col gap-10 py-16">
       <div className="flex flex-col gap-4">
         <Heading>The collection</Heading>
         <Text size="lg" className="max-w-2xl">
@@ -51,7 +51,7 @@ function EmptyState({ query }: { query?: string }) {
       <Text>
         <p>The kiln is small and the shelves change often. Try a different search, or browse everything.</p>
       </Text>
-      <Link href="/shop" className="text-sm underline underline-offset-4 text-olive-700 dark:text-olive-300">
+      <Link href="/shop" className="text-sm text-olive-700 underline underline-offset-4 dark:text-olive-300">
         Browse everything
       </Link>
     </div>
