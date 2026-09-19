@@ -19,7 +19,8 @@ export function ProductImage({
     <Dialog>
       <DialogTrigger
         aria-label={`View ${alt} larger`}
-        className="group relative aspect-square flex-1 cursor-zoom-in overflow-hidden rounded-xl bg-tile focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        // self-start, or the flex row stretches it and the accordion expanding grows the photograph.
+        className="group relative aspect-square w-full flex-1 cursor-zoom-in self-start overflow-hidden rounded-xl bg-tile focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         <Image
           src={src}
