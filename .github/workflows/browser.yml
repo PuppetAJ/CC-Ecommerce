@@ -1,0 +1,75 @@
+# The browser suite, on pull requests only. It builds and boots the app, so it is
+# slower than CI and is not a required check: main is gated by ci.yml alone.
+name: Browser suite
+
+on:
+  pull_request:
+
+concurrency:
+  group: browser-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: wicken
+          POSTGRES_PASSWORD: wicken
+          POSTGRES_DB: wicken
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wicken"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://wicken:wicken@127.0.0.1:5432/wicken
+      BETTER_AUTH_SECRET: ci-secret-not-used-for-anything-real
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - run: pnpm db:migrate
+
+      # The suite asserts on real products and on the two demo accounts.
+      - run: pnpm db:seed
+
+      - run: pnpm build
+
+      - name: Start the app
+        run: |
+          pnpm start > app.log 2>&1 &
+          for i in $(seq 1 45); do
+            curl -sf http://localhost:3000/api/health > /dev/null && exit 0
+            sleep 2
+          done
+          echo "The app did not come up"; cat app.log; exit 1
+
+      - run: pnpm test:e2e
+
+      - run: pnpm test:a11y
+
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-log
+          path: app.log
