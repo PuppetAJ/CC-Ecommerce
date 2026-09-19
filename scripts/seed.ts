@@ -1,4 +1,5 @@
 import { pool } from '../src/lib/db/pool.ts'
+import { seedDemoUsers } from './demo-users.ts'
 import type { Category } from '../src/lib/db/types.ts'
 import { productSpecs } from './product-specs.ts'
 
@@ -458,5 +459,11 @@ try {
   throw error
 } finally {
   client.release()
+}
+
+try {
+  await seedDemoUsers()
+  console.log('Seeded the demo shopper and demo admin')
+} finally {
   await pool.end()
 }
