@@ -16,11 +16,23 @@ type Candidate = { id: string; thumb: string; alt: string; photographer: string;
 const perGroup = 15
 
 const groups: { name: string; want: number; queries: string[] }[] = [
-  { name: 'Tableware', want: 6, queries: ['stoneware mug', 'ceramic bowl handmade', 'ceramic plate minimal', 'handmade tableware'] },
+  {
+    name: 'Tableware',
+    want: 6,
+    queries: ['stoneware mug', 'ceramic bowl handmade', 'ceramic plate minimal', 'handmade tableware'],
+  },
   { name: 'Vases', want: 5, queries: ['ceramic vase minimal', 'stoneware vase', 'pottery vase still life'] },
   { name: 'Lighting', want: 4, queries: ['table lamp linen shade', 'ceramic pendant lamp', 'candle holder ceramic'] },
-  { name: 'Furniture', want: 5, queries: ['wooden dining chair', 'oak dining table', 'wooden stool minimal', 'wooden bench interior'] },
-  { name: 'Editorial', want: 5, queries: ['pottery workshop hands', 'ceramic studio shelves', 'potters wheel', 'woodworking workshop'] },
+  {
+    name: 'Furniture',
+    want: 5,
+    queries: ['wooden dining chair', 'oak dining table', 'wooden stool minimal', 'wooden bench interior'],
+  },
+  {
+    name: 'Editorial',
+    want: 5,
+    queries: ['pottery workshop hands', 'ceramic studio shelves', 'potters wheel', 'woodworking workshop'],
+  },
 ]
 
 async function search(query: string): Promise<Photo[]> {

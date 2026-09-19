@@ -24,7 +24,9 @@ export function FaqAccordion({
         <Accordion type="single" collapsible className="border-y border-olive-950/10 dark:border-white/10">
           {items.map((item) => (
             <AccordionItem key={item.question} value={item.question}>
-              <AccordionTrigger className="text-base/7 text-olive-950 dark:text-white">{item.question}</AccordionTrigger>
+              <AccordionTrigger className="text-base/7 text-olive-950 dark:text-white">
+                {item.question}
+              </AccordionTrigger>
               <AccordionContent className="pr-12 text-sm/7 text-olive-700 dark:text-olive-400">
                 {item.answer}
               </AccordionContent>

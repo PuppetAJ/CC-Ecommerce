@@ -1,8 +1,4 @@
-import {
-  FooterCategory,
-  FooterLink,
-  FooterWithLinkCategories,
-} from '@/components/sections/footer-with-link-categories'
+import { FooterCategory, FooterLink, FooterWithLinkCategories } from '@/components/sections/footer-with-link-categories'
 
 export function SiteFooter() {
   return (

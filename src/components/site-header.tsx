@@ -1,8 +1,9 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { CartSheet } from '@/components/cart-sheet'
 import { Container } from '@/components/elements/container'
-import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { MobileNav } from '@/components/mobile-nav'
+import { AccountMenu, AccountMenuFallback } from '@/features/auth/components/account-menu'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { navLinks } from '@/lib/nav'
 
@@ -27,13 +28,9 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />
           <CartSheet />
-          {/* Phase 4 swaps these for an account menu once there is a session to read. */}
-          <PlainButtonLink href="/login" className="max-sm:hidden">
-            Log in
-          </PlainButtonLink>
-          <ButtonLink href="/register">
-            Sign up
-          </ButtonLink>
+          <Suspense fallback={<AccountMenuFallback />}>
+            <AccountMenu />
+          </Suspense>
           <MobileNav />
         </div>
       </Container>

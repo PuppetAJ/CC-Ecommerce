@@ -4,7 +4,13 @@ import { useRouter } from 'next/navigation'
 import { useId } from 'react'
 
 // Options carry their own hrefs so this stays a leaf: no searchParams read, no Suspense needed.
-export function SortSelect({ value, options }: { value: string; options: { value: string; label: string; href: string }[] }) {
+export function SortSelect({
+  value,
+  options,
+}: {
+  value: string
+  options: { value: string; label: string; href: string }[]
+}) {
   const router = useRouter()
   const id = useId()
   return (

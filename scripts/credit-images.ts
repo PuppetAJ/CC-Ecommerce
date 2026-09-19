@@ -9,13 +9,15 @@ const key = process.env.UNSPLASH_ACCESS_KEY
 if (!key) throw new Error('UNSPLASH_ACCESS_KEY is not set')
 const headers = { Authorization: `Client-ID ${key}`, 'Accept-Version': 'v1' }
 
-type Credit = { file: string; id: string; photographer: string; profile: string; credited?: boolean }
+type Credit = { file: string; source?: string; id: string; photographer: string; profile: string; credited?: boolean }
 const credits = JSON.parse(readFileSync('public/images/credits.json', 'utf8')) as Credit[]
 
 // Unsplash's demo tier allows 50 requests an hour, so already-credited photos are
 // skipped and the run can be repeated until nothing is pending.
 for (const credit of credits) {
   if (credit.credited) continue
+  // editorial-bench comes from Pexels, which has no download endpoint to ping.
+  if (credit.source && credit.source !== 'unsplash') continue
   if (!credit.profile) {
     const res = await fetch(`https://api.unsplash.com/photos/${credit.id}`, { headers })
     if (res.ok) {

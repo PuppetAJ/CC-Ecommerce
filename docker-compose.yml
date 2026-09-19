@@ -10,7 +10,7 @@ services:
     ports:
       # Loopback only. Docker's default of 0.0.0.0 would publish a password-less
       # dev database on every interface.
-      - "127.0.0.1:5432:5432"
+      - '127.0.0.1:5432:5432'
     volumes:
       # Postgres 18 wants the whole directory mounted, not the data subdirectory.
       - wicken-postgres-data:/var/lib/postgresql

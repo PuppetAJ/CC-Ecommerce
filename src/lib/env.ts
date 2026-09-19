@@ -7,6 +7,10 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   APP_URL: z.url().default('http://localhost:3000'),
   DATABASE_URL: z.url(),
+  // `openssl rand -base64 32`. Signs the session cookie, so changing it logs everyone out.
+  BETTER_AUTH_SECRET: z.string().min(32),
+  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+  GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
 })
 
 const parsed = schema.safeParse({
@@ -14,6 +18,9 @@ const parsed = schema.safeParse({
   APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   // Tests run against their own database, so a test run cannot truncate dev data.
   DATABASE_URL: process.env.NODE_ENV === 'test' ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 })
 
 if (!parsed.success) {
@@ -22,3 +29,6 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data
+
+/** Google sign-in is only offered when both halves of the credential are present. */
+export const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET)

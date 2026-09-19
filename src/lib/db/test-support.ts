@@ -1,7 +1,22 @@
 import { pool } from './pool.ts'
 
 export async function resetDatabase(): Promise<void> {
-  await pool.query('TRUNCATE order_items, orders, cart_items, carts, products RESTART IDENTITY CASCADE')
+  // users cascades to sessions, accounts, carts and orders, so it covers the auth tables too.
+  await pool.query(
+    'TRUNCATE order_items, orders, cart_items, carts, products, users, rate_limits RESTART IDENTITY CASCADE',
+  )
+}
+
+/** carts.user_id and orders.user_id are real foreign keys since phase 4, so a test
+ * that references a user has to create the row first. */
+export async function insertUser(id: string, role = 'customer'): Promise<string> {
+  await pool.query('INSERT INTO users (id, name, email, role) VALUES ($1, $2, $3, $4)', [
+    id,
+    `Test ${id}`,
+    `${id}@example.test`,
+    role,
+  ])
+  return id
 }
 
 type ProductOverrides = Partial<{
