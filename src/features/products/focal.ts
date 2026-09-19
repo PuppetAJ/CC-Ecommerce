@@ -4,8 +4,10 @@
 // the overflow, so 0 is hard left and 100 hard right.
 const focalX: Record<string, number> = {
   'candle-holder-trio': 85,
-  'elm-side-table': 40,
+  'elm-side-table': 15,
   'hanging-pendant-shade': 90,
+  // 21% frames exactly two of the three vases, which is what "Paired" claims.
+  'paired-bottle-vases': 21,
   'ridge-breakfast-mug': 40,
   'round-bud-vase': 18,
   'wall-sconce': 0,
