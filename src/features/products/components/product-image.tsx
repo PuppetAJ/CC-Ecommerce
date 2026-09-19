@@ -3,25 +3,51 @@
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { XIcon } from 'lucide-react'
 import Image from 'next/image'
+import { useRef, useState, type MouseEvent } from 'react'
 
-// The tile crops a 3:2 photograph to a square, so the zoom is not only bigger — it is the
-// first time the visitor sees the whole frame.
+const magnification = 2.2
+
+/**
+ * Two ways in. Hovering magnifies in place with the cursor as the anchor, which is how you
+ * read a glaze or a grain without leaving the page. Clicking opens the whole frame, which
+ * on a square tile is the first sight of the third of the photograph the crop removed.
+ */
 export function ProductImage({ src, alt, objectPosition }: { src: string; alt: string; objectPosition: string }) {
+  const frame = useRef<HTMLButtonElement>(null)
+  const [origin, setOrigin] = useState<string | null>(null)
+
+  function track(event: MouseEvent) {
+    const box = frame.current?.getBoundingClientRect()
+    if (!box) return
+    const x = ((event.clientX - box.left) / box.width) * 100
+    const y = ((event.clientY - box.top) / box.height) * 100
+    setOrigin(`${x}% ${y}%`)
+  }
+
   return (
     <Dialog>
       <DialogTrigger
+        ref={frame}
         aria-label={`View ${alt} larger`}
+        onMouseMove={track}
+        onMouseLeave={() => setOrigin(null)}
         // self-start, or the flex row stretches it and the accordion expanding grows the photograph.
-        className="group relative aspect-square w-full flex-1 cursor-zoom-in self-start overflow-hidden rounded-xl bg-tile focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className="relative aspect-square w-full flex-1 cursor-zoom-in self-start overflow-hidden rounded-xl bg-tile focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         <Image
           src={src}
           alt={alt}
           fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
+          // The magnifier samples at 2.2x, so the tile asks for the full-size asset rather than
+          // its displayed width; that is also the one the lightbox opens, so it is a single download.
+          sizes="(min-width: 1024px) 1600px, 100vw"
           priority
-          style={{ objectPosition }}
-          className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          style={{
+            objectPosition,
+            transform: origin ? `scale(${magnification})` : undefined,
+            transformOrigin: origin ?? undefined,
+          }}
+          className="object-cover transition-transform duration-200 ease-out motion-reduce:transition-none"
         />
       </DialogTrigger>
       <DialogContent showCloseButton={false} className="max-w-5xl border-0 bg-transparent p-0 shadow-none sm:max-w-5xl">
