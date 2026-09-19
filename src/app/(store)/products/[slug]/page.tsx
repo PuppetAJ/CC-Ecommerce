@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button'
 import { ProductGrid } from '@/features/products/components/product-grid'
 import { getProduct, getRelated } from '@/features/products/data'
+import { focalPosition } from '@/features/products/focal'
 import { categoryLabels } from '@/features/products/schemas'
 import { formatPrice } from '@/lib/format'
 import type { Metadata } from 'next'
@@ -52,6 +53,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               priority
+              style={{ objectPosition: focalPosition(product.slug) }}
               className="object-cover"
             />
           )}

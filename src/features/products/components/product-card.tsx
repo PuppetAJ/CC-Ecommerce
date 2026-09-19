@@ -3,6 +3,7 @@ import type { Product } from '@/lib/db/types'
 import { formatPrice } from '@/lib/format'
 import Image from 'next/image'
 import Link from 'next/link'
+import { focalPosition } from '../focal'
 
 // Every tile is 4:5 so the grid never reflows as images load.
 const tile = 'relative aspect-4/5 overflow-hidden rounded-xl bg-tile'
@@ -19,6 +20,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
             priority={priority}
+            style={{ objectPosition: focalPosition(product.slug) }}
             className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         )}
