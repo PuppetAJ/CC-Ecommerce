@@ -8,6 +8,8 @@ type Seed = {
   category: Category
   price_cents: number
   stock_quantity: number
+  dimensions: string
+  materials: string
   is_featured?: boolean
 }
 
@@ -20,6 +22,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 2800,
     stock_quantity: 40,
+    dimensions: '9 cm tall, 8.5 cm across · 300 ml',
+    materials: 'Stoneware, clear glaze',
     is_featured: true,
   },
   {
@@ -30,6 +34,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 3400,
     stock_quantity: 32,
+    dimensions: '26 cm across, 2.5 cm deep',
+    materials: 'Stoneware, wood ash glaze',
   },
   {
     slug: 'deep-serving-bowl',
@@ -39,6 +45,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 5600,
     stock_quantity: 18,
+    dimensions: '28 cm across, 11 cm deep · 2.4 l',
+    materials: 'Stoneware, matt white glaze',
   },
   {
     slug: 'everyday-side-plate',
@@ -48,6 +56,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 2200,
     stock_quantity: 60,
+    dimensions: '21 cm across',
+    materials: 'Stoneware, speckled glaze',
   },
   {
     slug: 'stacking-bowl-pair',
@@ -57,6 +67,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 4800,
     stock_quantity: 24,
+    dimensions: '16 cm across, 7 cm deep · 500 ml each',
+    materials: 'Stoneware, speckled glaze',
   },
   {
     slug: 'salt-cellar',
@@ -66,6 +78,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 1800,
     stock_quantity: 0,
+    dimensions: '7 cm across, 5 cm tall',
+    materials: 'Stoneware, unglazed foot',
   },
   {
     slug: 'tall-stem-vase',
@@ -75,6 +89,8 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 6800,
     stock_quantity: 14,
+    dimensions: '22 cm tall, 11 cm across the belly',
+    materials: 'Stoneware, matt white glaze',
     is_featured: true,
   },
   {
@@ -85,6 +101,8 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 8900,
     stock_quantity: 9,
+    dimensions: '18 cm across, 14 cm tall',
+    materials: 'Porcelain, carved, unglazed',
   },
   {
     slug: 'kiln-table-lamp',
@@ -94,6 +112,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 18500,
     stock_quantity: 8,
+    dimensions: '42 cm tall, 26 cm shade',
+    materials: 'Stoneware base, opal glass shade, E27',
     is_featured: true,
   },
   {
@@ -104,6 +124,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 11200,
     stock_quantity: 15,
+    dimensions: '24 cm across, 18 cm deep',
+    materials: 'Porcelain, braided flex, E27',
   },
   {
     slug: 'spouted-pendant',
@@ -113,6 +135,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 5400,
     stock_quantity: 22,
+    dimensions: '26 cm tall, 12 cm across',
+    materials: 'Stoneware, braided flex, E14',
   },
   {
     slug: 'column-table-lamp',
@@ -122,6 +146,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 14900,
     stock_quantity: 6,
+    dimensions: '46 cm tall, 14 cm shade',
+    materials: 'Linen shade, steel column, E14',
   },
   {
     slug: 'oak-dining-chair',
@@ -131,6 +157,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 42000,
     stock_quantity: 10,
+    dimensions: '80 cm tall, 46 cm seat height',
+    materials: 'Solid oak, oiled',
   },
   {
     slug: 'ash-dining-table',
@@ -140,6 +168,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 128000,
     stock_quantity: 3,
+    dimensions: '180 × 90 cm, 74 cm tall',
+    materials: 'Ash top, brushed steel base',
     is_featured: true,
   },
   {
@@ -150,6 +180,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 19500,
     stock_quantity: 16,
+    dimensions: '45 cm tall, 40 × 28 cm seat',
+    materials: 'Reclaimed pine, oiled',
   },
   {
     slug: 'elm-side-table',
@@ -159,6 +191,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 36000,
     stock_quantity: 7,
+    dimensions: '55 × 35 cm, 45 cm tall',
+    materials: 'Solid elm, oiled',
   },
   {
     slug: 'harvest-vase',
@@ -168,6 +202,8 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 7800,
     stock_quantity: 14,
+    dimensions: '24 cm tall, 17 cm across',
+    materials: 'Earthenware, burnished, unglazed',
   },
   {
     slug: 'oxblood-vase',
@@ -177,6 +213,8 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 9600,
     stock_quantity: 6,
+    dimensions: '30 cm tall, 12 cm across',
+    materials: 'Porcelain, copper-red glaze',
   },
   {
     slug: 'cobalt-column-vase',
@@ -186,6 +224,8 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 11000,
     stock_quantity: 8,
+    dimensions: '34 cm tall, 13 cm across',
+    materials: 'Stoneware, speckled cobalt glaze',
   },
   {
     slug: 'smoke-glaze-vase',
@@ -195,6 +235,8 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 8400,
     stock_quantity: 11,
+    dimensions: '19 cm tall, 10 cm across',
+    materials: 'Stoneware, reduction fired',
   },
   {
     slug: 'stoneware-teapot',
@@ -204,6 +246,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 8800,
     stock_quantity: 12,
+    dimensions: '16 cm tall · 1 l',
+    materials: 'Stoneware, cane handle',
   },
   {
     slug: 'butter-dish',
@@ -213,6 +257,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 3200,
     stock_quantity: 26,
+    dimensions: '18 × 10 cm, 7 cm tall',
+    materials: 'Porcelain, unglazed interior lid',
   },
   {
     slug: 'teapot-trio',
@@ -222,6 +268,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 14500,
     stock_quantity: 4,
+    dimensions: '12 cm tall each · 500 ml each',
+    materials: 'Three clays, one firing',
   },
   {
     slug: 'tall-pitcher',
@@ -231,6 +279,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 6400,
     stock_quantity: 18,
+    dimensions: '24 cm tall · 1.5 l',
+    materials: 'Stoneware, pulled handle',
   },
   {
     slug: 'gilt-rim-plate',
@@ -240,6 +290,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 3800,
     stock_quantity: 20,
+    dimensions: '20 cm across',
+    materials: 'Porcelain, gold lustre rim',
   },
   {
     slug: 'studio-mug-set',
@@ -249,6 +301,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 7200,
     stock_quantity: 15,
+    dimensions: '9 cm tall · 250 ml each · set of four',
+    materials: 'Stoneware, speckled glaze',
   },
   {
     slug: 'butter-glaze-plate',
@@ -258,6 +312,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 3000,
     stock_quantity: 30,
+    dimensions: '22 cm across',
+    materials: 'Stoneware, butter-yellow glaze',
   },
   {
     slug: 'tumbler-set',
@@ -267,6 +323,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 6800,
     stock_quantity: 16,
+    dimensions: '10 cm tall · 300 ml each · set of six',
+    materials: 'Stoneware, unglazed foot',
   },
   {
     slug: 'ridged-tumblers',
@@ -276,6 +334,8 @@ const products: Seed[] = [
     category: 'tableware',
     price_cents: 5600,
     stock_quantity: 13,
+    dimensions: '9 cm tall · 250 ml each · set of four',
+    materials: 'Stoneware, pastel glazes',
   },
   {
     slug: 'taper-candle-holders',
@@ -285,6 +345,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 4600,
     stock_quantity: 22,
+    dimensions: '5 cm tall, 11 cm dish · set of three',
+    materials: 'Porcelain, fits standard tapers',
   },
   {
     slug: 'stone-candle-set',
@@ -294,6 +356,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 5800,
     stock_quantity: 17,
+    dimensions: '8-14 cm across · set of four',
+    materials: 'Cast stone, unscented soy wax',
   },
   {
     slug: 'bedside-lamp',
@@ -303,6 +367,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 16500,
     stock_quantity: 7,
+    dimensions: '34 cm tall, 20 cm shade',
+    materials: 'Stoneware base, linen shade, E14',
   },
   {
     slug: 'globe-wall-light',
@@ -312,6 +378,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 19800,
     stock_quantity: 5,
+    dimensions: '32 cm out from the wall, 15 cm globe',
+    materials: 'Solid brass, opal glass, hard wired',
   },
   {
     slug: 'fluted-pendant',
@@ -321,6 +389,8 @@ const products: Seed[] = [
     category: 'lighting',
     price_cents: 17500,
     stock_quantity: 6,
+    dimensions: '28 cm across, 40 cm drop',
+    materials: 'Porcelain, brass arm, E27',
   },
   {
     slug: 'oak-book-table',
@@ -330,6 +400,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 34000,
     stock_quantity: 4,
+    dimensions: '48 × 40 cm, 52 cm tall',
+    materials: 'Solid oak, oiled, no visible fixings',
   },
   {
     slug: 'oak-wall-shelf',
@@ -339,6 +411,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 14500,
     stock_quantity: 9,
+    dimensions: '90 × 22 cm, 18 kg rated',
+    materials: 'Solid oak, oiled',
   },
   {
     slug: 'weathered-stool',
@@ -348,6 +422,8 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 12000,
     stock_quantity: 8,
+    dimensions: '42 cm tall, 34 × 26 cm seat',
+    materials: 'Reclaimed timber, wedged joints',
   },
 ]
 
@@ -357,8 +433,8 @@ try {
   await client.query('TRUNCATE order_items, orders, cart_items, carts, products RESTART IDENTITY CASCADE')
   for (const p of products) {
     await client.query(
-      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, image_url, is_featured)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, dimensions, materials, image_url, is_featured)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
         p.slug,
         p.name,
@@ -366,6 +442,8 @@ try {
         p.category,
         p.price_cents,
         p.stock_quantity,
+        p.dimensions,
+        p.materials,
         `/images/${p.slug}.jpg`,
         p.is_featured ?? false,
       ],

@@ -11,6 +11,8 @@ export type Product = {
   category: Category
   price_cents: number
   stock_quantity: number
+  dimensions: string | null
+  materials: string | null
   image_url: string | null
   is_featured: boolean
   created_at: Date

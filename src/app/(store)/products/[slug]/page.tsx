@@ -5,12 +5,12 @@ import { Text } from '@/components/elements/text'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { ProductGrid } from '@/features/products/components/product-grid'
+import { ProductImage } from '@/features/products/components/product-image'
 import { getProduct, getRelated } from '@/features/products/data'
 import { focalPosition } from '@/features/products/focal'
 import { categoryLabels } from '@/features/products/schemas'
 import { formatPrice } from '@/lib/format'
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -45,19 +45,13 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
   return (
     <Container className="flex flex-col gap-24 py-16">
       <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
-        <div className="relative aspect-square flex-1 overflow-hidden rounded-xl bg-tile">
-          {product.image_url && (
-            <Image
-              src={product.image_url}
-              alt={product.name}
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              priority
-              style={{ objectPosition: focalPosition(product.slug) }}
-              className="object-cover"
-            />
-          )}
-        </div>
+        {product.image_url && (
+          <ProductImage
+            src={product.image_url}
+            alt={product.name}
+            objectPosition={focalPosition(product.slug)}
+          />
+        )}
 
         <div className="flex flex-1 flex-col items-start gap-6 lg:py-8">
           <div className="flex flex-col gap-3">
@@ -94,8 +88,24 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
             <AccordionItem value="details">
               <AccordionTrigger>Details</AccordionTrigger>
               <AccordionContent>
-                Thrown, turned or joined by hand in our studio. Each glaze is mixed for the kiln it goes into, so
-                colour and surface vary a little between pieces.
+                <dl className="flex flex-col gap-3">
+                  {product.dimensions && (
+                    <div className="flex flex-col gap-0.5">
+                      <dt className="text-olive-600 dark:text-olive-400">Dimensions</dt>
+                      <dd>{product.dimensions}</dd>
+                    </div>
+                  )}
+                  {product.materials && (
+                    <div className="flex flex-col gap-0.5">
+                      <dt className="text-olive-600 dark:text-olive-400">Materials</dt>
+                      <dd>{product.materials}</dd>
+                    </div>
+                  )}
+                  <p>
+                    Thrown, turned or joined by hand in our studio. Each glaze is mixed for the kiln it goes into, so
+                    colour and surface vary a little between pieces.
+                  </p>
+                </dl>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="care">
