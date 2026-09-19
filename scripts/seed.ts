@@ -78,14 +78,6 @@ const products: Seed[] = [
     is_featured: true,
   },
   {
-    slug: 'round-bud-vase',
-    name: 'Round Bud Vase',
-    description: 'For the three stems left over from a bunch. Sits comfortably on a windowsill or a bedside table.',
-    category: 'vases',
-    price_cents: 2600,
-    stock_quantity: 45,
-  },
-  {
     slug: 'wide-mouth-vessel',
     name: 'Wide Mouth Vessel',
     description:
@@ -93,15 +85,6 @@ const products: Seed[] = [
     category: 'vases',
     price_cents: 8900,
     stock_quantity: 9,
-  },
-  {
-    slug: 'paired-bottle-vases',
-    name: 'Paired Bottle Vases',
-    description:
-      'Sold as a pair, thrown to different heights on purpose. Two stems in two bottles reads better than six in one.',
-    category: 'vases',
-    price_cents: 7400,
-    stock_quantity: 12,
   },
   {
     slug: 'kiln-table-lamp',
@@ -123,19 +106,19 @@ const products: Seed[] = [
     stock_quantity: 15,
   },
   {
-    slug: 'candle-holder-trio',
-    name: 'Candle Holder Trio',
+    slug: 'spouted-pendant',
+    name: 'Spouted Pendant',
     description:
-      'Three heights, one glaze, sized for ordinary dinner candles. They read as a group without matching exactly.',
+      'A thrown pendant with two cut spouts that throw light sideways as well as down. Hung on a braided flex, drop adjustable to a metre.',
     category: 'lighting',
     price_cents: 5400,
     stock_quantity: 22,
   },
   {
-    slug: 'wall-sconce',
-    name: 'Wall Sconce',
+    slug: 'column-table-lamp',
+    name: 'Column Table Lamp',
     description:
-      'Throws light up a wall rather than into a room. Hard-wired, so allow for an electrician unless you already have a point.',
+      'A straight linen shade on a slim column, for a hallway table or the end of a worktop. Inline switch on the flex, standard bulb.',
     category: 'lighting',
     price_cents: 14900,
     stock_quantity: 6,
@@ -176,6 +159,195 @@ const products: Seed[] = [
     category: 'furniture',
     price_cents: 36000,
     stock_quantity: 7,
+  },
+  {
+    slug: 'harvest-vase',
+    name: 'Harvest Vase',
+    description:
+      'A wide-bellied vase in a warm unglazed clay, made for dried grasses rather than cut flowers. The surface is burnished rather than glazed, so it darkens slightly where it is handled.',
+    category: 'vases',
+    price_cents: 7800,
+    stock_quantity: 14,
+  },
+  {
+    slug: 'oxblood-vase',
+    name: 'Oxblood Vase',
+    description:
+      'A copper-red glaze that comes out of the kiln differently every firing. This one is deep at the shoulder and thins toward the foot. Thirty centimetres, single stem.',
+    category: 'vases',
+    price_cents: 9600,
+    stock_quantity: 6,
+  },
+  {
+    slug: 'cobalt-column-vase',
+    name: 'Cobalt Column Vase',
+    description:
+      'A straight-sided column in a speckled cobalt glaze, heavy enough in the base to hold branches without a stone. The speckle is iron in the clay coming through the glaze.',
+    category: 'vases',
+    price_cents: 11000,
+    stock_quantity: 8,
+  },
+  {
+    slug: 'smoke-glaze-vase',
+    name: 'Smoke Glaze Vase',
+    description:
+      'Fired in a reduction kiln so the glaze pulls toward black at the rim and grey at the belly. Holds a handful of grasses, or nothing at all.',
+    category: 'vases',
+    price_cents: 8400,
+    stock_quantity: 11,
+  },
+  {
+    slug: 'stoneware-teapot',
+    name: 'Stoneware Teapot',
+    description:
+      'A one-litre teapot with a cane handle and a spout that has been tested against a table for drips. The lid sits in a recessed gallery so it stays put when you pour.',
+    category: 'tableware',
+    price_cents: 8800,
+    stock_quantity: 12,
+  },
+  {
+    slug: 'butter-dish',
+    name: 'Butter Dish',
+    description:
+      'Sized for a standard block with room to cut from it. The lid is unglazed inside so it does not sweat in a warm kitchen.',
+    category: 'tableware',
+    price_cents: 3200,
+    stock_quantity: 26,
+  },
+  {
+    slug: 'teapot-trio',
+    name: 'Teapot Trio',
+    description:
+      'Three small teapots in a pale, a sand and a red clay, each holding roughly two cups. Sold together because the three glazes were mixed from one batch and will not recur.',
+    category: 'tableware',
+    price_cents: 14500,
+    stock_quantity: 4,
+  },
+  {
+    slug: 'tall-pitcher',
+    name: 'Tall Pitcher',
+    description:
+      'A litre and a half, with a pulled handle and a lip drawn out far enough to pour water cleanly. Doubles as a vase, which is mostly what ours end up doing.',
+    category: 'tableware',
+    price_cents: 6400,
+    stock_quantity: 18,
+  },
+  {
+    slug: 'gilt-rim-plate',
+    name: 'Gilt Rim Plate',
+    description:
+      'A side plate finished with a thin band of gold lustre at the rim, fired a third time to set it. Hand wash only, which is the price of the gold.',
+    category: 'tableware',
+    price_cents: 3800,
+    stock_quantity: 20,
+  },
+  {
+    slug: 'studio-mug-set',
+    name: 'Studio Mug Set',
+    description:
+      'Four mugs from a single firing, so the speckle runs consistently across the set. Two hundred and fifty millilitres each, stackable two high.',
+    category: 'tableware',
+    price_cents: 7200,
+    stock_quantity: 15,
+  },
+  {
+    slug: 'butter-glaze-plate',
+    name: 'Butter Glaze Plate',
+    description:
+      'A soft yellow glaze that reads as cream under warm light and lemon under daylight. Twenty-two centimetres, with a rim shallow enough to stack.',
+    category: 'tableware',
+    price_cents: 3000,
+    stock_quantity: 30,
+  },
+  {
+    slug: 'tumbler-set',
+    name: 'Tumbler Set',
+    description:
+      'Six straight-sided tumblers, no handles, for water or wine depending on the evening. The unglazed foot gives them grip on a wet worktop.',
+    category: 'tableware',
+    price_cents: 6800,
+    stock_quantity: 16,
+  },
+  {
+    slug: 'ridged-tumblers',
+    name: 'Ridged Tumblers',
+    description:
+      'Thrown with three deep ridges so they sit in the hand without a handle. Glazed in a run of soft pastels mixed for one kiln only.',
+    category: 'tableware',
+    price_cents: 5600,
+    stock_quantity: 13,
+  },
+  {
+    slug: 'taper-candle-holders',
+    name: 'Taper Candle Holders',
+    description:
+      'Three low holders for standard tapers, weighted so a tall candle does not tip. The dish catches wax, which saves the tablecloth.',
+    category: 'lighting',
+    price_cents: 4600,
+    stock_quantity: 22,
+  },
+  {
+    slug: 'stone-candle-set',
+    name: 'Stone Candle Set',
+    description:
+      'Candles poured into cast stone vessels that keep their use once the wax is gone. Unscented, because a dining table already smells of dinner.',
+    category: 'lighting',
+    price_cents: 5800,
+    stock_quantity: 17,
+  },
+  {
+    slug: 'bedside-lamp',
+    name: 'Bedside Lamp',
+    description:
+      'A thrown ceramic base under a linen shade, wired for a standard bulb with an inline switch on the flex. Warm enough to read by, dim enough to leave on.',
+    category: 'lighting',
+    price_cents: 16500,
+    stock_quantity: 7,
+  },
+  {
+    slug: 'globe-wall-light',
+    name: 'Globe Wall Light',
+    description:
+      'An opal glass globe on a solid brass arm that will patinate rather than lacquer off. Hard wired, so it wants an electrician and a wall.',
+    category: 'lighting',
+    price_cents: 19800,
+    stock_quantity: 5,
+  },
+  {
+    slug: 'fluted-pendant',
+    name: 'Fluted Pendant',
+    description:
+      'A fluted porcelain shade that throws light down and glows at the edge. Hung from a braided flex, drop adjustable up to a metre and a half.',
+    category: 'lighting',
+    price_cents: 17500,
+    stock_quantity: 6,
+  },
+  {
+    slug: 'oak-book-table',
+    name: 'Oak Book Table',
+    description:
+      'A side table with an open bay beneath it, sized for the books you are partway through. Solid oak, oiled, joined without visible fixings.',
+    category: 'furniture',
+    price_cents: 34000,
+    stock_quantity: 4,
+  },
+  {
+    slug: 'oak-wall-shelf',
+    name: 'Oak Wall Shelf',
+    description:
+      'A ninety centimetre shelf on bracket supports cut from the same board, so the grain runs through. Rated for a row of books or a row of pots, not both.',
+    category: 'furniture',
+    price_cents: 14500,
+    stock_quantity: 9,
+  },
+  {
+    slug: 'weathered-stool',
+    name: 'Weathered Stool',
+    description:
+      'A low stool in reclaimed timber left to grey, for a hallway or a greenhouse. The legs are wedged through the seat rather than glued, so it can be knocked apart and re-wedged.',
+    category: 'furniture',
+    price_cents: 12000,
+    stock_quantity: 8,
   },
 ]
 
