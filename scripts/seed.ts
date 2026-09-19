@@ -1,5 +1,6 @@
 import { pool } from '../src/lib/db/pool.ts'
 import type { Category } from '../src/lib/db/types.ts'
+import { productSpecs } from './product-specs.ts'
 
 type Seed = {
   slug: string
@@ -433,8 +434,8 @@ try {
   await client.query('TRUNCATE order_items, orders, cart_items, carts, products RESTART IDENTITY CASCADE')
   for (const p of products) {
     await client.query(
-      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, dimensions, materials, image_url, is_featured)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, dimensions, materials, specs, image_url, is_featured)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [
         p.slug,
         p.name,
@@ -444,6 +445,7 @@ try {
         p.stock_quantity,
         p.dimensions,
         p.materials,
+        JSON.stringify(productSpecs[p.slug] ?? {}),
         `/images/${p.slug}.jpg`,
         p.is_featured ?? false,
       ],

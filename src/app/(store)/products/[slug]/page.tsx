@@ -13,6 +13,7 @@ import { formatPrice } from '@/lib/format'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Fragment } from 'react'
 
 export async function generateMetadata({ params }: PageProps<'/products/[slug]'>): Promise<Metadata> {
   const product = await getProduct((await params).slug)
@@ -98,6 +99,30 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
           </div>
 
           <Accordion type="single" collapsible className="w-full">
+            {Object.keys(product.specs).length > 0 && (
+              <AccordionItem value="specs">
+                <AccordionTrigger>Product information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex flex-col gap-6">
+                    {Object.entries(product.specs).map(([group, rows]) => (
+                      <div key={group} className="flex flex-col gap-2">
+                        <h4 className="font-medium text-olive-950 dark:text-white">{group}</h4>
+                        <dl className="grid grid-cols-[minmax(0,10rem)_1fr] gap-x-6">
+                          {Object.entries(rows).map(([label, value]) => (
+                            <Fragment key={label}>
+                              <dt className="border-t border-olive-200 py-2 text-olive-600 dark:border-olive-800 dark:text-olive-400">
+                                {label}
+                              </dt>
+                              <dd className="border-t border-olive-200 py-2 dark:border-olive-800">{value}</dd>
+                            </Fragment>
+                          ))}
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )}
             <AccordionItem value="care">
               <AccordionTrigger>Care and repair</AccordionTrigger>
               <AccordionContent>

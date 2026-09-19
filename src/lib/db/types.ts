@@ -13,6 +13,8 @@ export type Product = {
   stock_quantity: number
   dimensions: string | null
   materials: string | null
+  /** Grouped rows for the details table: group name to label to value. */
+  specs: Record<string, Record<string, string>>
   image_url: string | null
   is_featured: boolean
   created_at: Date
