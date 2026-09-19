@@ -5,8 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { focalPosition } from '../focal'
 
-// Every tile is 4:5 so the grid never reflows as images load.
-const tile = 'relative aspect-4/5 overflow-hidden rounded-xl bg-tile'
+// Square tiles keep 67% of a 3:2 photograph against 53% for a 4:5, so far less of each
+// frame is discarded and fewer products need a focal point. The grid never reflows either.
+const tile = 'relative aspect-square overflow-hidden rounded-xl bg-tile'
 
 export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const soldOut = product.stock_quantity === 0

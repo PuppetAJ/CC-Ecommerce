@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
   return (
     <Container className="flex flex-col gap-24 py-16">
       <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
-        <div className="relative aspect-4/5 flex-1 overflow-hidden rounded-xl bg-tile">
+        <div className="relative aspect-square flex-1 overflow-hidden rounded-xl bg-tile">
           {product.image_url && (
             <Image
               src={product.image_url}
