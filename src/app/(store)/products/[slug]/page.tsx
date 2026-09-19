@@ -46,11 +46,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
     <Container className="flex flex-col gap-24 py-16">
       <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
         {product.image_url && (
-          <ProductImage
-            src={product.image_url}
-            alt={product.name}
-            objectPosition={focalPosition(product.slug)}
-          />
+          <ProductImage src={product.image_url} alt={product.name} objectPosition={focalPosition(product.slug)} />
         )}
 
         <div className="flex flex-1 flex-col items-start gap-6 lg:py-8">
@@ -101,10 +97,6 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
                       <dd>{product.materials}</dd>
                     </div>
                   )}
-                  <p>
-                    Thrown, turned or joined by hand in our studio. Each glaze is mixed for the kiln it goes into, so
-                    colour and surface vary a little between pieces.
-                  </p>
                 </dl>
               </AccordionContent>
             </AccordionItem>
@@ -118,8 +110,8 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
             <AccordionItem value="shipping">
               <AccordionTrigger>Shipping and returns</AccordionTrigger>
               <AccordionContent>
-                Shipped in 3–5 working days, packed in straw board rather than plastic. Return anything unused within
-                30 days and we will collect it.
+                Shipped in 3–5 working days, packed in straw board rather than plastic. Return anything unused within 30
+                days and we will collect it.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -128,7 +120,15 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
 
       {related.length > 0 && (
         <section className="flex flex-col gap-8">
-          <Subheading>More from {categoryLabels[product.category].toLowerCase()}</Subheading>
+          <Subheading>
+            More from{' '}
+            <Link
+              href={`/shop?category=${product.category}`}
+              className="underline decoration-olive-300 underline-offset-8 hover:decoration-olive-950 dark:decoration-olive-700 dark:hover:decoration-white"
+            >
+              {categoryLabels[product.category].toLowerCase()}
+            </Link>
+          </Subheading>
           <ProductGrid products={related} />
         </section>
       )}
