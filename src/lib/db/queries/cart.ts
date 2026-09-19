@@ -8,6 +8,25 @@ export async function createCart(): Promise<string> {
   return rows[0].id
 }
 
+export async function createCartForUser(userId: string): Promise<string> {
+  const { rows } = await pool.query<{ id: string }>('INSERT INTO carts (user_id) VALUES ($1) RETURNING id', [userId])
+  return rows[0].id
+}
+
+/** True only for a cart nobody owns, which is what may still be claimed on login. */
+export async function isGuestCart(cartId: string): Promise<boolean> {
+  const { rows } = await pool.query('SELECT 1 FROM carts WHERE id = $1 AND user_id IS NULL', [cartId])
+  return rows.length > 0
+}
+
+export async function countCartItems(cartId: string): Promise<number> {
+  const { rows } = await pool.query<{ total: string | null }>(
+    'SELECT SUM(quantity)::int AS total FROM cart_items WHERE cart_id = $1',
+    [cartId],
+  )
+  return Number(rows[0]?.total ?? 0)
+}
+
 export async function cartExists(cartId: string): Promise<boolean> {
   const { rows } = await pool.query('SELECT 1 FROM carts WHERE id = $1', [cartId])
   return rows.length > 0

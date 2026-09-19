@@ -12,6 +12,7 @@ const pages = [
   ['shop, filtered', '/shop?category=vases&sort=price-asc'],
   ['shop, nothing found', '/shop?q=zzzznothing'],
   ['product', '/products/ash-dining-table'],
+  ['cart, empty', '/cart'],
   ['login', '/login'],
   ['register', '/register'],
   ['about', '/about'],

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter, Mona_Sans } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
+import { CartOpenProvider } from '@/features/cart/components/cart-open'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -17,7 +19,11 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="en" className={`${inter.variable} ${monaSans.variable}`} suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+          {/* Above every layout, because the root not-found renders the header too. */}
+          <CartOpenProvider>
+            {children}
+            <Toaster />
+          </CartOpenProvider>
         </ThemeProvider>
       </body>
     </html>

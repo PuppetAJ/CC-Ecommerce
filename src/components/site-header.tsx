@@ -4,6 +4,8 @@ import { CartSheet } from '@/components/cart-sheet'
 import { Container } from '@/components/elements/container'
 import { MobileNav } from '@/components/mobile-nav'
 import { AccountMenu, AccountMenuFallback } from '@/features/auth/components/account-menu'
+import { CartBadge } from '@/features/cart/components/cart-badge'
+import { CartContents, CartContentsSkeleton } from '@/features/cart/components/cart-contents'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { navLinks } from '@/lib/nav'
 
@@ -27,7 +29,17 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />
-          <CartSheet />
+          <CartSheet
+            badge={
+              <Suspense fallback={null}>
+                <CartBadge />
+              </Suspense>
+            }
+          >
+            <Suspense fallback={<CartContentsSkeleton />}>
+              <CartContents />
+            </Suspense>
+          </CartSheet>
           <Suspense fallback={<AccountMenuFallback />}>
             <AccountMenu />
           </Suspense>

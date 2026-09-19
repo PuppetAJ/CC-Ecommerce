@@ -3,7 +3,7 @@ import { Heading } from '@/components/elements/heading'
 import { Subheading } from '@/components/elements/subheading'
 import { Text } from '@/components/elements/text'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
+import { AddToCart } from '@/features/cart/components/add-to-cart'
 import { ProductGrid } from '@/features/products/components/product-grid'
 import { ProductImage } from '@/features/products/components/product-image'
 import { getProduct, getRelated } from '@/features/products/data'
@@ -83,10 +83,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
           )}
 
           <div className="flex flex-col gap-2">
-            {/* Adding to the cart arrives in phase 5; the button states are here so the page is honest now. */}
-            <Button size="lg" disabled className="w-56">
-              {soldOut ? 'Sold out' : 'Add to cart'}
-            </Button>
+            <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
             <p className="text-sm text-olive-600 dark:text-olive-400">
               {soldOut
                 ? 'Back when the next batch comes out of the kiln.'

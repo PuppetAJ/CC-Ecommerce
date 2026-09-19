@@ -1,25 +1,27 @@
 'use client'
 
 import { ShoppingBagIcon } from 'lucide-react'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import type { ReactNode } from 'react'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { useCartOpen } from '@/features/cart/components/cart-open'
 
-export function CartSheet() {
+export function CartSheet({ badge, children }: { badge: ReactNode; children: ReactNode }) {
+  const { open, setOpen } = useCartOpen()
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         aria-label="Open cart"
-        className="inline-flex size-9 items-center justify-center rounded-full text-olive-700 hover:bg-olive-200 dark:text-olive-400 dark:hover:bg-olive-800"
+        className="relative inline-flex size-9 items-center justify-center rounded-full text-olive-700 hover:bg-olive-200 dark:text-olive-400 dark:hover:bg-olive-800"
       >
         <ShoppingBagIcon className="size-5" />
+        {badge}
       </SheetTrigger>
-      <SheetContent className="flex flex-col">
-        <SheetHeader>
+      <SheetContent className="flex flex-col gap-0 p-0">
+        <SheetHeader className="border-b border-olive-950/10 px-4 dark:border-white/10">
           <SheetTitle className="font-display text-xl font-medium">Your cart</SheetTitle>
-          <SheetDescription>Your cart is empty.</SheetDescription>
         </SheetHeader>
-        <div className="flex flex-1 items-center justify-center px-4 text-sm text-olive-600 dark:text-olive-400">
-          Nothing here yet.
-        </div>
+        {children}
       </SheetContent>
     </Sheet>
   )

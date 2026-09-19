@@ -69,7 +69,9 @@ export async function signInWithGoogle(_previous: AuthState, formData: FormData)
 }
 
 export async function signInAsDemo(_previous: AuthState, formData: FormData): Promise<AuthState> {
-  if (!(await limitAttempts('demo'))) return { error: 'Too many attempts. Wait a minute and try again.' }
+  // Looser than sign-in: the demo password is printed on the page, so this is not a
+  // guessing target and the limit only exists to blunt abuse.
+  if (!(await limitAttempts('demo', 15))) return { error: 'Too many attempts. Wait a minute and try again.' }
 
   const account = formData.get('role') === 'admin' ? demoAccounts.admin : demoAccounts.customer
 

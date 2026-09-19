@@ -184,6 +184,82 @@ section('Where login sends you afterwards')
   }
 }
 
+section('Cart')
+{
+  const { context, page: shop } = await freshPage(browser)
+  const badge = () => shop.locator('button[aria-label="Open cart"] span').first()
+
+  await shop.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
+  check('a fresh visitor has no cart badge', (await badge().count()) === 0)
+
+  await shop.getByRole('button', { name: 'Add to cart' }).click()
+  await shop.waitForTimeout(2000)
+  check('adding opens the cart sheet', await shop.locator('[role="dialog"]').isVisible())
+  check('and the badge appears', (await badge().innerText()) === '1')
+
+  const sheet = shop.locator('[role="dialog"]')
+  await sheet
+    .getByRole('button', { name: /^Add one / })
+    .first()
+    .click()
+  await shop.waitForTimeout(1800)
+  check('the stepper changes the quantity', (await badge().innerText()) === '2')
+  check('and the subtotal follows it', /2,560/.test(await sheet.innerText()), await sheet.innerText())
+
+  await shop.keyboard.press('Escape')
+  await shop.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
+  await shop.getByRole('button', { name: 'Add to cart' }).click()
+  await shop.waitForTimeout(2000)
+  check('a second product is a second line', (await badge().innerText()) === '3')
+
+  await shop.keyboard.press('Escape')
+  await shop.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+  check('the cart survives a reload', /Ash Dining Table/.test(await visibleText(shop)))
+
+  await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
+  await shop.waitForTimeout(1800)
+  check('removing drops the line', !/Ash Dining Table/.test(await visibleText(shop)))
+  check('and the badge counts down', (await badge().innerText()) === '1')
+
+  await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
+  await shop.waitForTimeout(1800)
+  check('emptying it shows the empty state', /Nothing in here yet/.test(await visibleText(shop)))
+  check('and the badge goes', (await badge().count()) === 0)
+  await context.close()
+}
+
+section('Carrying a guest cart into an account')
+{
+  const { context, page: guest } = await freshPage(browser)
+  const cartText = async () => {
+    await guest.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+    return visibleText(guest)
+  }
+  const add = async (slug) => {
+    await guest.goto(`${BASE}/products/${slug}`, { waitUntil: 'networkidle' })
+    await guest.getByRole('button', { name: 'Add to cart' }).click()
+    await guest.waitForTimeout(2000)
+    await guest.keyboard.press('Escape')
+  }
+
+  await add('ash-dining-table')
+  await signInAsDemo(guest, 'shopper')
+  check('a guest cart follows them into the account', /Ash Dining Table/.test(await cartText()))
+
+  await guest.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  await guest.locator('button[aria-label="Account menu"]').click()
+  await guest.getByRole('button', { name: 'Log out' }).click()
+  await guest.waitForTimeout(2000)
+  check('signing out leaves the account cart behind', /Nothing in here yet/.test(await cartText()))
+
+  await add('ash-dining-table')
+  await signInAsDemo(guest, 'shopper')
+  const merged = await cartText()
+  // The account already held one, so the quantities are summed rather than replaced.
+  check('the two carts are added together, not replaced', /2,560/.test(merged), merged.slice(0, 200))
+  await context.close()
+}
+
 section('Throttling')
 {
   const { context, page: fresh } = await freshPage(browser)
