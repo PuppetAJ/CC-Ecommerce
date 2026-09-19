@@ -1,4 +1,4 @@
-// Chrome only; the role check is in each page, not here. See docs/phases/04-auth.md.
+// Chrome only: a layout serialises children into the payload, so each page checks the role itself.
 export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
   return children
 }

@@ -7,15 +7,28 @@ import { addToCart, type CartState } from '../actions'
 import { useCartOpen } from './cart-open'
 import { QuantityStepper } from './quantity-stepper'
 
+// Action state rides along in the client router cache, so returning to a product page
+// replays the last result. Remembering which ones were acted on keeps the sheet from
+// reopening on a visit the shopper did not add anything during.
+const handled = new Set<string>()
+
 export function AddToCart({ productId, name, stock }: { productId: number; name: string; stock: number }) {
   const [state, action, pending] = useActionState<CartState, FormData>(addToCart, undefined)
   const [quantity, setQuantity] = useState(1)
   const { setOpen } = useCartOpen()
 
   useEffect(() => {
-    if (state?.addedAt) setOpen(true)
-    if (state?.error) toast.error(state.error)
-  }, [state, setOpen])
+    if (state?.error) {
+      toast.error(state.error)
+      return
+    }
+    if (!state?.addedAt) return
+
+    const token = `${productId}:${state.addedAt}`
+    if (handled.has(token)) return
+    handled.add(token)
+    setOpen(true)
+  }, [state, productId, setOpen])
 
   if (stock <= 0) {
     return (
@@ -26,8 +39,7 @@ export function AddToCart({ productId, name, stock }: { productId: number; name:
   }
 
   return (
-    // A plain form post, so the button still works with JavaScript switched off; the sheet
-    // opening is the enhancement on top.
+    // The server action is the form's action, so the button still posts without JavaScript.
     <form action={action} className="flex flex-wrap items-center gap-3">
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="quantity" value={quantity} />

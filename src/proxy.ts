@@ -1,7 +1,7 @@
 import { getSessionCookie } from 'better-auth/cookies'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Layer one of three: cookie presence only, never the database. See docs/phases/04-auth.md.
+// Cookie presence only, never the database; the pages and actions do the real check.
 export function proxy(request: NextRequest) {
   if (getSessionCookie(request)) return NextResponse.next()
 

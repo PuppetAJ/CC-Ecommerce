@@ -1,4 +1,4 @@
-// axe-core at WCAG 2.1 A and AA, both themes. Needs the app running; see docs/TESTING.md.
+// axe-core at WCAG 2.1 A and AA, both themes. Needs the app running.
 import { createRequire } from 'node:module'
 import { chromium } from 'playwright'
 import { BASE } from './lib.mjs'
