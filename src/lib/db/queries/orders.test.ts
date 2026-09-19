@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict'
 import { after, beforeEach, describe, it } from 'node:test'
 import { pool } from '../pool.ts'
-import { insertProduct, resetDatabase } from '../test-support.ts'
+import { insertProduct, insertUser, resetDatabase } from '../test-support.ts'
 import { addCartItem, createCart, getCartItems } from './cart.ts'
 import { attachStripeSession, createPendingOrder, listOrdersForUser, markOrderPaid } from './orders.ts'
 
 after(() => pool.end())
-beforeEach(resetDatabase)
+beforeEach(async () => {
+  await resetDatabase()
+  await insertUser('user-1')
+  await insertUser('user-2')
+})
 
 const stock = async (id: number) => {
   const { rows } = await pool.query<{ stock_quantity: number }>('SELECT stock_quantity FROM products WHERE id = $1', [
@@ -103,7 +107,7 @@ describe('listing orders', () => {
     assert.ok(orders.every((o) => o.items.length === 1))
   })
 
-  it('does not return another user\'s orders', async () => {
+  it("does not return another user's orders", async () => {
     const cart = await createCart()
     await addCartItem(cart, await insertProduct(), 1)
     await createPendingOrder('user-1', cart)

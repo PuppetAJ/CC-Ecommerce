@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict'
 import { after, beforeEach, describe, it } from 'node:test'
 import { pool } from '../pool.ts'
-import { insertProduct, resetDatabase } from '../test-support.ts'
+import { insertProduct, insertUser, resetDatabase } from '../test-support.ts'
 import { addCartItem, createCart, getCartItems, mergeGuestCart, setCartItemQuantity } from './cart.ts'
 
 after(() => pool.end())
-beforeEach(resetDatabase)
+beforeEach(async () => {
+  await resetDatabase()
+  await insertUser('user-1')
+  await insertUser('user-2')
+})
 
 describe('cart queries', () => {
   it('adds to the existing quantity instead of failing on a duplicate', async () => {
