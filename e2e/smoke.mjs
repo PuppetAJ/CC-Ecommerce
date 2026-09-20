@@ -46,6 +46,13 @@ section('Product page')
   check('dimensions are visible without opening anything', /Dimensions/i.test(text))
   check('related products are offered', (await page.locator('a[href^="/products/"]').count()) > 0)
 
+  // Availability belongs with the price and the rating, not stranded under the button.
+  const stockAt = text.search(/In stock, ships|Only \d+ left|next batch comes out/)
+  check('availability is stated', stockAt > -1, text.slice(Math.max(0, stockAt - 20), stockAt + 40))
+  check('and sits above the description', stockAt < text.indexOf('Add to cart'))
+  const ratingAt = text.search(/\d\.\d · \d+ review/)
+  if (ratingAt > -1) check('below the rating that precedes it', ratingAt < stockAt, `${ratingAt} then ${stockAt}`)
+
   const beforeAccordion = await page.locator('button[aria-label^="View"]').boundingBox()
   await page.getByRole('button', { name: /Product information/i }).click()
   await page.waitForTimeout(500)

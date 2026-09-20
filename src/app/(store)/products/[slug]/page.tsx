@@ -82,6 +82,14 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
               <RatingSummary productId={product.id} />
             </Suspense>
 
+            <p className="text-sm text-olive-600 dark:text-olive-400">
+              {soldOut
+                ? 'Back when the next batch comes out of the kiln.'
+                : low
+                  ? `Only ${product.stock_quantity} left`
+                  : 'In stock, ships in 3–5 days'}
+            </p>
+
             <Text>
               <p>{product.description}</p>
             </Text>
@@ -103,20 +111,11 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
               </dl>
             )}
 
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
-                <Suspense fallback={null}>
-                  <SaveControl productId={product.id} name={product.name} />
-                </Suspense>
-              </div>
-              <p className="text-sm text-olive-600 dark:text-olive-400">
-                {soldOut
-                  ? 'Back when the next batch comes out of the kiln.'
-                  : low
-                    ? `Only ${product.stock_quantity} left`
-                    : 'In stock, ships in 3–5 days'}
-              </p>
+            <div className="flex items-center gap-3">
+              <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
+              <Suspense fallback={null}>
+                <SaveControl productId={product.id} name={product.name} />
+              </Suspense>
             </div>
           </div>
         </div>
