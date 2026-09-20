@@ -62,6 +62,7 @@ export function CartLines({ items }: { items: CartItem[] }) {
                 <QuantityStepper
                   quantity={item.quantity}
                   max={item.stock_quantity}
+                  min={0}
                   onChange={(quantity) => change(item.product_id, quantity)}
                   disabled={pending}
                   label={item.name}

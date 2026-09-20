@@ -15,18 +15,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-RIBRMU-280',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'ash-glaze-dinner-plate': {
     Measurements: {
@@ -39,18 +27,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-ASGLDIPL-340',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'deep-serving-bowl': {
@@ -66,18 +42,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-DESEBO-560',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'everyday-side-plate': {
     Measurements: {
@@ -90,18 +54,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-EVSIPL-220',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'stacking-bowl-pair': {
@@ -117,17 +69,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
     'Item details': {
-      'Model number': 'WK-STBOPA-480',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'salt-cellar': {
@@ -142,18 +85,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-SACE-180',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'tall-stem-vase': {
     Measurements: {
@@ -166,18 +97,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-TASTVA-680',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'wide-mouth-vessel': {
@@ -192,18 +111,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Oxidation',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-WIMOVE-890',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'kiln-table-lamp': {
     Measurements: {
@@ -211,21 +118,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '3.5 kg',
       'Cable length': '2 m braided flex',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Stoneware base, opal glass shade, E27',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E27',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Materials and care': {
-      Materials: 'Stoneware base, opal glass shade, E27',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-KITALA-185',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'hanging-pendant-shade': {
@@ -234,21 +133,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '1.9 kg',
       'Cable length': '2 m braided flex',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Porcelain, braided flex, E27',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E27',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Materials and care': {
-      Materials: 'Porcelain, braided flex, E27',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-HAPESH-112',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'spouted-pendant': {
@@ -257,21 +148,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '674 g',
       'Cable length': '2 m braided flex',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Stoneware, braided flex, E14',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E14',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Materials and care': {
-      Materials: 'Stoneware, braided flex, E14',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-SPPE-540',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'column-table-lamp': {
@@ -280,21 +163,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '2.7 kg',
       'Cable length': '2 m braided flex',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Linen shade, steel column, E14',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E14',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Materials and care': {
-      Materials: 'Linen shade, steel column, E14',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-COTALA-149',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'oak-dining-chair': {
@@ -308,17 +183,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-OADICH-420',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'ash-dining-table': {
@@ -332,17 +199,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-ASDITA-128',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'low-workshop-stool': {
@@ -356,17 +215,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-LOWOST-195',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'elm-side-table': {
@@ -380,17 +231,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-ELSITA-360',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'harvest-vase': {
@@ -405,18 +248,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1060 °C',
-      Firing: 'Oxidation',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-HAVA-780',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'oxblood-vase': {
     Measurements: {
@@ -429,18 +260,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Oxidation',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-OXVA-960',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'cobalt-column-vase': {
@@ -455,18 +274,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-COCOVA-110',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'smoke-glaze-vase': {
     Measurements: {
@@ -479,18 +286,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-SMGLVA-840',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'stoneware-teapot': {
@@ -506,18 +301,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-STTE-880',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'butter-dish': {
     Measurements: {
@@ -530,18 +313,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Oxidation',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-BUDI-320',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'teapot-trio': {
@@ -557,17 +328,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
     'Item details': {
-      'Model number': 'WK-TETR-145',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'tall-pitcher': {
@@ -583,18 +345,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-TAPI-640',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'gilt-rim-plate': {
     Measurements: {
@@ -607,18 +357,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'No, hand wash only',
       Microwave: 'No',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Oxidation',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-GIRIPL-380',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'studio-mug-set': {
@@ -634,17 +372,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
     'Item details': {
-      'Model number': 'WK-STMUSE-720',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'butter-glaze-plate': {
@@ -658,18 +387,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
-    'Item details': {
-      'Model number': 'WK-BUGLPL-300',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'tumbler-set': {
@@ -685,17 +402,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
     'Item details': {
-      'Model number': 'WK-TUSE-680',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'ridged-tumblers': {
@@ -711,17 +419,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'In the studio': {
-      'Fired to': '1260 °C',
-      Firing: 'Reduction',
-      'Batch size': 'Under forty pieces',
-      'Thrown by': 'Hand, on the wheel',
-    },
     'Item details': {
-      'Model number': 'WK-RITU-560',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'taper-candle-holders': {
@@ -729,20 +428,15 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dimensions: '5 cm tall, 11 cm dish · set of three',
       Weight: '500 g',
     },
-    'Candles and wax': {
+    'Materials and care': {
+      Materials: 'Porcelain, fits standard tapers',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Takes: 'Standard 22 mm tapers',
       'Burn time': 'About 7 hours a taper',
       Scent: 'Unscented',
     },
-    'Materials and care': {
-      Materials: 'Porcelain, fits standard tapers',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
     'Item details': {
-      'Model number': 'WK-TACAHO-460',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'stone-candle-set': {
@@ -750,20 +444,15 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dimensions: '8-14 cm across · set of four',
       Weight: '761 g',
     },
-    'Candles and wax': {
+    'Materials and care': {
+      Materials: 'Cast stone, unscented soy wax',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Takes: 'Refill poured to order',
       'Burn time': 'About 35 hours',
       Scent: 'Unscented',
     },
-    'Materials and care': {
-      Materials: 'Cast stone, unscented soy wax',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
     'Item details': {
-      'Model number': 'WK-STCASE-580',
-      'Made in': 'Our studio, Somerset',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'bedside-lamp': {
@@ -772,21 +461,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '3.1 kg',
       'Cable length': '2 m braided flex',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Stoneware base, linen shade, E14',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E14',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Materials and care': {
-      Materials: 'Stoneware base, linen shade, E14',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-BELA-165',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'globe-wall-light': {
@@ -795,21 +476,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '3.8 kg',
       'Cable length': 'Hard wired',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Solid brass, opal glass, hard wired',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E14',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Wall switch, not supplied',
-    },
-    'Materials and care': {
-      Materials: 'Solid brass, opal glass, hard wired',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-GLWALI-198',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'fluted-pendant': {
@@ -818,21 +491,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Weight: '3.3 kg',
       'Cable length': '2 m braided flex',
     },
-    Electrical: {
+    'Materials and care': {
+      Materials: 'Porcelain, brass arm, E27',
+      Care: 'Dust with a dry brush; never immerse a fitting',
       Fitting: 'E27',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Materials and care': {
-      Materials: 'Porcelain, brass arm, E27',
-      Care: 'Dust with a dry brush; never immerse a fitting',
-    },
-    'Item details': {
-      'Model number': 'WK-FLPE-175',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'oak-book-table': {
@@ -846,17 +511,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-OABOTA-340',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'oak-wall-shelf': {
@@ -870,17 +527,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-OAWASH-145',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'weathered-stool': {
@@ -894,17 +543,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
-    },
-    Assembly: {
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-WEST-120',
-      'Made in': 'Our studio, Somerset',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
 }

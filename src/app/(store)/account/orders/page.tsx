@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { requireUser } from '@/lib/auth/session'
 import { listOrdersForUser } from '@/lib/db/queries/orders'
 import { OrderStatus } from '@/features/checkout/components/order-status'
+import { ResumePayment } from '@/features/checkout/components/resume-payment'
 import { formatPrice } from '@/lib/format'
 
 export const metadata = { title: 'Your orders' }
@@ -67,7 +68,7 @@ async function Orders() {
                 <div className="flex gap-2">
                   <dt>Placed</dt>
                   <dd className="text-olive-950 dark:text-white">
-                    {order.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {order.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </dd>
                 </div>
                 <div className="flex gap-2">
@@ -98,12 +99,15 @@ async function Orders() {
               </span>
             </div>
 
-            <Link
-              href={`/account/orders/${order.id}`}
-              className="self-start text-sm text-olive-950 underline underline-offset-4 hover:text-olive-700 dark:text-white dark:hover:text-olive-300"
-            >
-              View this order
-            </Link>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link
+                href={`/account/orders/${order.id}`}
+                className="text-sm text-olive-950 underline underline-offset-4 hover:text-olive-700 dark:text-white dark:hover:text-olive-300"
+              >
+                View this order
+              </Link>
+              {order.status === 'pending' && <ResumePayment orderId={order.id} />}
+            </div>
           </li>
         )
       })}

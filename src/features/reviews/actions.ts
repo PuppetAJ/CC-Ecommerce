@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth/session'
-import { saveReview } from '@/lib/db/queries/reviews'
-import { review } from './schemas'
+import { saveReview, voteOnReview } from '@/lib/db/queries/reviews'
+import { review, reviewVote } from './schemas'
 
 export type ReviewState = { error?: string; needsLogin?: boolean; savedAt?: number }
 
@@ -23,4 +23,24 @@ export async function submitReview(_previous: ReviewState, formData: FormData): 
   // The product page is cached, and its reviews are not part of that cache key.
   revalidatePath(`/products/${formData.get('slug')}`)
   return { savedAt: Date.now() }
+}
+
+export type VoteState = { error?: string; needsLogin?: boolean }
+
+export async function voteOnHelpfulness(
+  productId: number,
+  reviewUserId: string,
+  helpful: boolean | null,
+): Promise<VoteState> {
+  const session = await getSession()
+  if (!session) return { needsLogin: true }
+
+  const parsed = reviewVote.safeParse({ productId, reviewUserId, helpful })
+  if (!parsed.success) return { error: 'That vote could not be counted.' }
+
+  // The database rejects a vote on your own review, so this is the friendly message for it.
+  if (parsed.data.reviewUserId === session.user.id) return { error: 'You cannot vote on your own review.' }
+
+  await voteOnReview(session.user.id, parsed.data.reviewUserId, parsed.data.productId, parsed.data.helpful)
+  return {}
 }

@@ -12,7 +12,7 @@ export function OrderSummary({ order, heading = true }: { order: Order; heading?
           <h2 className="font-display text-xl font-medium text-olive-950 dark:text-white">Order #{order.id}</h2>
         ) : (
           <span className="text-sm text-olive-600 dark:text-olive-400">
-            Placed {order.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+            Placed {order.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
           </span>
         )}
         <OrderStatus status={order.status} />

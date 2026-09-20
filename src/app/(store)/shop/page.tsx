@@ -1,4 +1,5 @@
 import { Container } from '@/components/elements/container'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
 import { QuickActions } from '@/app/_components/quick-actions'
@@ -99,11 +100,41 @@ function EmptyState({ query }: { query?: string }) {
   )
 }
 
+// Mirrors Results, so the rail and the grid land where the skeleton already put them.
 function ShopSkeleton() {
   return (
     <div className="flex flex-col gap-10">
-      <div className="h-24" />
-      <ProductGridSkeleton />
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-wrap gap-2">
+          {/* Literal classes: Tailwind cannot see a width it has to compute. */}
+          {['w-24', 'w-24', 'w-16', 'w-20', 'w-24'].map((width, index) => (
+            <Skeleton key={index} className={`h-8 rounded-full ${width}`} />
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Skeleton className="h-9 w-56 rounded-lg" />
+          <Skeleton className="h-9 w-44 rounded-lg" />
+        </div>
+        <Skeleton className="h-5 w-20" />
+      </div>
+      <div className="grid gap-10 lg:grid-cols-[12rem_1fr] lg:gap-12">
+        <div className="flex flex-col gap-8">
+          {[4, 7].map((rows, group) => (
+            <div key={group} className="flex flex-col gap-3">
+              <Skeleton className="h-5 w-20" />
+              {Array.from({ length: rows }, (_, row) => (
+                <div key={row} className="flex items-center gap-2.5">
+                  <Skeleton className="size-4 rounded-sm" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="min-w-0">
+          <ProductGridSkeleton />
+        </div>
+      </div>
     </div>
   )
 }

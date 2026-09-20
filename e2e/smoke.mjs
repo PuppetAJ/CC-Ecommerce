@@ -46,9 +46,26 @@ section('Product page')
   check('dimensions are visible without opening anything', /Dimensions/i.test(text))
   check('related products are offered', (await page.locator('a[href^="/products/"]').count()) > 0)
 
+  // Availability belongs with the price and the rating, not stranded under the button.
+  const stockAt = text.search(/In stock, ships|Only \d+ left|next batch comes out/)
+  check('availability is stated', stockAt > -1, text.slice(Math.max(0, stockAt - 20), stockAt + 40))
+  check('and sits above the description', stockAt < text.indexOf('Add to cart'))
+  const ratingAt = text.search(/\d\.\d · \d+ review/)
+  if (ratingAt > -1) check('below the rating that precedes it', ratingAt < stockAt, `${ratingAt} then ${stockAt}`)
+
   const beforeAccordion = await page.locator('button[aria-label^="View"]').boundingBox()
   await page.getByRole('button', { name: /Product information/i }).click()
   await page.waitForTimeout(500)
+
+  const specs = await page.locator('[data-slot="accordion-content"]').first().innerText()
+  check('product information keeps measurements and care', /Measurements/.test(specs) && /Materials and care/.test(specs))
+  check(
+    'and none of the sections that were cut',
+    !/Made in|In the studio|Electrical|Assembly|Model number|Packaging/.test(specs),
+    specs.split('\n').slice(0, 4).join(' | '),
+  )
+  // A single piece has nothing to say under Item details, so the heading does not appear.
+  check('a heading with nothing under it is dropped', !/Item details/.test(specs))
   const afterAccordion = await page.locator('button[aria-label^="View"]').boundingBox()
   check(
     'opening the accordion does not stretch the photograph',
@@ -295,6 +312,21 @@ section('Favorites, signed in')
   await context.close()
 }
 
+section('The shop skeleton mirrors the shop')
+{
+  // The prerendered shell is what a visitor sees before the grid streams in, so read it
+  // straight from the response rather than racing the browser for it.
+  const html = await (await fetch(`${BASE}/shop`)).text()
+  const shell = html.split('<script>self.__next_f')[0]
+
+  check('the shell is the skeleton', shell.includes('data-slot="skeleton"'), `${shell.length} bytes`)
+  check('it reserves the filter rail', shell.includes('lg:grid-cols-[12rem_1fr]'))
+  const rows = (shell.match(/size-4 rounded-sm/g) ?? []).length
+  check('with facet rows in it', rows > 5, `${rows} rows`)
+  const pills = (shell.match(/h-8 rounded-full/g) ?? []).length
+  check('and the category pills above it', pills > 3, `${pills} pills`)
+}
+
 section('Material and color filters')
 {
   const { context, page: shop } = await freshPage(browser)
@@ -499,9 +531,17 @@ section('Cart')
   await shop.locator('text=/Subtotal|Nothing in here yet/').first().waitFor({ timeout: 15000 })
   check('the cart survives a reload', /Ash Dining Table/.test(await visibleText(shop)))
 
-  await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
+  // Two of them, so stepping down once is an ordinary decrement and the second empties it.
+  const lastOne = shop.locator('button[aria-label="Remove Ash Dining Table from the cart"]')
+  check('above one the minus is still a minus', (await lastOne.count()) === 0)
+  await shop.locator('button[aria-label="Remove one Ash Dining Table"]').click()
   await shop.waitForTimeout(1800)
-  check('removing drops the line', !/Ash Dining Table/.test(await visibleText(shop)))
+  check('at one left it becomes a remove', (await lastOne.count()) === 1)
+  check('and the badge follows it down', (await badge().innerText()) === '2')
+
+  await lastOne.click()
+  await shop.waitForTimeout(1800)
+  check('stepping past one drops the line', !/Ash Dining Table/.test(await visibleText(shop)))
   check('and the badge counts down', (await badge().innerText()) === '1')
 
   await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
@@ -699,6 +739,26 @@ section('Checkout')
     check('and it opens', /Ash Dining Table/.test(await visibleText(buyer)))
     // Nothing marked it paid, so the page must not pretend otherwise.
     check('an unpaid order is not called confirmed', !/confirmed/i.test(await visibleText(buyer)))
+    check(
+      'an unpaid order offers to finish paying',
+      (await buyer.getByRole('button', { name: 'Complete payment' }).count()) === 1,
+    )
+    // The order is the dead end this exists to fix, so press it rather than only find it.
+    await buyer.getByRole('button', { name: 'Complete payment' }).click()
+    await buyer.waitForURL(/checkout\.stripe\.com/, { timeout: 30000 }).catch(() => {})
+    check('and pressing it reopens Stripe', buyer.url().includes('checkout.stripe.com'), buyer.url())
+    await buyer.goto(orderUrl, { waitUntil: 'networkidle' })
+    await buyer.waitForTimeout(800)
+    check('the order is still awaiting payment', /Awaiting payment/.test(await visibleText(buyer)))
+
+    // The detail page sits in the same column as the list, so their headings share an edge.
+    const detailEdge = (await buyer.locator('h1').first().boundingBox()).x
+    await buyer.goto(`${BASE}/account/orders`, { waitUntil: 'networkidle' })
+    await buyer.waitForTimeout(800)
+    const listEdge = (await buyer.locator('h1').first().boundingBox()).x
+    check('one order lines up with the list it came from', Math.abs(detailEdge - listEdge) < 2, `${detailEdge} vs ${listEdge}`)
+    await buyer.goto(orderUrl, { waitUntil: 'networkidle' })
+    await buyer.waitForTimeout(800)
   }
 
   await emptyTheCart()
@@ -759,6 +819,141 @@ section('Writing a review')
   await author.waitForTimeout(1200)
   const after = await author.locator('#reviews').innerText()
   check('editing replaces rather than duplicates', after.includes(revised) && !after.includes(words))
+  await context.close()
+}
+
+section('Helpful votes on reviews')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await signInAsDemo(reader, 'shopper')
+
+  const open = async (query = '') => {
+    await reader.goto(`${BASE}/products/harvest-vase${query}`, { waitUntil: 'networkidle' })
+    await reader.locator('#reviews').scrollIntoViewIfNeeded()
+    await reader.waitForTimeout(1200)
+  }
+
+  await open()
+  const thumbs = reader.locator('#reviews button[aria-label^="Helpful,"]')
+  check('each review offers a thumb', (await thumbs.count()) > 0, `${await thumbs.count()} votable reviews`)
+
+  const row = await reader.locator('#reviews li').first().innerText()
+  check('the thumbs come before the question', /\d[\s\S]*Was this helpful\?/.test(row), row.split('\n').at(-1))
+
+  const before = Number(await thumbs.first().innerText())
+  await thumbs.first().click()
+  await reader.waitForTimeout(1800)
+  const after = Number(await thumbs.first().innerText())
+  check('a thumb up counts', after === before + 1, `${before} to ${after}`)
+  check('and the button reads as pressed', (await thumbs.first().getAttribute('aria-pressed')) === 'true')
+
+  await open()
+  check('the vote survives a reload', Number(await thumbs.first().innerText()) === after)
+
+  // The same thumb again clears it, rather than counting twice.
+  await thumbs.first().click()
+  await reader.waitForTimeout(1800)
+  check('pressing it again takes it back', Number(await thumbs.first().innerText()) === before)
+
+  // A review of your own is not something to vote on, and the table refuses it too.
+  await open('?reviews=recent')
+  const panel = await reader.locator('#reviews').innerText()
+  check('your own review is not votable', /Your review ·/.test(panel), panel.split('\n').slice(0, 3).join(' | '))
+  await context.close()
+}
+
+section('Sorting reviews')
+{
+  const { context, page: reader } = await freshPage(browser)
+
+  const open = async (query = '') => {
+    await reader.goto(`${BASE}/products/spouted-pendant${query}`, { waitUntil: 'networkidle' })
+    await reader.locator('#reviews').scrollIntoViewIfNeeded()
+    await reader.waitForTimeout(1200)
+  }
+  // Stars put the rating in an aria-label, not in the text, so read it there.
+  const ratings = async () =>
+    Promise.all(
+      (await reader.locator('#reviews li [role="img"]').all()).map(async (star) =>
+        Number((await star.getAttribute('aria-label')).split(' ')[0]),
+      ),
+    )
+  const scores = async () =>
+    (await reader.locator('#reviews li').allInnerTexts()).map((text) => {
+      const [up = 0, down = 0] = (text.match(/\d+/g) ?? []).slice(-2).map(Number)
+      return up - down
+    })
+
+  const falling = (values) => values.every((value, index) => index === 0 || values[index - 1] >= value)
+  const rising = (values) => values.every((value, index) => index === 0 || values[index - 1] <= value)
+
+  await open()
+  const helpful = await scores()
+  const helpfulStars = await ratings()
+  check('reviews are listed', helpful.length > 1, `${helpful.length} reviews`)
+  check('most helpful runs down the net score', falling(helpful), helpful.join(' then '))
+  check('the sort control is offered', (await reader.getByLabel('Sort reviews').count()) === 1)
+
+  await open('?reviews=highest')
+  const high = await ratings()
+  check('highest rated runs down the stars', falling(high), high.join(' then '))
+  // Without this the two sorts could be agreeing by chance and neither check would mean much.
+  check(
+    'and it is not the order most helpful gave',
+    high.join() !== helpfulStars.join(),
+    `${helpfulStars.join()} then ${high.join()}`,
+  )
+
+  await open('?reviews=lowest')
+  const low = await ratings()
+  check('lowest rated runs up them', rising(low), low.join(' then '))
+
+  await open('?reviews=bogus')
+  check('a bogus sort falls back rather than throwing', (await scores()).length === helpful.length)
+  await context.close()
+}
+
+section('Long review lists are capped')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
+  await reader.locator('#reviews').scrollIntoViewIfNeeded()
+  await reader.waitForTimeout(1200)
+
+  const shown = () => reader.locator('#reviews li').count()
+  const capped = await shown()
+  check('only the first few are shown', capped === 5, `${capped} on screen`)
+
+  const more = reader.getByRole('button', { name: /Show all \d+ reviews/ })
+  check('with an offer to see the rest', (await more.count()) === 1)
+  const total = Number((await more.innerText()).match(/\d+/)[0])
+  check('which names the real total', total > capped, `${total} in all`)
+
+  await more.click()
+  await reader.waitForTimeout(400)
+  check('expanding shows them all', (await shown()) === total, `${await shown()} on screen`)
+  check('and offers to fold them back', (await reader.getByRole('button', { name: 'Show fewer' }).count()) === 1)
+
+  await reader.getByRole('button', { name: 'Show fewer' }).click()
+  await reader.waitForTimeout(400)
+  check('folding back returns to the cap', (await shown()) === capped)
+  await context.close()
+}
+
+section('Choosing a review sort does not jump')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
+  await reader.locator('#reviews').scrollIntoViewIfNeeded()
+  await reader.evaluate(() => window.scrollBy(0, 90))
+  await reader.waitForTimeout(400)
+  const before = await reader.evaluate(() => window.scrollY)
+
+  await reader.getByLabel('Sort reviews').selectOption('lowest')
+  await reader.waitForTimeout(2000)
+  const after = await reader.evaluate(() => window.scrollY)
+  check('the page stays where it was', Math.abs(before - after) < 60, `${Math.round(before)} to ${Math.round(after)}`)
+  check('but the sort did apply', reader.url().includes('reviews=lowest'), reader.url())
   await context.close()
 }
 

@@ -11,7 +11,7 @@ function arrivalWindow(from = new Date()) {
     }
     return date
   }
-  const format = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })
+  const format = (date: Date) => date.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })
   return `${format(add(3))} – ${format(add(5))}`
 }
 

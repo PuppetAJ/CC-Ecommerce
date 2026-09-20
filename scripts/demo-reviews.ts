@@ -8,6 +8,9 @@ const reviewers = [
   ['Priya Raman', 'priya.raman@wicken.test'],
   ['Tom Whitlock', 'tom.whitlock@wicken.test'],
   ['Ana Beltrán', 'ana.beltran@wicken.test'],
+  ['Ruth Kowalski', 'ruth.kowalski@wicken.test'],
+  ['Desmond Achebe', 'desmond.achebe@wicken.test'],
+  ['Hannah Vogel', 'hannah.vogel@wicken.test'],
 ] as const
 
 const lines: [number, string][] = [
@@ -53,7 +56,7 @@ export async function seedDemoReviews(): Promise<number> {
     for (const [index, product] of products.entries()) {
       // A deterministic spread: some products carry four reviews, some none at all, which
       // is what a real catalogue looks like and lets the empty state be seen.
-      const howMany = [3, 0, 2, 4, 1, 0, 2, 1][index % 8]
+      const howMany = [3, 0, 7, 4, 1, 0, 2, 1][index % 8]
       for (let n = 0; n < howMany; n++) {
         const [rating, body] = lines[(index * 3 + n) % lines.length]
         await client.query(
@@ -63,6 +66,26 @@ export async function seedDemoReviews(): Promise<number> {
           [ids[n % ids.length], product.id, rating, body, (index * 7 + n * 11) % 180],
         )
         written++
+      }
+    }
+
+    // Helpfulness votes among the same invented reviewers, so "most helpful" has something to
+    // order by on a fresh database. Deterministic, so a reseed does not shuffle the ranking.
+    await client.query('DELETE FROM review_votes WHERE voter_id = ANY($1)', [ids])
+    const { rows: seeded } = await client.query<{ user_id: string; product_id: number }>(
+      'SELECT user_id, product_id FROM reviews WHERE user_id = ANY($1) ORDER BY product_id, user_id',
+      [ids],
+    )
+    for (const [index, review] of seeded.entries()) {
+      for (const [offset, voter] of ids.entries()) {
+        if (voter === review.user_id) continue
+        const roll = (index * 5 + offset * 3) % 7
+        if (roll > 3) continue
+        await client.query(
+          `INSERT INTO review_votes (voter_id, review_user_id, product_id, helpful) VALUES ($1, $2, $3, $4)
+           ON CONFLICT DO NOTHING`,
+          [voter, review.user_id, review.product_id, roll !== 3],
+        )
       }
     }
 
