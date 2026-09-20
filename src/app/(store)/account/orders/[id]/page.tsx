@@ -19,11 +19,14 @@ export default async function Page({ params }: PageProps<'/account/orders/[id]'>
 
   return (
     <Container className="flex max-w-2xl flex-col gap-8 py-16">
-      <Link href="/account/orders" className="text-sm text-olive-600 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white">
+      <Link
+        href="/account/orders"
+        className="text-sm text-olive-600 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white"
+      >
         Back to your orders
       </Link>
       <Heading>Order #{order.id}</Heading>
-      <OrderSummary order={order} />
+      <OrderSummary order={order} heading={false} />
     </Container>
   )
 }

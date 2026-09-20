@@ -39,8 +39,9 @@ if (!parsed.success) {
 
 export const env = parsed.data
 
-/** Checkout is only offered when Stripe is configured, so the app runs without it. */
-export const stripeEnabled = Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET)
+// Only the secret key is needed to open a checkout session; the webhook secret gates the
+// webhook route on its own, so a deployment without it can still take a test payment.
+export const stripeEnabled = Boolean(env.STRIPE_SECRET_KEY)
 
 /** Google sign-in is only offered when both halves of the credential are present. */
 export const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET)

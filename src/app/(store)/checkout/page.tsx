@@ -51,7 +51,7 @@ export default async function Page() {
                   <p className="text-sm font-medium text-olive-950 dark:text-white">{item.name}</p>
                   <p className="text-sm text-olive-600 dark:text-olive-400">Quantity {item.quantity}</p>
                 </div>
-                <p className="text-sm tabular-nums text-olive-950 dark:text-white">
+                <p className="text-sm text-olive-950 tabular-nums dark:text-white">
                   {formatPrice(item.unit_price_cents * item.quantity)}
                 </p>
               </div>
@@ -77,7 +77,9 @@ export default async function Page() {
           <>
             <PayButton total={formatPrice(total)} />
             <div className="rounded-lg bg-olive-950/5 p-4 text-xs/5 text-olive-700 dark:bg-white/5 dark:text-olive-400">
-              <p className="font-medium text-olive-950 dark:text-white">This is a demo. Use Stripe&rsquo;s test card.</p>
+              <p className="font-medium text-olive-950 dark:text-white">
+                This is a demo. Use Stripe&rsquo;s test card.
+              </p>
               <p className="mt-1">
                 <code className="rounded bg-olive-950/5 px-1 py-0.5 dark:bg-white/10">4242 4242 4242 4242</code>, any
                 future expiry, any CVC, any postcode. No money moves.
@@ -85,9 +87,7 @@ export default async function Page() {
             </div>
           </>
         ) : (
-          <p className="text-sm text-olive-600 dark:text-olive-400">
-            Payments are not configured on this deployment.
-          </p>
+          <p className="text-sm text-olive-600 dark:text-olive-400">Payments are not configured on this deployment.</p>
         )}
       </aside>
     </Container>

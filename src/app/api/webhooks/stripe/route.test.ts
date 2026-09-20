@@ -39,7 +39,9 @@ async function pendingOrder(sessionId: string) {
 }
 
 const stockOf = async (id: number) => {
-  const { rows } = await pool.query<{ stock_quantity: number }>('SELECT stock_quantity FROM products WHERE id = $1', [id])
+  const { rows } = await pool.query<{ stock_quantity: number }>('SELECT stock_quantity FROM products WHERE id = $1', [
+    id,
+  ])
   return rows[0].stock_quantity
 }
 const statusOf = async (id: number) => {

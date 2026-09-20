@@ -9,11 +9,17 @@ const statusLabels: Record<Order['status'], string> = {
   cancelled: 'Cancelled',
 }
 
-export function OrderSummary({ order }: { order: Order }) {
+export function OrderSummary({ order, heading = true }: { order: Order; heading?: boolean }) {
   return (
     <div className="flex flex-col gap-6 rounded-xl border border-olive-950/10 p-6 dark:border-white/10">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-xl font-medium text-olive-950 dark:text-white">Order #{order.id}</h2>
+        {heading ? (
+          <h2 className="font-display text-xl font-medium text-olive-950 dark:text-white">Order #{order.id}</h2>
+        ) : (
+          <span className="text-sm text-olive-600 dark:text-olive-400">
+            Placed {order.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </span>
+        )}
         <span className="text-sm text-olive-600 dark:text-olive-400">{statusLabels[order.status]}</span>
       </div>
 
@@ -40,7 +46,7 @@ export function OrderSummary({ order }: { order: Order }) {
                 )}
                 <p className="text-sm text-olive-600 dark:text-olive-400">Quantity {item.quantity}</p>
               </div>
-              <p className="text-sm tabular-nums text-olive-950 dark:text-white">
+              <p className="text-sm text-olive-950 tabular-nums dark:text-white">
                 {formatPrice(item.unit_price_cents * item.quantity)}
               </p>
             </div>

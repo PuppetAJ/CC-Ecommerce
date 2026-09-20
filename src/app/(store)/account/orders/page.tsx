@@ -58,7 +58,7 @@ async function Orders() {
               {order.items.reduce((count, item) => count + item.quantity, 0)} item
               {order.items.reduce((count, item) => count + item.quantity, 0) === 1 ? '' : 's'}
             </span>
-            <span className="text-sm tabular-nums text-olive-950 dark:text-white">
+            <span className="text-sm text-olive-950 tabular-nums dark:text-white">
               {formatPrice(order.total_cents)}
             </span>
             <span className="text-sm text-olive-600 dark:text-olive-400">
