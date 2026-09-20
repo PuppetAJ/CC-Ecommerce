@@ -4,7 +4,7 @@ import { Text } from '@/components/elements/text'
 import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
 import { ShopToolbar } from '@/features/products/components/shop-toolbar'
 import { getCatalogue } from '@/features/products/data'
-import { shopSearchSchema } from '@/features/products/schemas'
+import { fromShop, shopSearchSchema } from '@/features/products/schemas'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -37,7 +37,11 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
   return (
     <div className="flex flex-col gap-10">
       <ShopToolbar search={search} count={products.length} />
-      {products.length > 0 ? <ProductGrid products={products} /> : <EmptyState query={search.q} />}
+      {products.length > 0 ? (
+        <ProductGrid products={products} from={fromShop(search)} />
+      ) : (
+        <EmptyState query={search.q} />
+      )}
     </div>
   )
 }

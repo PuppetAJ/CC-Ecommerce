@@ -4,11 +4,12 @@ import { Subheading } from '@/components/elements/subheading'
 import { Text } from '@/components/elements/text'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
-import { ProductGrid } from '@/features/products/components/product-grid'
+import { Breadcrumbs } from '@/features/products/components/breadcrumbs'
+import { ProductRail } from '@/features/products/components/product-rail'
 import { ProductImage } from '@/features/products/components/product-image'
 import { getProduct, getRelated } from '@/features/products/data'
 import { focalPosition } from '@/features/products/focal'
-import { categoryLabels } from '@/features/products/schemas'
+import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/schemas'
 import { formatPrice } from '@/lib/format'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -22,6 +23,7 @@ export async function generateMetadata({ params }: PageProps<'/products/[slug]'>
   return {
     title: product.name,
     description: product.description,
+    alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
       title: product.name,
       description: product.description,
@@ -33,16 +35,19 @@ export async function generateMetadata({ params }: PageProps<'/products/[slug]'>
 // Silences instant-navigation validation; it does not make the route answer 404 (D17).
 export const instant = false
 
-export default async function ProductPage({ params }: PageProps<'/products/[slug]'>) {
+export default async function ProductPage({ params, searchParams }: PageProps<'/products/[slug]'>) {
   const product = await getProduct((await params).slug)
   if (!product) notFound()
 
-  const related = await getRelated(product)
+  // The same schema the shop parses, because these are the shop's own params riding along.
+  const search = shopSearchSchema.parse(await searchParams)
+  const related = await getRelated(product, 12)
   const soldOut = product.stock_quantity === 0
   const low = !soldOut && product.stock_quantity <= 3
 
   return (
     <Container className="flex flex-col gap-24 py-16">
+      <Breadcrumbs search={search} category={product.category} name={product.name} />
       <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
         {product.image_url && (
           <ProductImage src={product.image_url} alt={product.name} objectPosition={focalPosition(product.slug)} />
@@ -147,7 +152,7 @@ export default async function ProductPage({ params }: PageProps<'/products/[slug
               {categoryLabels[product.category].toLowerCase()}
             </Link>
           </Subheading>
-          <ProductGrid products={related} />
+          <ProductRail products={related} from={fromShop(search)} />
         </section>
       )}
     </Container>

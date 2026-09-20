@@ -44,7 +44,7 @@ export default async function Page({ searchParams }: PageProps<'/login'>) {
       ) : null}
 
       <Divider label="Or look around as" />
-      <DemoLogin />
+      <DemoLogin next={next} />
       <p className="text-xs text-olive-600 dark:text-olive-400">
         Both demo accounts use{' '}
         <code className="rounded bg-olive-950/5 px-1 py-0.5 dark:bg-white/10">{demoAccounts.customer.password}</code>,

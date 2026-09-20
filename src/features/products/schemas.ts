@@ -35,3 +35,9 @@ export function shopHref(search: Partial<ShopSearch>): string {
   const query = params.toString()
   return query ? `/shop?${query}` : '/shop'
 }
+
+/** The shop's filters as a query string to hang on a product link, so it can offer a way back. */
+export function fromShop(search: Partial<ShopSearch>): string {
+  const href = shopHref(search)
+  return href === '/shop' ? '' : `?${href.split('?')[1]}`
+}

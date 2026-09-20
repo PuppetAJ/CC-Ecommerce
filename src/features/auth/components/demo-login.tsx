@@ -7,11 +7,12 @@ import { FormError } from './field'
 
 // Both buttons submit one form; the clicked button's name and value ride along in
 // the FormData, which is how one action serves two roles without two forms.
-export function DemoLogin() {
+export function DemoLogin({ next }: { next: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(signInAsDemo, undefined)
 
   return (
     <form action={action} className="grid gap-2">
+      <input type="hidden" name="next" value={next} />
       <div className="flex gap-2">
         <SoftButton type="submit" name="role" value="customer" size="lg" disabled={pending} className="flex-1">
           Demo shopper
