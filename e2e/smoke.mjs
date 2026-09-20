@@ -315,6 +315,47 @@ section('Carrying a guest cart into an account')
   await context.close()
 }
 
+section('A claimed cart cannot be reached by its old cookie')
+{
+  const { context: victimContext, page: victim } = await freshPage(browser)
+  await victim.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
+  await victim.getByRole('button', { name: 'Add to cart' }).click()
+  await victim.waitForTimeout(2000)
+
+  const cookie = (await victimContext.cookies()).find((c) => c.name === 'wicken_cart')
+  check('the guest cart cookie is httpOnly', Boolean(cookie?.httpOnly))
+
+  await signInAsDemo(victim, 'shopper')
+
+  // Whoever still holds that id must get nothing, because the cart now has an owner.
+  const { context: holderContext, page: holder } = await freshPage(browser)
+  await holderContext.addCookies([{ name: 'wicken_cart', value: cookie.value, url: BASE }])
+  await holder.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+  const seen = await visibleText(holder)
+  check('the old id reads nothing', /Nothing in here yet/.test(seen), seen.slice(0, 140))
+
+  await holder.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
+  await holder.getByRole('button', { name: 'Add to cart' }).click()
+  await holder.waitForTimeout(2000)
+  await victim.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+  const victimCart = await visibleText(victim)
+  check(
+    'and writing with it does not reach the account cart',
+    !/Harvest Vase/.test(victimCart),
+    victimCart.slice(0, 160),
+  )
+  await holderContext.close()
+
+  // Leave the demo account as it was found.
+  for (let line = 0; line < 20; line++) {
+    const remove = victim.getByRole('button', { name: 'Remove', exact: true }).first()
+    if ((await remove.count()) === 0) break
+    await remove.click()
+    await victim.waitForTimeout(900)
+  }
+  await victimContext.close()
+}
+
 section('Throttling')
 {
   const { context, page: fresh } = await freshPage(browser)

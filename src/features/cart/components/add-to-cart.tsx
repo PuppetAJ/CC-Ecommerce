@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/elements/button'
@@ -16,6 +17,7 @@ export function AddToCart({ productId, name, stock }: { productId: number; name:
   const [state, action, pending] = useActionState<CartState, FormData>(addToCart, undefined)
   const [quantity, setQuantity] = useState(1)
   const { setOpen } = useCartOpen()
+  const router = useRouter()
 
   useEffect(() => {
     if (state?.error) {
@@ -28,7 +30,10 @@ export function AddToCart({ productId, name, stock }: { productId: number; name:
     if (handled.has(token)) return
     handled.add(token)
     setOpen(true)
-  }, [state, productId, setOpen])
+    // The badge and the sheet live in the layout, whose segment the page's own action
+    // does not re-render, so this route is refreshed explicitly.
+    router.refresh()
+  }, [state, productId, setOpen, router])
 
   if (stock <= 0) {
     return (

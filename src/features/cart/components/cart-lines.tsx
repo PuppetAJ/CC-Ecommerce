@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useOptimistic, useTransition } from 'react'
 import { toast } from 'sonner'
 import type { CartItem } from '@/lib/db/types'
@@ -20,12 +21,15 @@ export function CartLines({ items }: { items: CartItem[] }) {
       .filter((item) => item.quantity > 0),
   )
   const [pending, start] = useTransition()
+  const router = useRouter()
 
   function change(productId: number, quantity: number) {
     start(async () => {
       apply({ productId, quantity })
       const result = quantity <= 0 ? await removeFromCart(productId) : await setQuantity(productId, quantity)
       if (result?.error) toast.error(result.error)
+      // Refreshes this route only, rather than invalidating every cached path.
+      router.refresh()
     })
   }
 

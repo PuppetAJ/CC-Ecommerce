@@ -1,11 +1,11 @@
 import 'server-only'
 import {
-  cartExists,
   countCartItems,
   createCart,
   createCartForUser,
   getCartIdForUser,
   getCartItems,
+  isGuestCart,
 } from '@/lib/db/queries/cart'
 import type { CartItem } from '@/lib/db/types'
 import { getSession } from '@/lib/auth/session'
@@ -16,8 +16,10 @@ async function currentCartId(): Promise<string | null> {
   const session = await getSession()
   if (session) return getCartIdForUser(session.user.id)
 
+  // isGuestCart, not cartExists: once a cart is claimed by an account the cookie that
+  // used to name it must stop working, or whoever still holds that id keeps access.
   const cookieId = await readCartCookie()
-  return cookieId && (await cartExists(cookieId)) ? cookieId : null
+  return cookieId && (await isGuestCart(cookieId)) ? cookieId : null
 }
 
 export async function getCart(): Promise<CartItem[]> {
@@ -38,7 +40,7 @@ export async function resolveCartId(): Promise<string> {
   }
 
   const cookieId = await readCartCookie()
-  if (cookieId && (await cartExists(cookieId))) return cookieId
+  if (cookieId && (await isGuestCart(cookieId))) return cookieId
 
   const created = await createCart()
   await writeCartCookie(created)
