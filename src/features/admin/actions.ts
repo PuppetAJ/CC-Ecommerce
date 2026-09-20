@@ -21,9 +21,11 @@ export async function saveProduct(_previous: AdminState, formData: FormData): Pr
   if (!parsed.success) return { error: 'Those values were not accepted. Check the numbers.' }
 
   const sale = parsed.data.salePriceDollars
-  const saleCents = sale === '' || sale === undefined ? null : Math.round(Number(sale) * 100)
+  const saleCents = sale === null ? null : Math.round(sale * 100)
   const priceCents = Math.round(parsed.data.priceDollars * 100)
-  // A sale that is not a saving is a mistake somebody is about to publish.
+  // A sale that is not a saving is a mistake somebody is about to publish, and a sale of
+  // nothing makes the product free.
+  if (saleCents !== null && saleCents <= 0) return { error: 'A sale price has to be more than nothing.' }
   if (saleCents !== null && saleCents >= priceCents) return { error: 'A sale price has to be below the price.' }
 
   const saved = await updateProduct(parsed.data.id, {

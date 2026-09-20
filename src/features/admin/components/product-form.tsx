@@ -13,7 +13,7 @@ export function ProductForm({ product }: { product: Product }) {
   const [state, action, pending] = useActionState<AdminState, FormData>(saveProduct, undefined)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Saved. The storefront has it.')
+    if (state?.savedAt) toast.success('Saved to the storefront')
     if (state?.error) toast.error(state.error)
   }, [state])
 
@@ -52,7 +52,15 @@ export function ProductForm({ product }: { product: Product }) {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-olive-950 dark:text-white">Stock</span>
-        <input name="stock" type="number" min="0" step="1" required defaultValue={product.stock_quantity} className={field} />
+        <input
+          name="stock"
+          type="number"
+          min="0"
+          step="1"
+          required
+          defaultValue={product.stock_quantity}
+          className={field}
+        />
       </label>
 
       <label className="flex items-center gap-2.5">

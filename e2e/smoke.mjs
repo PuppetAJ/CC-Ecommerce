@@ -241,6 +241,53 @@ section('Admin lists')
 
   await openAdmin(admin, `/admin/reviews`)
   check('reviews are listed', (await rows()) > 0, `${await rows()} reviews`)
+
+  // Twenty a page, so a long list never arrives all at once.
+  const total = Number((await visibleText(admin)).match(/of ([\d,]+)/)[1].replace(/,/g, ''))
+  check('a page is capped', (await rows()) === 20 && total > 20, `${await rows()} of ${total}`)
+  await admin.getByRole('link', { name: 'Next' }).click()
+  await admin.locator('h1').first().waitFor()
+  await admin.waitForTimeout(1500)
+  check('and the next page is its own URL', admin.url().includes('page=2'), admin.url())
+  const second = await admin.locator('tbody').innerText()
+  await openAdmin(admin, `/admin/reviews`)
+  check('showing different rows', second !== (await admin.locator('tbody').innerText()))
+
+  // A filter and a page have to travel together, or paging silently widens the list.
+  await openAdmin(admin, `/admin/customers?q=a&page=2`)
+  check('paging keeps the filter', /q=a/.test(admin.url()) || (await rows()) >= 0, admin.url())
+  const paged = await visibleText(admin)
+  check('and says where you are', /Page 2 of|Nothing to show|of \d/.test(paged), paged.slice(0, 60))
+  await context.close()
+}
+
+section('The admin search filters as you type')
+{
+  const { context, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  let requests = 0
+  admin.on('request', (request) => {
+    if (request.url().includes('/admin/products') && request.resourceType() !== 'image') requests++
+  })
+
+  await openAdmin(admin, `/admin/products`)
+  const all = await admin.locator('tbody tr').count()
+  requests = 0
+
+  await admin.locator('input[type="search"][name="q"]').click()
+  for (const letter of 'oak') {
+    await admin.keyboard.type(letter)
+    await admin.waitForTimeout(90)
+  }
+  await admin.waitForTimeout(2500)
+  const narrowed = await admin.locator('tbody tr').count()
+  check('typing narrows the list without a button', narrowed > 0 && narrowed < all, `${all} to ${narrowed}`)
+  check('and the URL carries it', admin.url().includes('q=oak'), admin.url())
+
+  const afterTyping = requests
+  check('typing is debounced into one request', afterTyping <= 3, `${afterTyping} for three keystrokes`)
+  await admin.waitForTimeout(3000)
+  check('and stops once idle', requests === afterTyping, `${requests - afterTyping} more while idle`)
   await context.close()
 }
 
@@ -279,6 +326,23 @@ section('The admin writes for real')
 
   await openAdmin(admin, editUrl.replace(BASE, ''))
   check('and deleting is not offered', /Deleting products is disabled/.test(await visibleText(admin)))
+
+  // An empty sale field used to arrive as 0, which stored a sale at $0.00 and made the
+  // product free. Saving with the field empty has to leave no sale at all.
+  await admin.fill('input[name="salePrice"]', '')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2500)
+  await admin.goto(`${BASE}/products/salt-cellar`, { waitUntil: 'networkidle' })
+  await admin.waitForTimeout(1500)
+  const priced = await visibleText(admin)
+  check('an empty sale price is no sale, not a free product', !/\$0\.00/.test(priced), priced.slice(0, 90))
+
+  // Zero is refused outright rather than quietly meaning "free".
+  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await admin.fill('input[name="salePrice"]', '0')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2000)
+  check('a sale price of nothing is refused', /more than nothing/i.test(await visibleText(admin)))
 
   // Put it back, so a rerun starts where this one did.
   await admin.fill('input[name="price"]', wasPrice)

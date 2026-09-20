@@ -37,9 +37,17 @@ export default async function Page({ params }: PageProps<'/admin/orders/[id]'>) 
           ['Customer', order.customer_name],
           ['Email', order.customer_email],
           ['Placed', order.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })],
-          ['Paid', order.paid_at ? order.paid_at.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Not yet'],
+          [
+            'Paid',
+            order.paid_at
+              ? order.paid_at.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+              : 'Not yet',
+          ],
         ].map(([label, value]) => (
-          <div key={label} className="flex justify-between gap-4 border-b border-olive-950/10 py-2 dark:border-white/10">
+          <div
+            key={label}
+            className="flex justify-between gap-4 border-b border-olive-950/10 py-2 dark:border-white/10"
+          >
             <dt className="text-olive-600 dark:text-olive-400">{label}</dt>
             <dd className="truncate text-olive-950 dark:text-white">{value}</dd>
           </div>
@@ -50,9 +58,7 @@ export default async function Page({ params }: PageProps<'/admin/orders/[id]'>) 
         {order.items.map((item) => (
           <li key={`${item.product_slug}-${item.product_name}`} className="flex gap-4 py-4">
             <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-tile">
-              {item.image_url ? (
-                <Image src={item.image_url} alt="" fill sizes="56px" className="object-cover" />
-              ) : null}
+              {item.image_url ? <Image src={item.image_url} alt="" fill sizes="56px" className="object-cover" /> : null}
             </div>
             <div className="flex flex-1 items-start justify-between gap-4">
               <div>

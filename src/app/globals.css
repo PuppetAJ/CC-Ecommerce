@@ -27,6 +27,10 @@
   /* Ground that product photography sits on, so it reads as deliberate in both themes. */
   --color-tile: var(--tile);
   --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-chart-grid: var(--chart-grid);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -82,6 +86,11 @@
   --destructive: oklch(0.577 0.245 27.325);
   /* Terracotta: olive is too close to grey to carry data. Each step checked on its own surface. */
   --chart-1: #a85c3e;
+  /* Four categories on one pie touch every other slice, so these are checked all-pairs. */
+  --chart-2: #2a78d6;
+  --chart-3: #eda100;
+  --chart-4: #e87ba4;
+  --chart-5: #008300;
   --chart-grid: oklch(15.3% 0.006 107.1 / 12%);
   --border: var(--color-olive-300);
   --input: var(--color-olive-300);
@@ -117,6 +126,10 @@
   --input: oklch(1 0 0 / 15%);
   --ring: var(--color-olive-400);
   --chart-1: #c2764e;
+  --chart-2: #3987e5;
+  --chart-3: #c98500;
+  --chart-4: #d55181;
+  --chart-5: #008300;
   --chart-grid: oklch(100% 0 0 / 14%);
   --tile: var(--color-olive-900);
   --sidebar: var(--color-olive-900);

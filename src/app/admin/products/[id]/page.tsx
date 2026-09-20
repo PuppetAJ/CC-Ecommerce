@@ -32,9 +32,7 @@ export default async function Page({ params }: PageProps<'/admin/products/[id]'>
             ) : null}
           </div>
           <div>
-            <span className="block text-xs text-olive-600 dark:text-olive-400">
-              {categoryLabels[product.category]}
-            </span>
+            <span className="block text-xs text-olive-600 dark:text-olive-400">{categoryLabels[product.category]}</span>
             <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">{product.name}</h1>
           </div>
         </div>

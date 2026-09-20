@@ -3,12 +3,14 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { SortSelect } from '@/components/elements/sort-select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CategorySplitChart } from '@/features/admin/components/category-split'
 import { Funnel } from '@/features/admin/components/funnel'
 import { MetricCard } from '@/features/admin/components/metric-card'
 import { TrendChart } from '@/features/admin/components/trend-chart'
 import { adminHref, adminSearchSchema, rangeLabels, ranges, windows } from '@/features/admin/schemas'
+import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
-import { lowStock, revenueByDay, topSellers, totalsBetween } from '@/lib/db/queries/admin'
+import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/admin'
 import { funnelBetween, sessionsByDay } from '@/lib/db/queries/events'
 import { formatPrice } from '@/lib/format'
 
@@ -46,7 +48,7 @@ export default async function Page({ searchParams }: PageProps<'/admin'>) {
 
 async function Figures({ range }: { range: '7' | '30' | '90' }) {
   const { from, to, wasFrom, wasTo } = windows(range)
-  const [now, before, revenue, sessions, funnel, wasFunnel, sellers, low] = await Promise.all([
+  const [now, before, revenue, sessions, funnel, wasFunnel, sellers, low, split] = await Promise.all([
     totalsBetween(from, to),
     totalsBetween(wasFrom, wasTo),
     revenueByDay(from, to),
@@ -55,6 +57,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
     funnelBetween(wasFrom, wasTo),
     topSellers(from, to),
     lowStock(),
+    salesByCategory(from, to),
   ])
 
   const conversion = funnel.sessions > 0 ? (funnel.purchases / funnel.sessions) * 100 : 0
@@ -76,12 +79,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
           was={before.average_cents}
           now={now.average_cents}
         />
-        <MetricCard
-          label="Conversion"
-          value={`${conversion.toFixed(2)}%`}
-          was={wasConversion}
-          now={conversion}
-        />
+        <MetricCard label="Conversion" value={`${conversion.toFixed(2)}%`} was={wasConversion} now={conversion} />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
@@ -94,6 +92,12 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
+        <Panel title="What sells" note="Share of revenue by category.">
+          <CategorySplitChart
+            split={split.map((row) => ({ label: categoryLabels[row.category], revenue_cents: row.revenue_cents }))}
+          />
+        </Panel>
+
         <Panel title="How far people get" note="Sessions reaching each step.">
           <Funnel steps={funnel} />
         </Panel>

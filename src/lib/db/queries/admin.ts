@@ -65,6 +65,23 @@ export async function topSellers(from: Date, to: Date, limit = 5): Promise<TopSe
   return rows.map((row) => ({ ...row, sold: Number(row.sold), revenue_cents: Number(row.revenue_cents) }))
 }
 
+export type CategorySplit = { category: Category; units: number; revenue_cents: number }
+
+/** What the shop actually sells, by the category a product sits in. Paid orders only. */
+export async function salesByCategory(from: Date, to: Date): Promise<CategorySplit[]> {
+  const { rows } = await pool.query<{ category: Category; units: string; revenue_cents: string }>(
+    `SELECT p.category, sum(oi.quantity) AS units, sum(oi.quantity * oi.unit_price_cents) AS revenue_cents
+       FROM order_items oi
+       JOIN orders o ON o.id = oi.order_id
+       JOIN products p ON p.id = oi.product_id
+      WHERE ${paidWithin('o')}
+      GROUP BY p.category
+      ORDER BY sum(oi.quantity * oi.unit_price_cents) DESC`,
+    [from, to],
+  )
+  return rows.map((row) => ({ ...row, units: Number(row.units), revenue_cents: Number(row.revenue_cents) }))
+}
+
 export async function lowStock(threshold = 3, limit = 6): Promise<Product[]> {
   const { rows } = await pool.query<Product>(
     'SELECT * FROM products WHERE stock_quantity <= $1 ORDER BY stock_quantity, name LIMIT $2',
@@ -73,20 +90,34 @@ export async function lowStock(threshold = 3, limit = 6): Promise<Product[]> {
   return rows
 }
 
-export type ProductFilters = { q?: string; category?: Category; stock?: 'low' | 'out' }
+/** How many rows a list page shows. One number, so every list behaves the same way. */
+export const perPage = 20
 
-export async function listAdminProducts({ q, category, stock }: ProductFilters = {}): Promise<Product[]> {
-  const { rows } = await pool.query<Product>(
-    `SELECT * FROM products
+export type Page<T> = { rows: T[]; total: number }
+
+// count(*) OVER () rides along with the rows, so a page and its total are one round trip.
+const withTotal = 'count(*) OVER () AS total_rows'
+
+function paged<T>(rows: (T & { total_rows?: string })[]): Page<T> {
+  const total = rows.length > 0 ? Number(rows[0].total_rows) : 0
+  return { rows: rows.map(({ total_rows: _ignored, ...rest }) => rest as unknown as T), total }
+}
+
+export type ProductFilters = { q?: string; category?: Category; stock?: 'low' | 'out'; page?: number }
+
+export async function listAdminProducts({ q, category, stock, page = 1 }: ProductFilters = {}): Promise<Page<Product>> {
+  const { rows } = await pool.query<Product & { total_rows: string }>(
+    `SELECT *, ${withTotal} FROM products
       WHERE ($1::text IS NULL OR name ILIKE '%' || $1 || '%' OR slug ILIKE '%' || $1 || '%')
         AND ($2::text IS NULL OR category = $2)
         AND ($3::text IS NULL
              OR ($3 = 'low' AND stock_quantity BETWEEN 1 AND 3)
              OR ($3 = 'out' AND stock_quantity = 0))
-      ORDER BY name`,
-    [q ?? null, category ?? null, stock ?? null],
+      ORDER BY name
+      LIMIT $4 OFFSET $5`,
+    [q ?? null, category ?? null, stock ?? null, perPage, (page - 1) * perPage],
   )
-  return rows
+  return paged<Product>(rows)
 }
 
 export async function getAdminProduct(id: number): Promise<Product | null> {
@@ -129,17 +160,21 @@ const orderWithItems = `
 
 export type AdminOrder = Order & { customer_name: string; customer_email: string }
 
-export async function listAdminOrders({ status, q }: { status?: OrderStatus; q?: string } = {}): Promise<AdminOrder[]> {
-  const { rows } = await pool.query<AdminOrder>(
+export async function listAdminOrders({
+  status,
+  q,
+  page = 1,
+}: { status?: OrderStatus; q?: string; page?: number } = {}): Promise<Page<AdminOrder>> {
+  const { rows } = await pool.query<AdminOrder & { total_rows: string }>(
     `${orderWithItems}
       WHERE ($1::text IS NULL OR o.status = $1)
         AND ($2::text IS NULL OR u.name ILIKE '%' || $2 || '%' OR u.email ILIKE '%' || $2 || '%')
       GROUP BY o.id, u.name, u.email
-      ORDER BY o.created_at DESC
-      LIMIT 200`,
-    [status ?? null, q ?? null],
+      ORDER BY o.created_at DESC, o.id DESC
+      LIMIT $3 OFFSET $4`,
+    [status ?? null, q ?? null, perPage, (page - 1) * perPage],
   )
-  return rows
+  return paged<AdminOrder>(rows)
 }
 
 export async function getAdminOrder(id: number): Promise<AdminOrder | null> {
@@ -167,9 +202,9 @@ export type Customer = {
   last_order: Date | null
 }
 
-export async function listCustomers(q?: string): Promise<Customer[]> {
-  const { rows } = await pool.query<Customer & { orders: string; spent_cents: string }>(
-    `SELECT u.id, u.name, u.email, u.created_at,
+export async function listCustomers(q?: string, page = 1): Promise<Page<Customer>> {
+  const { rows } = await pool.query<Customer & { orders: string; spent_cents: string; total_rows: string }>(
+    `SELECT u.id, u.name, u.email, u.created_at, ${withTotal},
             count(o.id) FILTER (WHERE o.status = 'paid') AS orders,
             COALESCE(sum(o.total_cents) FILTER (WHERE o.status = 'paid'), 0) AS spent_cents,
             max(o.created_at) AS last_order
@@ -178,10 +213,12 @@ export async function listCustomers(q?: string): Promise<Customer[]> {
       WHERE ($1::text IS NULL OR u.name ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $1 || '%')
       GROUP BY u.id, u.name, u.email, u.created_at
       ORDER BY COALESCE(sum(o.total_cents) FILTER (WHERE o.status = 'paid'), 0) DESC, u.name
-      LIMIT 200`,
-    [q ?? null],
+      LIMIT $2 OFFSET $3`,
+    [q ?? null, perPage, (page - 1) * perPage],
   )
-  return rows.map((row) => ({ ...row, orders: Number(row.orders), spent_cents: Number(row.spent_cents) }))
+  return paged<Customer>(
+    rows.map((row) => ({ ...row, orders: Number(row.orders), spent_cents: Number(row.spent_cents) })),
+  )
 }
 
 export type AdminReview = {
@@ -195,20 +232,20 @@ export type AdminReview = {
   created_at: Date
 }
 
-export async function listAllReviews(q?: string): Promise<AdminReview[]> {
-  const { rows } = await pool.query<AdminReview>(
+export async function listAllReviews(q?: string, page = 1): Promise<Page<AdminReview>> {
+  const { rows } = await pool.query<AdminReview & { total_rows: string }>(
     `SELECT r.user_id, u.name AS author, r.product_id, p.name AS product_name, p.slug AS product_slug,
-            r.rating, r.body, r.created_at
+            r.rating, r.body, r.created_at, ${withTotal}
        FROM reviews r
        JOIN users u ON u.id = r.user_id
        JOIN products p ON p.id = r.product_id
       WHERE ($1::text IS NULL OR r.body ILIKE '%' || $1 || '%' OR u.name ILIKE '%' || $1 || '%'
              OR p.name ILIKE '%' || $1 || '%')
-      ORDER BY r.created_at DESC
-      LIMIT 200`,
-    [q ?? null],
+      ORDER BY r.created_at DESC, r.user_id
+      LIMIT $2 OFFSET $3`,
+    [q ?? null, perPage, (page - 1) * perPage],
   )
-  return rows
+  return paged<AdminReview>(rows)
 }
 
 export async function deleteReview(userId: string, productId: number): Promise<void> {
