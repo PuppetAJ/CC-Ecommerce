@@ -1,14 +1,25 @@
+import type { ReactNode } from 'react'
 import type { Product } from '@/lib/db/types'
 import { ProductCard, ProductCardSkeleton } from './product-card'
 
 const grid = 'grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4'
 
-export function ProductGrid({ products, from }: { products: Product[]; from?: string }) {
+export function ProductGrid({
+  products,
+  from,
+  // A slot, so the grid stays ignorant of the cart and favourites it would otherwise
+  // have to import across a feature boundary.
+  actions,
+}: {
+  products: Product[]
+  from?: string
+  actions?: (product: Product) => ReactNode
+}) {
   return (
     <div className={grid}>
       {products.map((product, i) => (
         // The first row is above the fold on every breakpoint we support.
-        <ProductCard key={product.id} product={product} priority={i < 4} from={from} />
+        <ProductCard key={product.id} product={product} priority={i < 4} from={from} actions={actions?.(product)} />
       ))}
     </div>
   )

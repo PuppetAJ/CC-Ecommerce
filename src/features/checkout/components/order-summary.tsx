@@ -2,12 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Order } from '@/lib/db/types'
 import { formatPrice } from '@/lib/format'
-
-const statusLabels: Record<Order['status'], string> = {
-  pending: 'Awaiting payment',
-  paid: 'Paid',
-  cancelled: 'Cancelled',
-}
+import { OrderStatus } from './order-status'
 
 export function OrderSummary({ order, heading = true }: { order: Order; heading?: boolean }) {
   return (
@@ -20,7 +15,7 @@ export function OrderSummary({ order, heading = true }: { order: Order; heading?
             Placed {order.created_at.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
           </span>
         )}
-        <span className="text-sm text-olive-600 dark:text-olive-400">{statusLabels[order.status]}</span>
+        <OrderStatus status={order.status} />
       </div>
 
       <ul className="divide-y divide-olive-950/10 dark:divide-white/10">
