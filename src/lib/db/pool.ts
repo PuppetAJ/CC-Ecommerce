@@ -6,7 +6,10 @@ import { env } from '../env.ts'
 // leak a pool per edit until Postgres refused new connections.
 const globalForPool = globalThis as { wickenPool?: Pool }
 
-export const pool = globalForPool.wickenPool ?? new Pool({ connectionString: env.DATABASE_URL })
+// Postgres kills anything still running after ten seconds, so one pathological query cannot
+// hold a connection open indefinitely. Every query here should finish in milliseconds.
+export const pool =
+  globalForPool.wickenPool ?? new Pool({ connectionString: env.DATABASE_URL, statement_timeout: 10_000 })
 
 if (env.NODE_ENV !== 'production') globalForPool.wickenPool = pool
 

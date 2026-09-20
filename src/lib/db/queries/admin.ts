@@ -1,6 +1,7 @@
 import 'server-only'
 import { pool } from '../pool.ts'
 import type { Category, Order, OrderStatus, Product } from '../types.ts'
+import { searchTerm } from '../text.ts'
 
 export type Totals = { revenue_cents: number; orders: number; average_cents: number; returning_rate: number }
 
@@ -115,7 +116,7 @@ export async function listAdminProducts({ q, category, stock, page = 1 }: Produc
              OR ($3 = 'out' AND stock_quantity = 0))
       ORDER BY name
       LIMIT $4 OFFSET $5`,
-    [q ?? null, category ?? null, stock ?? null, perPage, (page - 1) * perPage],
+    [q ? searchTerm(q) : null, category ?? null, stock ?? null, perPage, (page - 1) * perPage],
   )
   return paged<Product>(rows)
 }
@@ -172,7 +173,7 @@ export async function listAdminOrders({
       GROUP BY o.id, u.name, u.email
       ORDER BY o.created_at DESC, o.id DESC
       LIMIT $3 OFFSET $4`,
-    [status ?? null, q ?? null, perPage, (page - 1) * perPage],
+    [status ?? null, q ? searchTerm(q) : null, perPage, (page - 1) * perPage],
   )
   return paged<AdminOrder>(rows)
 }
@@ -214,7 +215,7 @@ export async function listCustomers(q?: string, page = 1): Promise<Page<Customer
       GROUP BY u.id, u.name, u.email, u.created_at
       ORDER BY COALESCE(sum(o.total_cents) FILTER (WHERE o.status = 'paid'), 0) DESC, u.name
       LIMIT $2 OFFSET $3`,
-    [q ?? null, perPage, (page - 1) * perPage],
+    [q ? searchTerm(q) : null, perPage, (page - 1) * perPage],
   )
   return paged<Customer>(
     rows.map((row) => ({ ...row, orders: Number(row.orders), spent_cents: Number(row.spent_cents) })),
@@ -243,7 +244,7 @@ export async function listAllReviews(q?: string, page = 1): Promise<Page<AdminRe
              OR p.name ILIKE '%' || $1 || '%')
       ORDER BY r.created_at DESC, r.user_id
       LIMIT $2 OFFSET $3`,
-    [q ?? null, perPage, (page - 1) * perPage],
+    [q ? searchTerm(q) : null, perPage, (page - 1) * perPage],
   )
   return paged<AdminReview>(rows)
 }

@@ -1,6 +1,7 @@
 import 'server-only'
 import { pool } from '../pool.ts'
 import type { Category, Product } from '../types.ts'
+import { searchTerm } from '../text.ts'
 
 export type ProductSort = 'newest' | 'price-asc' | 'price-desc' | 'name'
 
@@ -44,7 +45,7 @@ export async function listProducts({
      ORDER BY ${orderBy[sort]}`,
     [
       category ?? null,
-      search ?? null,
+      search ? searchTerm(search) : null,
       materials?.length ? materials : null,
       colors?.length ? colors : null,
       priceRanges?.length ? priceRanges.map(([lo]) => lo) : null,
