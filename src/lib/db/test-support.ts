@@ -3,7 +3,7 @@ import { pool } from './pool.ts'
 export async function resetDatabase(): Promise<void> {
   // users cascades to sessions, accounts, carts and orders, so it covers the auth tables too.
   await pool.query(
-    'TRUNCATE order_items, orders, cart_items, carts, favourites, reviews, products, users, rate_limits RESTART IDENTITY CASCADE',
+    'TRUNCATE order_items, orders, cart_items, carts, favorites, reviews, products, users, rate_limits RESTART IDENTITY CASCADE',
   )
 }
 

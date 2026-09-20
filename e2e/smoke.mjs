@@ -257,7 +257,7 @@ section('Quick actions on the grid')
   const add = card.locator('button[aria-label^="Add"]')
   check('every tile carries a quick add', (await add.count()) === 1)
   check(
-    'and a favourite toggle',
+    'and a favorite toggle',
     (await card.locator('button[aria-label^="Save"], button[aria-label^="Remove"]').count()) === 1,
   )
 
@@ -272,7 +272,7 @@ section('Quick actions on the grid')
   await context.close()
 }
 
-section('Favourites, signed in')
+section('Favorites, signed in')
 {
   const { context, page: shop } = await freshPage(browser)
   await signInAsDemo(shop, 'shopper')
@@ -596,10 +596,15 @@ section('The account area')
   const { context, page: account } = await freshPage(browser)
   await signInAsDemo(account, 'shopper')
 
-  await account.goto(`${BASE}/account/favourites`, { waitUntil: 'networkidle' })
+  await account.goto(`${BASE}/account/favorites`, { waitUntil: 'networkidle' })
   await account.waitForTimeout(1200)
-  check('favourites has its own page', /Favourites/.test(await visibleText(account)))
-  check('reachable from the account sidebar', (await account.locator('nav[aria-label="Account"] a').count()) === 2)
+  check('favorites has its own page', /Favorites/.test(await visibleText(account)))
+  const sidebar = await account.locator('nav[aria-label="Account"]').innerText()
+  check(
+    'the sidebar reaches orders, favorites and settings',
+    /Orders/.test(sidebar) && /Favorites/.test(sidebar) && /Settings/.test(sidebar),
+    sidebar.replace(/\n/g, ' | '),
+  )
 
   // Save something, then confirm it is listed there.
   await account.goto(`${BASE}/shop?category=lighting`, { waitUntil: 'networkidle' })
@@ -608,13 +613,37 @@ section('The account area')
   await card.locator('button[aria-label^="Save"]').click()
   await account.waitForTimeout(1500)
 
-  await account.goto(`${BASE}/account/favourites`, { waitUntil: 'networkidle' })
+  await account.goto(`${BASE}/account/favorites`, { waitUntil: 'networkidle' })
   await account.waitForTimeout(1200)
   check('a saved product is listed there', (await visibleText(account)).includes(name), name)
 
   // Leave the demo account as it was found.
   await account.locator('button[aria-label^="Remove"]').first().click()
   await account.waitForTimeout(1500)
+  await context.close()
+}
+
+section('Sale prices')
+{
+  const { context, page: shopper } = await freshPage(browser)
+
+  await shopper.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
+  const page = await visibleText(shopper)
+  // Seeded at 25% off, so the sale price shows beside the struck-through original.
+  check('a sale product shows both prices', /\$58\.50/.test(page) && /\$78\.00/.test(page), page.slice(0, 120))
+
+  await shopper.getByRole('button', { name: 'Add to cart' }).click()
+  await shopper.waitForTimeout(2000)
+  const sheet = await shopper.locator('[role="dialog"]').innerText()
+  // The important one: the cart has to charge the sale price, not the list price.
+  check(
+    'and the cart charges the sale price',
+    /58\.50/.test(sheet) && !/78\.00/.test(sheet),
+    sheet.replace(/\n/g, ' | ').slice(0, 140),
+  )
+
+  await shopper.goto(`${BASE}/shop?category=vases`, { waitUntil: 'networkidle' })
+  check('the grid marks it as on sale', /% off/.test(await visibleText(shopper)))
   await context.close()
 }
 

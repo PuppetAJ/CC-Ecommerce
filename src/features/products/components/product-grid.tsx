@@ -7,19 +7,28 @@ const grid = 'grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4'
 export function ProductGrid({
   products,
   from,
-  // A slot, so the grid stays ignorant of the cart and favourites it would otherwise
+  // A slot, so the grid stays ignorant of the cart and favorites it would otherwise
   // have to import across a feature boundary.
   actions,
+  rating,
 }: {
   products: Product[]
   from?: string
   actions?: (product: Product) => ReactNode
+  rating?: (product: Product) => ReactNode
 }) {
   return (
     <div className={grid}>
       {products.map((product, i) => (
         // The first row is above the fold on every breakpoint we support.
-        <ProductCard key={product.id} product={product} priority={i < 4} from={from} actions={actions?.(product)} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          priority={i < 4}
+          from={from}
+          actions={actions?.(product)}
+          rating={rating?.(product)}
+        />
       ))}
     </div>
   )

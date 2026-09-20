@@ -14,7 +14,7 @@ import { ProductImage } from '@/features/products/components/product-image'
 import { getProduct, getRelated } from '@/features/products/data'
 import { focalPosition } from '@/features/products/focal'
 import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/schemas'
-import { formatPrice } from '@/lib/format'
+import { Price } from '@/features/products/components/price'
 import { getSession } from '@/lib/auth/session'
 import { getOwnReview, listReviews, summariseReviews } from '@/lib/db/queries/reviews'
 import type { Metadata } from 'next'
@@ -52,7 +52,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
   const low = !soldOut && product.stock_quantity <= 3
 
   return (
-    <Container className="flex flex-col gap-24 py-10">
+    <Container className="flex flex-col gap-16 py-10">
       <div className="flex flex-col gap-6">
         <Breadcrumbs search={search} category={product.category} name={product.name} />
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
@@ -71,7 +71,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
               <Heading className="text-4xl/10 sm:text-5xl/12">{product.name}</Heading>
             </div>
 
-            <p className="text-2xl text-olive-950 dark:text-white">{formatPrice(product.price_cents)}</p>
+            <Price product={product} size="lg" />
 
             <Suspense fallback={null}>
               <RatingSummary productId={product.id} />
@@ -108,57 +108,61 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
                     : 'In stock, ships in 3–5 days'}
               </p>
             </div>
-
-            <Accordion type="single" collapsible className="w-full">
-              {Object.keys(product.specs).length > 0 && (
-                <AccordionItem value="specs">
-                  <AccordionTrigger>Product information</AccordionTrigger>
-                  <AccordionContent>
-                    <div className="flex flex-col gap-6">
-                      {Object.entries(product.specs).map(([group, rows]) => (
-                        <div key={group} className="flex flex-col gap-2">
-                          <h4 className="font-medium text-olive-950 dark:text-white">{group}</h4>
-                          <dl className="grid grid-cols-[minmax(0,10rem)_1fr] gap-x-6">
-                            {Object.entries(rows).map(([label, value]) => (
-                              <Fragment key={label}>
-                                <dt className="border-t border-olive-200 py-2 text-olive-600 dark:border-olive-800 dark:text-olive-400">
-                                  {label}
-                                </dt>
-                                <dd className="border-t border-olive-200 py-2 dark:border-olive-800">{value}</dd>
-                              </Fragment>
-                            ))}
-                          </dl>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-              <AccordionItem value="care">
-                <AccordionTrigger>Care and repair</AccordionTrigger>
-                <AccordionContent>
-                  Dishwasher safe, though handwashing keeps the glaze brighter for longer. Timber is oiled rather than
-                  lacquered, so a scratch can be sanded back and re-oiled. We keep spares for everything we have sold.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="shipping">
-                <AccordionTrigger>Shipping and returns</AccordionTrigger>
-                <AccordionContent>
-                  Shipped in 3–5 working days, packed in straw board rather than plastic. Return anything unused within
-                  30 days and we will collect it.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </div>
         </div>
       </div>
 
-      <section id="reviews" className="flex max-w-3xl flex-col gap-8">
-        <Subheading>Reviews</Subheading>
-        <Suspense fallback={<p className="text-sm text-olive-600 dark:text-olive-400">Loading reviews…</p>}>
-          <Reviews productId={product.id} slug={product.slug} />
-        </Suspense>
-      </section>
+      <div className="grid gap-12 lg:grid-cols-[1fr_24rem] lg:gap-16">
+        <section id="reviews" className="flex min-w-0 flex-col gap-8">
+          <Subheading>Reviews</Subheading>
+          <Suspense fallback={<p className="text-sm text-olive-600 dark:text-olive-400">Loading reviews…</p>}>
+            <Reviews productId={product.id} slug={product.slug} />
+          </Suspense>
+        </section>
+
+        <div className="lg:pt-2">
+          <Accordion type="single" collapsible className="w-full">
+            {Object.keys(product.specs).length > 0 && (
+              <AccordionItem value="specs">
+                <AccordionTrigger>Product information</AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex flex-col gap-6">
+                    {Object.entries(product.specs).map(([group, rows]) => (
+                      <div key={group} className="flex flex-col gap-2">
+                        <h4 className="font-medium text-olive-950 dark:text-white">{group}</h4>
+                        <dl className="grid grid-cols-[minmax(0,10rem)_1fr] gap-x-6">
+                          {Object.entries(rows).map(([label, value]) => (
+                            <Fragment key={label}>
+                              <dt className="border-t border-olive-200 py-2 text-olive-600 dark:border-olive-800 dark:text-olive-400">
+                                {label}
+                              </dt>
+                              <dd className="border-t border-olive-200 py-2 dark:border-olive-800">{value}</dd>
+                            </Fragment>
+                          ))}
+                        </dl>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+            <AccordionItem value="care">
+              <AccordionTrigger>Care and repair</AccordionTrigger>
+              <AccordionContent>
+                Dishwasher safe, though handwashing keeps the glaze brighter for longer. Timber is oiled rather than
+                lacquered, so a scratch can be sanded back and re-oiled. We keep spares for everything we have sold.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="shipping">
+              <AccordionTrigger>Shipping and returns</AccordionTrigger>
+              <AccordionContent>
+                Shipped in 3–5 working days, packed in straw board rather than plastic. Return anything unused within 30
+                days and we will collect it.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </div>
 
       {related.length > 0 && (
         <section className="flex flex-col gap-8">

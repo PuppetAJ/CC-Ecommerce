@@ -12,8 +12,8 @@ export const sorts = ['newest', 'price-asc', 'price-desc', 'name'] as const
 
 export const sortLabels: Record<(typeof sorts)[number], string> = {
   newest: 'Newest',
-  'price-asc': 'Price, low to high',
-  'price-desc': 'Price, high to low',
+  'price-asc': 'Price: Low to high',
+  'price-desc': 'Price: High to low',
   name: 'Name, A to Z',
 }
 

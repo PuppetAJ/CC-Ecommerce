@@ -63,7 +63,8 @@ for (const colorScheme of ['light', 'dark']) {
   await audit(page, 'landing, signed in', '/')
   await audit(page, 'checkout', '/checkout')
   await audit(page, 'your orders', '/account/orders')
-  await audit(page, 'favourites', '/account/favourites')
+  await audit(page, 'favorites', '/account/favorites')
+  await audit(page, 'settings', '/account/settings')
   await context.close()
 }
 

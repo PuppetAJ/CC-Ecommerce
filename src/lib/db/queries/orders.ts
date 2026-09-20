@@ -52,7 +52,8 @@ export async function createPendingOrder(userId: string, cartId: string): Promis
       stock_quantity: number
       quantity: number
     }>(
-      `SELECT p.id AS product_id, p.name, p.slug, p.image_url, p.price_cents, p.stock_quantity, ci.quantity
+      `SELECT p.id AS product_id, p.name, p.slug, p.image_url,
+              COALESCE(p.sale_price_cents, p.price_cents) AS price_cents, p.stock_quantity, ci.quantity
        FROM cart_items ci
        JOIN products p ON p.id = ci.product_id
        WHERE ci.cart_id = $1

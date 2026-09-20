@@ -10,6 +10,8 @@ export type Product = {
   description: string
   category: Category
   price_cents: number
+  /** Null unless on sale; the effective price is COALESCE(sale_price_cents, price_cents). */
+  sale_price_cents: number | null
   stock_quantity: number
   dimensions: string | null
   materials: string | null

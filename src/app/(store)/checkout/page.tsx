@@ -6,7 +6,7 @@ import { Text } from '@/components/elements/text'
 import { ButtonLink } from '@/components/elements/button'
 import { requireUser } from '@/lib/auth/session'
 import { cartSubtotal, getCart } from '@/features/cart/cart'
-import { OrderBreakdown, Reassurances } from '@/features/checkout/components/order-breakdown'
+import { OrderBreakdown } from '@/features/checkout/components/order-breakdown'
 import { PayButton } from '@/features/checkout/components/pay-button'
 import { formatPrice } from '@/lib/format'
 import { stripeEnabled } from '@/lib/env'
@@ -101,7 +101,6 @@ export default async function Page() {
                 future expiry, any CVC, any postcode. No money moves.
               </p>
             </div>
-            <Reassurances />
           </>
         ) : (
           <p className="text-sm text-olive-600 dark:text-olive-400">Payments are not configured on this deployment.</p>

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Product } from '@/lib/db/types'
-import { formatPrice } from '@/lib/format'
+import { Price, SaleBadge } from './price'
 import { focalPosition } from '../focal'
 
 // Square tiles keep 67% of a 3:2 photograph against 53% for a 4:5, so far less of each
@@ -15,11 +15,13 @@ export function ProductCard({
   priority = false,
   from = '',
   actions,
+  rating,
 }: {
   product: Product
   priority?: boolean
   from?: string
   actions?: ReactNode
+  rating?: ReactNode
 }) {
   const soldOut = product.stock_quantity === 0
 
@@ -39,10 +41,12 @@ export function ProductCard({
             className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
         )}
-        {soldOut && (
+        {soldOut ? (
           <span className="absolute top-3 left-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-olive-950">
             Sold out
           </span>
+        ) : (
+          <SaleBadge product={product} />
         )}
         {actions}
       </div>
@@ -55,8 +59,9 @@ export function ProductCard({
             {product.name}
           </Link>
         </h3>
-        <p className="text-sm text-olive-600 dark:text-olive-400">{formatPrice(product.price_cents)}</p>
+        <Price product={product} />
       </div>
+      {rating}
     </article>
   )
 }

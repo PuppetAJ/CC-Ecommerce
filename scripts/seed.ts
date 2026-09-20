@@ -453,8 +453,12 @@ try {
       ],
     )
   }
+  // A few things on sale, so the badge and the struck-through price are visible.
+  await client.query(`UPDATE products SET sale_price_cents = round(price_cents * 0.75)
+     WHERE slug IN ('harvest-vase', 'ridged-tumblers', 'weathered-stool', 'globe-wall-light')`)
+
   await client.query('COMMIT')
-  console.log(`Seeded ${products.length} products`)
+  console.log(`Seeded ${products.length} products, four on sale`)
 } catch (error) {
   await client.query('ROLLBACK')
   throw error
