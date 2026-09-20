@@ -1,114 +1,96 @@
-import Link from 'next/link'
-import { CheckIcon } from 'lucide-react'
-import { colorLabels, colorSwatches, materialLabels, shopHref, toggleFacet, type ShopSearch } from '../schemas'
+'use client'
+
+import { useRef } from 'react'
+import { colorLabels, colorSwatches, materialLabels, type ShopSearch } from '../schemas'
 import type { colors, materials } from '../schemas'
 
 type Material = (typeof materials)[number]
 type Color = (typeof colors)[number]
 
 /**
- * Links rather than checkboxes, so every filter combination is a URL and the whole thing
- * works with JavaScript off. aria-pressed carries the state a checkbox would have.
+ * Real checkboxes in a GET form, so the browser builds the query string and every
+ * combination stays a URL. Submitted on change where there is JavaScript; the button below
+ * is the fallback where there is not.
  */
 export function FacetFilters({
   search,
   facets,
 }: {
   search: ShopSearch
-  facets: { materials: [string, number][]; colors: [string, number][] }
+  facets: { materials: string[]; colors: string[] }
 }) {
+  const form = useRef<HTMLFormElement>(null)
+  const submit = () => form.current?.requestSubmit()
+
   return (
-    <div className="flex flex-col gap-8">
-      <Facet title="Material">
-        {facets.materials.map(([value, count]) => {
+    <form ref={form} action="/shop" className="flex flex-col gap-8">
+      {/* Carried so filtering does not silently drop the category, sort or search. */}
+      {search.category && <input type="hidden" name="category" value={search.category} />}
+      {search.sort !== 'newest' && <input type="hidden" name="sort" value={search.sort} />}
+      {search.q && <input type="hidden" name="q" value={search.q} />}
+
+      <fieldset className="flex flex-col gap-3">
+        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Material</legend>
+        {facets.materials.map((value) => {
           const material = value as Material
-          const on = search.material?.includes(material) ?? false
           return (
-            <Pill
-              key={value}
-              href={shopHref({ ...search, material: toggleFacet(search.material, material) })}
-              on={on}
-              label={materialLabels[material]}
-              count={count}
-              facet="material"
-            />
+            <label key={value} className="flex cursor-pointer items-center gap-2.5 text-sm">
+              <input
+                type="checkbox"
+                name="material"
+                value={material}
+                defaultChecked={search.material?.includes(material) ?? false}
+                onChange={submit}
+                className="size-4 shrink-0 rounded border-olive-400 text-olive-950 focus-visible:ring-2 focus-visible:ring-ring dark:border-olive-600"
+              />
+              <span className="text-olive-700 dark:text-olive-300">{materialLabels[material]}</span>
+            </label>
           )
         })}
-      </Facet>
+      </fieldset>
 
-      <Facet title="Colour">
-        {facets.colors.map(([value, count]) => {
-          const color = value as Color
-          const on = search.color?.includes(color) ?? false
-          return (
-            <Pill
-              key={value}
-              href={shopHref({ ...search, color: toggleFacet(search.color, color) })}
-              on={on}
-              label={colorLabels[color]}
-              count={count}
-              swatch={colorSwatches[color]}
-              facet="color"
-            />
-          )
-        })}
-      </Facet>
-    </div>
-  )
-}
+      <fieldset>
+        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Color</legend>
+        {/* Swatches alone: the name is the accessible label, not a column of text. */}
+        <div className="flex flex-wrap gap-2">
+          {facets.colors.map((value) => {
+            const color = value as Color
+            const on = search.color?.includes(color) ?? false
+            const swatch = colorSwatches[color]
+            return (
+              <label key={value} title={colorLabels[color]} className="cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="color"
+                  value={color}
+                  defaultChecked={on}
+                  onChange={submit}
+                  className="peer sr-only"
+                />
+                <span className="sr-only">{colorLabels[color]}</span>
+                <span
+                  aria-hidden
+                  style={swatch.startsWith('conic') ? { backgroundImage: swatch } : { backgroundColor: swatch }}
+                  className={`block size-7 rounded-full border transition-[box-shadow,border-color] peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 ${
+                    on
+                      ? 'border-olive-950 ring-2 ring-olive-950 ring-offset-2 dark:border-white dark:ring-white'
+                      : 'border-olive-950/20 dark:border-white/25'
+                  }`}
+                />
+              </label>
+            )
+          })}
+        </div>
+      </fieldset>
 
-function Facet({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-3">
-      <h3 className="text-sm font-medium text-olive-950 dark:text-white">{title}</h3>
-      <ul className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">{children}</ul>
-    </div>
-  )
-}
-
-function Pill({
-  href,
-  on,
-  label,
-  count,
-  swatch,
-  facet,
-}: {
-  href: string
-  on: boolean
-  label: string
-  count: number
-  swatch?: string
-  facet: 'material' | 'color'
-}) {
-  return (
-    <li>
-      <Link
-        href={href}
-        // aria-pressed belongs to buttons; a link expresses selection with aria-current.
-        aria-current={on ? 'true' : undefined}
-        data-facet={facet}
-        className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors ${
-          on
-            ? 'bg-olive-950/10 font-medium text-olive-950 dark:bg-white/15 dark:text-white'
-            : 'text-olive-600 hover:bg-olive-950/5 hover:text-olive-950 dark:text-olive-400 dark:hover:bg-white/5 dark:hover:text-white'
-        }`}
-      >
-        {swatch ? (
-          <span
-            aria-hidden
-            className="size-4 shrink-0 rounded-full border border-olive-950/15 dark:border-white/20"
-            style={swatch.startsWith('linear') ? { backgroundImage: swatch } : { backgroundColor: swatch }}
-          />
-        ) : (
-          <span aria-hidden className="flex size-4 shrink-0 items-center justify-center">
-            {on ? <CheckIcon className="size-3.5" /> : null}
-          </span>
-        )}
-        <span className="flex-1">{label}</span>
-        {on ? <span className="sr-only">selected</span> : null}
-        <span className="text-xs text-olive-600 dark:text-olive-400">{count}</span>
-      </Link>
-    </li>
+      <noscript>
+        <button
+          type="submit"
+          className="rounded-lg border border-olive-300 px-3 py-1.5 text-sm text-olive-700 dark:border-olive-800 dark:text-olive-300"
+        >
+          Apply filters
+        </button>
+      </noscript>
+    </form>
   )
 }

@@ -4,6 +4,7 @@ import { Subheading } from '@/components/elements/subheading'
 import { Text } from '@/components/elements/text'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Suspense } from 'react'
+import { FavoriteButton } from '@/app/_components/favorite-button'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
 import { ReviewForm } from '@/features/reviews/components/review-form'
 import { ReviewList } from '@/features/reviews/components/review-list'
@@ -16,6 +17,7 @@ import { focalPosition } from '@/features/products/focal'
 import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/schemas'
 import { Price } from '@/features/products/components/price'
 import { getSession } from '@/lib/auth/session'
+import { listFavoriteIds } from '@/lib/db/queries/favorites'
 import { getOwnReview, listReviews, summariseReviews } from '@/lib/db/queries/reviews'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -99,7 +101,12 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             )}
 
             <div className="flex flex-col gap-2">
-              <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
+              <div className="flex items-center gap-3">
+                <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
+                <Suspense fallback={null}>
+                  <SaveControl productId={product.id} name={product.name} />
+                </Suspense>
+              </div>
               <p className="text-sm text-olive-600 dark:text-olive-400">
                 {soldOut
                   ? 'Back when the next batch comes out of the kiln.'
@@ -112,7 +119,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
         </div>
       </div>
 
-      <div className="grid gap-12 lg:grid-cols-[1fr_24rem] lg:gap-16">
+      <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <section id="reviews" className="flex min-w-0 flex-col gap-8">
           <Subheading>Reviews</Subheading>
           <Suspense fallback={<p className="text-sm text-olive-600 dark:text-olive-400">Loading reviews…</p>}>
@@ -214,4 +221,11 @@ async function RatingSummary({ productId }: { productId: number }) {
       </a>
     </div>
   )
+}
+
+/** Request-time, so the cached product shell above is untouched by who is reading. */
+async function SaveControl({ productId, name }: { productId: number; name: string }) {
+  const session = await getSession()
+  const favorited = session ? (await listFavoriteIds(session.user.id)).includes(productId) : false
+  return <FavoriteButton productId={productId} name={name} favorited={favorited} />
 }

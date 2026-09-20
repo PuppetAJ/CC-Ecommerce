@@ -10,13 +10,15 @@ import { toggle } from '@/features/favorites/actions'
 // Revealed on hover only where there is a mouse. Touch has no hover and coarse pointers
 // need the 44px target, so there the buttons simply stay visible; focus-within covers the
 // keyboard. Research on this pattern is in docs/REDESIGN.md §15.
+// pointer-events-none, or this covers the whole tile and swallows clicks meant for the
+// card's link; the buttons themselves opt back in.
 const shell =
-  'absolute inset-0 z-10 flex items-center justify-center gap-3 transition-opacity ' +
+  'pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-3 transition-opacity ' +
   'pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:opacity-100 ' +
   'motion-reduce:transition-none'
 
 const button =
-  'inline-flex size-11 items-center justify-center rounded-full bg-white/95 text-olive-950 shadow-sm ' +
+  'pointer-events-auto inline-flex size-11 items-center justify-center rounded-full bg-white/95 text-olive-950 shadow-sm ' +
   'transition-colors hover:bg-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ' +
   'disabled:opacity-60 dark:bg-olive-950/90 dark:text-white dark:hover:bg-olive-950'
 

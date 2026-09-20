@@ -38,21 +38,18 @@ export async function listProducts({
   return rows
 }
 
-/** What to offer in the filters, and how many each would leave. Counted from the catalogue
- * rather than the vocabulary, so a facet nothing carries is never shown. */
-export async function listFacets(): Promise<{ materials: [string, number][]; colors: [string, number][] }> {
+/** What to offer in the filters. Read from the catalogue rather than the vocabulary, so a
+ * facet nothing carries is never shown. Ordered by how many carry it, commonest first. */
+export async function listFacets(): Promise<{ materials: string[]; colors: string[] }> {
   const [materials, colors] = await Promise.all([
-    pool.query<{ value: string; count: number }>(
-      'SELECT unnest(material_tags) AS value, count(*)::int AS count FROM products GROUP BY value ORDER BY count DESC, value',
+    pool.query<{ value: string }>(
+      'SELECT unnest(material_tags) AS value FROM products GROUP BY value ORDER BY count(*) DESC, value',
     ),
-    pool.query<{ value: string; count: number }>(
-      'SELECT color AS value, count(*)::int AS count FROM products WHERE color IS NOT NULL GROUP BY color ORDER BY count DESC, value',
+    pool.query<{ value: string }>(
+      'SELECT color AS value FROM products WHERE color IS NOT NULL GROUP BY color ORDER BY count(*) DESC, value',
     ),
   ])
-  return {
-    materials: materials.rows.map((row) => [row.value, row.count]),
-    colors: colors.rows.map((row) => [row.value, row.count]),
-  }
+  return { materials: materials.rows.map((row) => row.value), colors: colors.rows.map((row) => row.value) }
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {

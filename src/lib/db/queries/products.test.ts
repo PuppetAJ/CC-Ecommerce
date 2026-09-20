@@ -55,7 +55,7 @@ describe('product queries', () => {
   })
 })
 
-describe('filtering by material and colour', () => {
+describe('filtering by material and color', () => {
   const stock = async () => {
     await pool.query(
       `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, material_tags, color)
@@ -82,7 +82,7 @@ describe('filtering by material and colour', () => {
     )
   })
 
-  it('filters by colour', async () => {
+  it('filters by color', async () => {
     await stock()
     assert.deepEqual(
       (await listProducts({ colors: ['blue'] })).map((p) => p.slug),
@@ -90,7 +90,7 @@ describe('filtering by material and colour', () => {
     )
   })
 
-  it('combines material and colour', async () => {
+  it('combines material and color', async () => {
     await stock()
     const found = await listProducts({ materials: ['stoneware'], colors: ['white'] })
     assert.deepEqual(
@@ -104,16 +104,19 @@ describe('filtering by material and colour', () => {
     assert.equal((await listProducts({ materials: [], colors: [] })).length, 4)
   })
 
-  it('counts the facets the catalogue actually carries', async () => {
+  it('offers only the facets the catalogue actually carries', async () => {
     await stock()
     const { materials, colors } = await listFacets()
-    assert.deepEqual(
-      materials.find(([value]) => value === 'stoneware'),
-      ['stoneware', 2],
-    )
-    assert.deepEqual(
-      colors.find(([value]) => value === 'natural'),
-      ['natural', 2],
-    )
+
+    assert.ok(materials.includes('stoneware'))
+    assert.ok(colors.includes('natural'))
+    // Nothing is black, so it must not be offered even though the vocabulary allows it.
+    assert.ok(!colors.includes('black'))
+  })
+
+  it('offers the commonest facet first', async () => {
+    await stock()
+    const { materials } = await listFacets()
+    assert.equal(materials[0], 'stoneware', 'two carry it, the rest one each')
   })
 })

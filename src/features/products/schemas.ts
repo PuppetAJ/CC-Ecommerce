@@ -82,7 +82,7 @@ export const colorSwatches: Record<(typeof colors)[number], string> = {
   gold: '#b08d46',
   terracotta: '#b0674a',
   natural: '#c29578',
-  mixed: 'linear-gradient(135deg, #e8e0cf 0%, #b0674a 50%, #2f4f7a 100%)',
+  mixed: 'conic-gradient(#e8e0cf 0deg 120deg, #b0674a 120deg 240deg, #2f4f7a 240deg 360deg)',
 }
 
 export const sorts = ['newest', 'price-asc', 'price-desc', 'name'] as const
