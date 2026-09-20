@@ -1,10 +1,13 @@
 import { Container } from '@/components/elements/container'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
+import { QuickActions } from '@/app/_components/quick-actions'
 import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
 import { ShopToolbar } from '@/features/products/components/shop-toolbar'
 import { getCatalogue } from '@/features/products/data'
 import { fromShop, shopSearchSchema } from '@/features/products/schemas'
+import { getSession } from '@/lib/auth/session'
+import { listFavouriteIds } from '@/lib/db/queries/favourites'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -34,11 +37,26 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
   const search = shopSearchSchema.parse(await searchParams)
   const products = await getCatalogue(search)
 
+  // One query for the whole grid rather than one per tile.
+  const session = await getSession()
+  const favourites = new Set(session ? await listFavouriteIds(session.user.id) : [])
+
   return (
     <div className="flex flex-col gap-10">
       <ShopToolbar search={search} count={products.length} />
       {products.length > 0 ? (
-        <ProductGrid products={products} from={fromShop(search)} />
+        <ProductGrid
+          products={products}
+          from={fromShop(search)}
+          actions={(product) => (
+            <QuickActions
+              productId={product.id}
+              name={product.name}
+              soldOut={product.stock_quantity === 0}
+              favourited={favourites.has(product.id)}
+            />
+          )}
+        />
       ) : (
         <EmptyState query={search.q} />
       )}

@@ -1,8 +1,9 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Product } from '@/lib/db/types'
 import { formatPrice } from '@/lib/format'
-import Image from 'next/image'
-import Link from 'next/link'
 import { focalPosition } from '../focal'
 
 // Square tiles keep 67% of a 3:2 photograph against 53% for a 4:5, so far less of each
@@ -13,14 +14,19 @@ export function ProductCard({
   product,
   priority = false,
   from = '',
+  actions,
 }: {
   product: Product
   priority?: boolean
   from?: string
+  actions?: ReactNode
 }) {
   const soldOut = product.stock_quantity === 0
+
   return (
-    <Link href={`/products/${product.slug}${from}`} className="group flex flex-col gap-3">
+    // Not a Link wrapper: the quick actions are buttons, and a button inside an anchor is
+    // invalid. The title carries a stretched link that covers the whole card instead.
+    <article className="group relative flex flex-col gap-3">
       <div className={tile}>
         {product.image_url && (
           <Image
@@ -38,12 +44,20 @@ export function ProductCard({
             Sold out
           </span>
         )}
+        {actions}
       </div>
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-sm font-medium text-olive-950 dark:text-white">{product.name}</h3>
+        <h3 className="text-sm font-medium text-olive-950 dark:text-white">
+          <Link
+            href={`/products/${product.slug}${from}`}
+            className="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring"
+          >
+            {product.name}
+          </Link>
+        </h3>
         <p className="text-sm text-olive-600 dark:text-olive-400">{formatPrice(product.price_cents)}</p>
       </div>
-    </Link>
+    </article>
   )
 }
 

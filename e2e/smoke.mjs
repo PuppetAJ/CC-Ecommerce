@@ -243,6 +243,58 @@ section('More from a category')
   await context.close()
 }
 
+section('Quick actions on the grid')
+{
+  const { context, page: shop } = await freshPage(browser)
+  const badge = () => shop.locator('button[aria-label="Open cart"] span').first()
+
+  await shop.goto(`${BASE}/shop?category=furniture`, { waitUntil: 'networkidle' })
+  const card = shop.locator('article').first()
+  const name = await card.locator('h3').innerText()
+
+  // The buttons exist in the DOM at all times; only their opacity is hovered. A touch
+  // device never fires hover, so they must be clickable without it.
+  const add = card.locator('button[aria-label^="Add"]')
+  check('every tile carries a quick add', (await add.count()) === 1)
+  check(
+    'and a favourite toggle',
+    (await card.locator('button[aria-label^="Save"], button[aria-label^="Remove"]').count()) === 1,
+  )
+
+  await add.click()
+  await shop.waitForTimeout(2000)
+  check('quick add puts it in the cart', (await badge().innerText()) === '1', name)
+
+  // Signed out, favouriting should invite a login rather than fail silently.
+  await card.locator('button[aria-label^="Save"]').click()
+  await shop.waitForTimeout(1200)
+  check('favouriting signed out asks for a login', /Log in to save/.test(await visibleText(shop)))
+  await context.close()
+}
+
+section('Favourites, signed in')
+{
+  const { context, page: shop } = await freshPage(browser)
+  await signInAsDemo(shop, 'shopper')
+  await shop.goto(`${BASE}/shop?category=vases`, { waitUntil: 'networkidle' })
+
+  const card = shop.locator('article').first()
+  const save = card.locator('button[aria-label^="Save"]')
+  await save.click()
+  await shop.waitForTimeout(1500)
+  check('favouriting marks it saved', (await card.locator('button[aria-pressed="true"]').count()) === 1)
+
+  await shop.reload({ waitUntil: 'networkidle' })
+  const after = shop.locator('article').first()
+  check('and it survives a reload', (await after.locator('button[aria-pressed="true"]').count()) === 1)
+
+  // Leave the demo account as it was found.
+  await after.locator('button[aria-label^="Remove"]').click()
+  await shop.waitForTimeout(1500)
+  check('unfavouriting undoes it', (await after.locator('button[aria-pressed="false"]').count()) === 1)
+  await context.close()
+}
+
 section('Cart')
 {
   const { context, page: shop } = await freshPage(browser)
@@ -273,6 +325,7 @@ section('Cart')
 
   await shop.keyboard.press('Escape')
   await shop.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+  await shop.locator('text=/Subtotal|Nothing in here yet/').first().waitFor({ timeout: 15000 })
   check('the cart survives a reload', /Ash Dining Table/.test(await visibleText(shop)))
 
   await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
@@ -326,10 +379,13 @@ section('Carrying a guest cart into an account')
   const { context, page: guest } = await freshPage(browser)
   const cartText = async () => {
     await guest.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+    // The cart streams behind Suspense, so wait for it rather than for the network.
+    await guest.locator('text=/Subtotal|Nothing in here yet/').first().waitFor({ timeout: 15000 })
     return visibleText(guest)
   }
   const emptyTheCart = async () => {
     await guest.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+    await guest.locator('text=/Subtotal|Nothing in here yet/').first().waitFor({ timeout: 15000 })
     for (let line = 0; line < 20; line++) {
       const remove = guest.getByRole('button', { name: 'Remove', exact: true }).first()
       if ((await remove.count()) === 0) break
@@ -427,6 +483,7 @@ section('Checkout')
   // The demo account persists between runs, so start from a known cart.
   const emptyTheCart = async () => {
     await buyer.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+    await buyer.locator('text=/Subtotal|Nothing in here yet/').first().waitFor({ timeout: 15000 })
     for (let line = 0; line < 20; line++) {
       const remove = buyer.getByRole('button', { name: 'Remove', exact: true }).first()
       if ((await remove.count()) === 0) break
