@@ -4,7 +4,7 @@ import { getProductBySlug, listFeaturedProducts, listProducts, listRelatedProduc
 import type { Product } from '@/lib/db/types'
 import type { ShopSearch } from './schemas'
 
-// Above src/lib/db, which must stay importable by plain Node. See docs/phases/03-catalogue.md.
+// Sits above src/lib/db, which must stay importable by plain Node for the tests and seed.
 
 // Takes the parsed search params whole, so the URL's `q` cannot drift from the query's
 // `search` the way it silently did once.

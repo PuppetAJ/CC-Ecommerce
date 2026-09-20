@@ -13,7 +13,7 @@ export function hasRole(user: { role?: string | null }, role: Role): boolean {
 }
 
 // Kept apart from ./index.ts, which adds the Next plugin, so the seed script can
-// build its own instance under plain Node. See docs/phases/04-auth.md.
+// build its own instance under plain Node.
 export const authOptions = {
   appName: 'Wicken',
   baseURL: env.APP_URL,

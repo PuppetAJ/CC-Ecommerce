@@ -1,4 +1,4 @@
-// axe-core at WCAG 2.1 A and AA, both themes. Needs the app running; see docs/TESTING.md.
+// axe-core at WCAG 2.1 A and AA, both themes. Needs the app running.
 import { createRequire } from 'node:module'
 import { chromium } from 'playwright'
 import { BASE } from './lib.mjs'
@@ -12,6 +12,7 @@ const pages = [
   ['shop, filtered', '/shop?category=vases&sort=price-asc'],
   ['shop, nothing found', '/shop?q=zzzznothing'],
   ['product', '/products/ash-dining-table'],
+  ['cart, empty', '/cart'],
   ['login', '/login'],
   ['register', '/register'],
   ['about', '/about'],
