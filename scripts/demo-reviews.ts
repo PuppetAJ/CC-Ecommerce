@@ -8,6 +8,9 @@ const reviewers = [
   ['Priya Raman', 'priya.raman@wicken.test'],
   ['Tom Whitlock', 'tom.whitlock@wicken.test'],
   ['Ana Beltrán', 'ana.beltran@wicken.test'],
+  ['Ruth Kowalski', 'ruth.kowalski@wicken.test'],
+  ['Desmond Achebe', 'desmond.achebe@wicken.test'],
+  ['Hannah Vogel', 'hannah.vogel@wicken.test'],
 ] as const
 
 const lines: [number, string][] = [
@@ -53,7 +56,7 @@ export async function seedDemoReviews(): Promise<number> {
     for (const [index, product] of products.entries()) {
       // A deterministic spread: some products carry four reviews, some none at all, which
       // is what a real catalogue looks like and lets the empty state be seen.
-      const howMany = [3, 0, 2, 4, 1, 0, 2, 1][index % 8]
+      const howMany = [3, 0, 7, 4, 1, 0, 2, 1][index % 8]
       for (let n = 0; n < howMany; n++) {
         const [rating, body] = lines[(index * 3 + n) % lines.length]
         await client.query(

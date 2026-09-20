@@ -128,6 +128,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             <Subheading>Reviews</Subheading>
             <SortSelect
               label="Sort reviews"
+              scroll={false}
               value={reviewSort}
               options={reviewSorts.map((sort) => ({
                 value: sort,

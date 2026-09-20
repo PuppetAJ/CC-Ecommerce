@@ -46,7 +46,7 @@ export function ReviewForm({
       <input type="hidden" name="rating" value={rating} />
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium text-olive-950 dark:text-white">Your rating</legend>
+        <legend className="sr-only">Your rating</legend>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -70,7 +70,7 @@ export function ReviewForm({
       </fieldset>
 
       <label className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-olive-950 dark:text-white">Your review</span>
+        <span className="sr-only">Your review</span>
         <textarea
           name="body"
           required

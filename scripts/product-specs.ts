@@ -15,11 +15,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-RIBRMU-280',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'ash-glaze-dinner-plate': {
     Measurements: {
@@ -32,11 +27,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-ASGLDIPL-340',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'deep-serving-bowl': {
@@ -52,11 +42,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-DESEBO-560',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'everyday-side-plate': {
     Measurements: {
@@ -69,11 +54,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-EVSIPL-220',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'stacking-bowl-pair': {
@@ -90,9 +70,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Food safe': 'Yes',
     },
     'Item details': {
-      'Model number': 'WK-STBOPA-480',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'salt-cellar': {
@@ -107,11 +85,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-SACE-180',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'tall-stem-vase': {
     Measurements: {
@@ -125,11 +98,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-TASTVA-680',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'wide-mouth-vessel': {
     Measurements: {
@@ -142,11 +110,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-WIMOVE-890',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'kiln-table-lamp': {
@@ -163,11 +126,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
     },
-    'Item details': {
-      'Model number': 'WK-KITALA-185',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'hanging-pendant-shade': {
     Measurements: {
@@ -182,11 +140,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Item details': {
-      'Model number': 'WK-HAPESH-112',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'spouted-pendant': {
@@ -203,11 +156,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
     },
-    'Item details': {
-      'Model number': 'WK-SPPE-540',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'column-table-lamp': {
     Measurements: {
@@ -222,11 +170,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Item details': {
-      'Model number': 'WK-COTALA-149',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'oak-dining-chair': {
@@ -244,11 +187,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
     },
-    'Item details': {
-      'Model number': 'WK-OADICH-420',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'ash-dining-table': {
     Measurements: {
@@ -264,11 +202,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-ASDITA-128',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'low-workshop-stool': {
@@ -286,11 +219,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
     },
-    'Item details': {
-      'Model number': 'WK-LOWOST-195',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'elm-side-table': {
     Measurements: {
@@ -307,11 +235,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
     },
-    'Item details': {
-      'Model number': 'WK-ELSITA-360',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'harvest-vase': {
     Measurements: {
@@ -324,11 +247,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-HAVA-780',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'oxblood-vase': {
@@ -343,11 +261,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-OXVA-960',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'cobalt-column-vase': {
     Measurements: {
@@ -361,11 +274,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-COCOVA-110',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'smoke-glaze-vase': {
     Measurements: {
@@ -378,11 +286,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-SMGLVA-840',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'stoneware-teapot': {
@@ -398,11 +301,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-STTE-880',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'butter-dish': {
     Measurements: {
@@ -415,11 +313,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-BUDI-320',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'teapot-trio': {
@@ -436,9 +329,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Food safe': 'Yes',
     },
     'Item details': {
-      'Model number': 'WK-TETR-145',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'tall-pitcher': {
@@ -454,11 +345,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Microwave: 'Yes',
       'Food safe': 'Yes',
     },
-    'Item details': {
-      'Model number': 'WK-TAPI-640',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'gilt-rim-plate': {
     Measurements: {
@@ -471,11 +357,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'No, hand wash only',
       Microwave: 'No',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-GIRIPL-380',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'studio-mug-set': {
@@ -492,9 +373,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Food safe': 'Yes',
     },
     'Item details': {
-      'Model number': 'WK-STMUSE-720',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'butter-glaze-plate': {
@@ -508,11 +387,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
-    },
-    'Item details': {
-      'Model number': 'WK-BUGLPL-300',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'tumbler-set': {
@@ -529,9 +403,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Food safe': 'Yes',
     },
     'Item details': {
-      'Model number': 'WK-TUSE-680',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'ridged-tumblers': {
@@ -548,9 +420,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Food safe': 'Yes',
     },
     'Item details': {
-      'Model number': 'WK-RITU-560',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'taper-candle-holders': {
@@ -566,9 +436,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Scent: 'Unscented',
     },
     'Item details': {
-      'Model number': 'WK-TACAHO-460',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'stone-candle-set': {
@@ -584,9 +452,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Scent: 'Unscented',
     },
     'Item details': {
-      'Model number': 'WK-STCASE-580',
       'Unit count': 'Sold as a set',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'bedside-lamp': {
@@ -603,11 +469,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
     },
-    'Item details': {
-      'Model number': 'WK-BELA-165',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'globe-wall-light': {
     Measurements: {
@@ -623,11 +484,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Bulb included': 'No',
       Switch: 'Wall switch, not supplied',
     },
-    'Item details': {
-      'Model number': 'WK-GLWALI-198',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'fluted-pendant': {
     Measurements: {
@@ -642,11 +498,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Inline on the flex',
-    },
-    'Item details': {
-      'Model number': 'WK-FLPE-175',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
   'oak-book-table': {
@@ -664,11 +515,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
     },
-    'Item details': {
-      'Model number': 'WK-OABOTA-340',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'oak-wall-shelf': {
     Measurements: {
@@ -685,11 +531,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
     },
-    'Item details': {
-      'Model number': 'WK-OAWASH-145',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
-    },
   },
   'weathered-stool': {
     Measurements: {
@@ -705,11 +546,6 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Arrives as': 'Assembled',
       Fixings: 'Wedged or draw-bored, no screws',
       'Takes apart': 'Yes, for moving',
-    },
-    'Item details': {
-      'Model number': 'WK-WEST-120',
-      'Unit count': '1',
-      Packaging: 'Straw board and paper tape, no plastic',
     },
   },
 }

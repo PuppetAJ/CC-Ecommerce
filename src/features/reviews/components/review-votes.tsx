@@ -56,7 +56,6 @@ export function ReviewVotes({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-olive-600 dark:text-olive-400">Was this helpful?</span>
       <button
         type="button"
         onClick={() => press(true)}
@@ -79,6 +78,7 @@ export function ReviewVotes({
         <ThumbsDownIcon className="size-3.5" />
         <span className="tabular-nums">{tally.unhelpful}</span>
       </button>
+      <span className="text-xs text-olive-600 dark:text-olive-400">Was this helpful?</span>
     </div>
   )
 }

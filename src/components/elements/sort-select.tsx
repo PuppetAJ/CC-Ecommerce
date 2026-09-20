@@ -8,10 +8,13 @@ export function SortSelect({
   value,
   options,
   label = 'Sort',
+  scroll = true,
 }: {
   value: string
   options: { value: string; label: string; href: string }[]
   label?: string
+  /** False where the control sits beside what it reorders, so choosing does not jump. */
+  scroll?: boolean
 }) {
   const router = useRouter()
   const id = useId()
@@ -25,7 +28,7 @@ export function SortSelect({
         value={value}
         onChange={(event) => {
           const next = options.find((option) => option.value === event.target.value)
-          if (next) router.push(next.href)
+          if (next) router.push(next.href, { scroll })
         }}
         className="rounded-lg border border-olive-300 bg-transparent py-1.5 pr-8 pl-3 text-sm text-olive-950 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
       >

@@ -51,12 +51,14 @@ section('Product page')
   await page.waitForTimeout(500)
 
   const specs = await page.locator('[data-slot="accordion-content"]').first().innerText()
+  check('product information keeps measurements and care', /Measurements/.test(specs) && /Materials and care/.test(specs))
   check(
-    'product information carries three sections',
-    /Measurements/.test(specs) && /Materials and care/.test(specs) && /Item details/.test(specs),
-    specs.split('\n')[0],
+    'and none of the sections that were cut',
+    !/Made in|In the studio|Electrical|Assembly|Model number|Packaging/.test(specs),
+    specs.split('\n').slice(0, 4).join(' | '),
   )
-  check('and nothing beyond them', !/Made in|In the studio|Electrical|Assembly/.test(specs))
+  // A single piece has nothing to say under Item details, so the heading does not appear.
+  check('a heading with nothing under it is dropped', !/Item details/.test(specs))
   const afterAccordion = await page.locator('button[aria-label^="View"]').boundingBox()
   check(
     'opening the accordion does not stretch the photograph',
@@ -301,6 +303,21 @@ section('Favorites, signed in')
   await shop.waitForTimeout(1500)
   check('unfavouriting undoes it', (await after.locator('button[aria-pressed="false"]').count()) === 1)
   await context.close()
+}
+
+section('The shop skeleton mirrors the shop')
+{
+  // The prerendered shell is what a visitor sees before the grid streams in, so read it
+  // straight from the response rather than racing the browser for it.
+  const html = await (await fetch(`${BASE}/shop`)).text()
+  const shell = html.split('<script>self.__next_f')[0]
+
+  check('the shell is the skeleton', shell.includes('data-slot="skeleton"'), `${shell.length} bytes`)
+  check('it reserves the filter rail', shell.includes('lg:grid-cols-[12rem_1fr]'))
+  const rows = (shell.match(/size-4 rounded-sm/g) ?? []).length
+  check('with facet rows in it', rows > 5, `${rows} rows`)
+  const pills = (shell.match(/h-8 rounded-full/g) ?? []).length
+  check('and the category pills above it', pills > 3, `${pills} pills`)
 }
 
 section('Material and color filters')
@@ -715,6 +732,26 @@ section('Checkout')
     check('and it opens', /Ash Dining Table/.test(await visibleText(buyer)))
     // Nothing marked it paid, so the page must not pretend otherwise.
     check('an unpaid order is not called confirmed', !/confirmed/i.test(await visibleText(buyer)))
+    check(
+      'an unpaid order offers to finish paying',
+      (await buyer.getByRole('button', { name: 'Complete payment' }).count()) === 1,
+    )
+    // The order is the dead end this exists to fix, so press it rather than only find it.
+    await buyer.getByRole('button', { name: 'Complete payment' }).click()
+    await buyer.waitForURL(/checkout\.stripe\.com/, { timeout: 30000 }).catch(() => {})
+    check('and pressing it reopens Stripe', buyer.url().includes('checkout.stripe.com'), buyer.url())
+    await buyer.goto(orderUrl, { waitUntil: 'networkidle' })
+    await buyer.waitForTimeout(800)
+    check('the order is still awaiting payment', /Awaiting payment/.test(await visibleText(buyer)))
+
+    // The detail page sits in the same column as the list, so their headings share an edge.
+    const detailEdge = (await buyer.locator('h1').first().boundingBox()).x
+    await buyer.goto(`${BASE}/account/orders`, { waitUntil: 'networkidle' })
+    await buyer.waitForTimeout(800)
+    const listEdge = (await buyer.locator('h1').first().boundingBox()).x
+    check('one order lines up with the list it came from', Math.abs(detailEdge - listEdge) < 2, `${detailEdge} vs ${listEdge}`)
+    await buyer.goto(orderUrl, { waitUntil: 'networkidle' })
+    await buyer.waitForTimeout(800)
   }
 
   await emptyTheCart()
@@ -793,6 +830,9 @@ section('Helpful votes on reviews')
   const thumbs = reader.locator('#reviews button[aria-label^="Helpful,"]')
   check('each review offers a thumb', (await thumbs.count()) > 0, `${await thumbs.count()} votable reviews`)
 
+  const row = await reader.locator('#reviews li').first().innerText()
+  check('the thumbs come before the question', /\d[\s\S]*Was this helpful\?/.test(row), row.split('\n').at(-1))
+
   const before = Number(await thumbs.first().innerText())
   await thumbs.first().click()
   await reader.waitForTimeout(1800)
@@ -820,7 +860,7 @@ section('Sorting reviews')
   const { context, page: reader } = await freshPage(browser)
 
   const open = async (query = '') => {
-    await reader.goto(`${BASE}/products/harvest-vase${query}`, { waitUntil: 'networkidle' })
+    await reader.goto(`${BASE}/products/spouted-pendant${query}`, { waitUntil: 'networkidle' })
     await reader.locator('#reviews').scrollIntoViewIfNeeded()
     await reader.waitForTimeout(1200)
   }
@@ -863,6 +903,50 @@ section('Sorting reviews')
 
   await open('?reviews=bogus')
   check('a bogus sort falls back rather than throwing', (await scores()).length === helpful.length)
+  await context.close()
+}
+
+section('Long review lists are capped')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
+  await reader.locator('#reviews').scrollIntoViewIfNeeded()
+  await reader.waitForTimeout(1200)
+
+  const shown = () => reader.locator('#reviews li').count()
+  const capped = await shown()
+  check('only the first few are shown', capped === 5, `${capped} on screen`)
+
+  const more = reader.getByRole('button', { name: /Show all \d+ reviews/ })
+  check('with an offer to see the rest', (await more.count()) === 1)
+  const total = Number((await more.innerText()).match(/\d+/)[0])
+  check('which names the real total', total > capped, `${total} in all`)
+
+  await more.click()
+  await reader.waitForTimeout(400)
+  check('expanding shows them all', (await shown()) === total, `${await shown()} on screen`)
+  check('and offers to fold them back', (await reader.getByRole('button', { name: 'Show fewer' }).count()) === 1)
+
+  await reader.getByRole('button', { name: 'Show fewer' }).click()
+  await reader.waitForTimeout(400)
+  check('folding back returns to the cap', (await shown()) === capped)
+  await context.close()
+}
+
+section('Choosing a review sort does not jump')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
+  await reader.locator('#reviews').scrollIntoViewIfNeeded()
+  await reader.evaluate(() => window.scrollBy(0, 90))
+  await reader.waitForTimeout(400)
+  const before = await reader.evaluate(() => window.scrollY)
+
+  await reader.getByLabel('Sort reviews').selectOption('lowest')
+  await reader.waitForTimeout(2000)
+  const after = await reader.evaluate(() => window.scrollY)
+  check('the page stays where it was', Math.abs(before - after) < 60, `${Math.round(before)} to ${Math.round(after)}`)
+  check('but the sort did apply', reader.url().includes('reviews=lowest'), reader.url())
   await context.close()
 }
 
