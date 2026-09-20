@@ -30,6 +30,9 @@ export function AccountDropdown({ name, email, isAdmin }: { name: string; email:
         <DropdownMenuItem asChild>
           <Link href="/account/orders">Your orders</Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/account/favourites">Favourites</Link>
+        </DropdownMenuItem>
         {isAdmin ? (
           <DropdownMenuItem asChild>
             <Link href="/admin">Admin</Link>

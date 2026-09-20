@@ -3,7 +3,11 @@ import { Heading } from '@/components/elements/heading'
 import { Subheading } from '@/components/elements/subheading'
 import { Text } from '@/components/elements/text'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Suspense } from 'react'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
+import { ReviewForm } from '@/features/reviews/components/review-form'
+import { ReviewList } from '@/features/reviews/components/review-list'
+import { Stars } from '@/features/reviews/components/stars'
 import { Breadcrumbs } from '@/features/products/components/breadcrumbs'
 import { ProductRail } from '@/features/products/components/product-rail'
 import { ProductImage } from '@/features/products/components/product-image'
@@ -11,6 +15,8 @@ import { getProduct, getRelated } from '@/features/products/data'
 import { focalPosition } from '@/features/products/focal'
 import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/schemas'
 import { formatPrice } from '@/lib/format'
+import { getSession } from '@/lib/auth/session'
+import { getOwnReview, listReviews, summariseReviews } from '@/lib/db/queries/reviews'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -66,6 +72,10 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             </div>
 
             <p className="text-2xl text-olive-950 dark:text-white">{formatPrice(product.price_cents)}</p>
+
+            <Suspense fallback={null}>
+              <RatingSummary productId={product.id} />
+            </Suspense>
 
             <Text>
               <p>{product.description}</p>
@@ -143,6 +153,13 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
         </div>
       </div>
 
+      <section id="reviews" className="flex max-w-3xl flex-col gap-8">
+        <Subheading>Reviews</Subheading>
+        <Suspense fallback={<p className="text-sm text-olive-600 dark:text-olive-400">Loading reviews…</p>}>
+          <Reviews productId={product.id} slug={product.slug} />
+        </Suspense>
+      </section>
+
       {related.length > 0 && (
         <section className="flex flex-col gap-8">
           <Subheading>
@@ -158,5 +175,39 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
         </section>
       )}
     </Container>
+  )
+}
+
+// Request-time, because it depends on who is reading; the cached product shell above is not.
+async function Reviews({ productId, slug }: { productId: number; slug: string }) {
+  const session = await getSession()
+  const [reviews, own] = await Promise.all([
+    listReviews(productId),
+    session ? getOwnReview(session.user.id, productId) : null,
+  ])
+
+  return (
+    <div className="flex flex-col gap-10">
+      <ReviewList reviews={reviews} />
+      <div className="flex flex-col gap-4 border-t border-olive-950/10 pt-8 dark:border-white/10">
+        <h3 className="font-medium text-olive-950 dark:text-white">{own ? 'Your review' : 'Write a review'}</h3>
+        <ReviewForm productId={productId} slug={slug} existing={own} signedIn={Boolean(session)} />
+      </div>
+    </div>
+  )
+}
+
+/** Sits by the price, where a rating is actually used, rather than only far below. */
+async function RatingSummary({ productId }: { productId: number }) {
+  const { count, average } = await summariseReviews(productId)
+  if (count === 0) return null
+
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <Stars rating={average} />
+      <a href="#reviews" className="text-olive-600 underline underline-offset-4 dark:text-olive-400">
+        {average.toFixed(1)} · {count} review{count === 1 ? '' : 's'}
+      </a>
+    </div>
   )
 }

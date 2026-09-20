@@ -12,6 +12,7 @@ const pages = [
   ['shop, filtered', '/shop?category=vases&sort=price-asc'],
   ['shop, nothing found', '/shop?q=zzzznothing'],
   ['product', '/products/ash-dining-table'],
+  ['product with reviews', '/products/oak-wall-shelf'],
   ['cart, empty', '/cart'],
   ['login', '/login'],
   ['register', '/register'],
@@ -62,6 +63,7 @@ for (const colorScheme of ['light', 'dark']) {
   await audit(page, 'landing, signed in', '/')
   await audit(page, 'checkout', '/checkout')
   await audit(page, 'your orders', '/account/orders')
+  await audit(page, 'favourites', '/account/favourites')
   await context.close()
 }
 
