@@ -2,6 +2,7 @@ import { pool } from '../src/lib/db/pool.ts'
 import { seedDemoReviews } from './demo-reviews.ts'
 import { seedDemoUsers } from './demo-users.ts'
 import type { Category } from '../src/lib/db/types.ts'
+import { productFacets } from './product-facets.ts'
 import { productSpecs } from './product-specs.ts'
 
 type Seed = {
@@ -453,6 +454,14 @@ try {
       ],
     )
   }
+  for (const [slug, facets] of Object.entries(productFacets)) {
+    await client.query('UPDATE products SET material_tags = $1, color = $2 WHERE slug = $3', [
+      facets.materials,
+      facets.color,
+      slug,
+    ])
+  }
+
   // A few things on sale, so the badge and the struck-through price are visible.
   await client.query(`UPDATE products SET sale_price_cents = round(price_cents * 0.75)
      WHERE slug IN ('harvest-vase', 'ridged-tumblers', 'weathered-stool', 'globe-wall-light')`)

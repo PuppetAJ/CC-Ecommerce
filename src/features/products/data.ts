@@ -1,6 +1,12 @@
 import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
-import { getProductBySlug, listFeaturedProducts, listProducts, listRelatedProducts } from '@/lib/db/queries/products'
+import {
+  getProductBySlug,
+  listFacets,
+  listFeaturedProducts,
+  listProducts,
+  listRelatedProducts,
+} from '@/lib/db/queries/products'
 import type { Product } from '@/lib/db/types'
 import type { ShopSearch } from './schemas'
 
@@ -8,11 +14,11 @@ import type { ShopSearch } from './schemas'
 
 // Takes the parsed search params whole, so the URL's `q` cannot drift from the query's
 // `search` the way it silently did once.
-export async function getCatalogue({ category, sort, q }: ShopSearch): Promise<Product[]> {
+export async function getCatalogue({ category, sort, q, material, color }: ShopSearch): Promise<Product[]> {
   'use cache'
   cacheLife('hours')
   cacheTag('products')
-  return listProducts({ category, sort, search: q })
+  return listProducts({ category, sort, search: q, materials: material, colors: color })
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {
@@ -35,4 +41,11 @@ export async function getRelated(product: Product, limit = 4): Promise<Product[]
   cacheTag('products')
   // The query orders at random; caching freezes one roll per product, which is what we want.
   return listRelatedProducts(product, limit)
+}
+
+export async function getFacets() {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('products')
+  return listFacets()
 }

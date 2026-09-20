@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { after, beforeEach, describe, it } from 'node:test'
 import { pool } from '../pool.ts'
 import { insertProduct, resetDatabase } from '../test-support.ts'
-import { getProductBySlug, listFeaturedProducts, listProducts } from './products.ts'
+import { getProductBySlug, listFeaturedProducts, listProducts, listFacets } from './products.ts'
 
 after(() => pool.end())
 beforeEach(resetDatabase)
@@ -52,5 +52,68 @@ describe('product queries', () => {
     const [product] = await listProducts()
     assert.equal(typeof product.price_cents, 'number')
     assert.equal(product.price_cents, 2800)
+  })
+})
+
+describe('filtering by material and colour', () => {
+  const stock = async () => {
+    await pool.query(
+      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, material_tags, color)
+       VALUES ('oak-thing', 'Oak Thing', 'x', 'furniture', 100, 1, ARRAY['oak'], 'natural'),
+              ('ash-thing', 'Ash Thing', 'x', 'furniture', 100, 1, ARRAY['ash', 'steel'], 'natural'),
+              ('blue-pot', 'Blue Pot', 'x', 'vases', 100, 1, ARRAY['stoneware'], 'blue'),
+              ('white-pot', 'White Pot', 'x', 'vases', 100, 1, ARRAY['stoneware'], 'white')`,
+    )
+  }
+
+  it('returns anything carrying one of the chosen materials', async () => {
+    await stock()
+    const found = await listProducts({ materials: ['oak', 'ash'] })
+    assert.deepEqual(found.map((p) => p.slug).sort(), ['ash-thing', 'oak-thing'])
+  })
+
+  it('matches a material anywhere in the array, not only first', async () => {
+    await stock()
+    const found = await listProducts({ materials: ['steel'] })
+    assert.deepEqual(
+      found.map((p) => p.slug),
+      ['ash-thing'],
+      'steel is the second tag on that product',
+    )
+  })
+
+  it('filters by colour', async () => {
+    await stock()
+    assert.deepEqual(
+      (await listProducts({ colors: ['blue'] })).map((p) => p.slug),
+      ['blue-pot'],
+    )
+  })
+
+  it('combines material and colour', async () => {
+    await stock()
+    const found = await listProducts({ materials: ['stoneware'], colors: ['white'] })
+    assert.deepEqual(
+      found.map((p) => p.slug),
+      ['white-pot'],
+    )
+  })
+
+  it('treats an empty selection as no filter at all', async () => {
+    await stock()
+    assert.equal((await listProducts({ materials: [], colors: [] })).length, 4)
+  })
+
+  it('counts the facets the catalogue actually carries', async () => {
+    await stock()
+    const { materials, colors } = await listFacets()
+    assert.deepEqual(
+      materials.find(([value]) => value === 'stoneware'),
+      ['stoneware', 2],
+    )
+    assert.deepEqual(
+      colors.find(([value]) => value === 'natural'),
+      ['natural', 2],
+    )
   })
 })
