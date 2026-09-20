@@ -115,3 +115,35 @@ describe('listing orders', () => {
     assert.deepEqual(await listOrdersForUser('user-2'), [])
   })
 })
+
+describe('sale pricing', () => {
+  it('charges the sale price, not the list price', async () => {
+    const cart = await createCart()
+    const product = await insertProduct({ price_cents: 10000, stock_quantity: 5 })
+    await pool.query('UPDATE products SET sale_price_cents = 7500 WHERE id = $1', [product])
+    await addCartItem(cart, product, 2)
+
+    const order = await createPendingOrder('user-1', cart)
+
+    assert.equal(order.items[0].unit_price_cents, 7500, 'the order snapshots the sale price')
+    assert.equal(order.total_cents, 15000, 'and totals from it')
+  })
+
+  it('falls back to the list price when nothing is on sale', async () => {
+    const cart = await createCart()
+    const product = await insertProduct({ price_cents: 10000, stock_quantity: 5 })
+    await addCartItem(cart, product, 1)
+
+    const order = await createPendingOrder('user-1', cart)
+    assert.equal(order.items[0].unit_price_cents, 10000)
+  })
+
+  it('shows the sale price in the cart', async () => {
+    const cart = await createCart()
+    const product = await insertProduct({ price_cents: 8000, stock_quantity: 5 })
+    await pool.query('UPDATE products SET sale_price_cents = 6000 WHERE id = $1', [product])
+    await addCartItem(cart, product, 1)
+
+    assert.equal((await getCartItems(cart))[0].unit_price_cents, 6000)
+  })
+})

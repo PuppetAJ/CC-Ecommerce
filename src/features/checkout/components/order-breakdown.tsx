@@ -36,21 +36,3 @@ export function OrderBreakdown({ subtotal }: { subtotal: number }) {
     </div>
   )
 }
-
-export function Reassurances() {
-  const items = [
-    ['Payment is handled by Stripe', 'Your card details never touch our servers.'],
-    ['Free returns within 30 days', 'Send anything unused back and we collect it.'],
-  ]
-
-  return (
-    <ul className="flex flex-col gap-3 border-t border-olive-950/10 pt-5 dark:border-white/10">
-      {items.map(([title, detail]) => (
-        <li key={title} className="text-xs/5">
-          <span className="font-medium text-olive-950 dark:text-white">{title}</span>
-          <span className="text-olive-600 dark:text-olive-400"> — {detail}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}

@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { quickAdd } from '@/features/cart/quick-add'
-import { toggle } from '@/features/favourites/actions'
+import { toggle } from '@/features/favorites/actions'
 
 // Revealed on hover only where there is a mouse. Touch has no hover and coarse pointers
 // need the 44px target, so there the buttons simply stay visible; focus-within covers the
 // keyboard. Research on this pattern is in docs/REDESIGN.md §15.
 const shell =
-  'absolute inset-x-2 bottom-2 z-10 flex items-center justify-center gap-3 transition-opacity ' +
+  'absolute inset-0 z-10 flex items-center justify-center gap-3 transition-opacity ' +
   'pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:opacity-100 ' +
   'motion-reduce:transition-none'
 
@@ -24,14 +24,14 @@ export function QuickActions({
   productId,
   name,
   soldOut,
-  favourited,
+  favorited,
 }: {
   productId: number
   name: string
   soldOut: boolean
-  favourited: boolean
+  favorited: boolean
 }) {
-  const [isFavourite, setIsFavourite] = useState(favourited)
+  const [isFavorite, setIsFavorite] = useState(favorited)
   const [pending, start] = useTransition()
   const router = useRouter()
 
@@ -47,17 +47,19 @@ export function QuickActions({
     })
   }
 
-  function favourite() {
+  function favorite() {
     start(async () => {
-      const previous = isFavourite
-      setIsFavourite(!previous)
+      const previous = isFavorite
+      setIsFavorite(!previous)
       const result = await toggle(productId)
       if (result.needsLogin || result.error) {
-        setIsFavourite(previous)
-        toast.error(result.needsLogin ? 'Log in to save favourites' : result.error!)
+        setIsFavorite(previous)
+        toast.error(result.needsLogin ? 'Log in to save favorites' : result.error!)
         return
       }
-      setIsFavourite(Boolean(result.favourited))
+      setIsFavorite(Boolean(result.favorited))
+      // The favorites page is a list of exactly these, so removing one has to drop the tile.
+      router.refresh()
     })
   }
 
@@ -65,13 +67,13 @@ export function QuickActions({
     <div className={shell}>
       <button
         type="button"
-        onClick={favourite}
+        onClick={favorite}
         disabled={pending}
-        aria-pressed={isFavourite}
-        aria-label={isFavourite ? `Remove ${name} from your favourites` : `Save ${name} to your favourites`}
+        aria-pressed={isFavorite}
+        aria-label={isFavorite ? `Remove ${name} from your favorites` : `Save ${name} to your favorites`}
         className={button}
       >
-        <HeartIcon className={isFavourite ? 'size-5 fill-current' : 'size-5'} />
+        <HeartIcon className={isFavorite ? 'size-5 fill-current' : 'size-5'} />
       </button>
       {!soldOut && (
         <button

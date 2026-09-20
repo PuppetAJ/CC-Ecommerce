@@ -1,12 +1,13 @@
 'use client'
 
-import { HeartIcon, PackageIcon } from 'lucide-react'
+import { HeartIcon, PackageIcon, SettingsIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const links = [
   { href: '/account/orders', label: 'Orders', icon: PackageIcon },
-  { href: '/account/favourites', label: 'Favourites', icon: HeartIcon },
+  { href: '/account/favorites', label: 'Favorites', icon: HeartIcon },
+  { href: '/account/settings', label: 'Settings', icon: SettingsIcon },
 ]
 
 export function AccountNav() {

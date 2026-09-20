@@ -35,7 +35,7 @@ export async function cartExists(cartId: string): Promise<boolean> {
 export async function getCartItems(cartId: string): Promise<CartItem[]> {
   const { rows } = await pool.query<CartItem>(
     `SELECT p.id AS product_id, p.slug, p.name, p.image_url,
-            p.price_cents AS unit_price_cents, p.stock_quantity, ci.quantity
+            COALESCE(p.sale_price_cents, p.price_cents) AS unit_price_cents, p.stock_quantity, ci.quantity
      FROM cart_items ci
      JOIN products p ON p.id = ci.product_id
      WHERE ci.cart_id = $1

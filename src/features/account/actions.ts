@@ -1,0 +1,47 @@
+'use server'
+
+import { headers } from 'next/headers'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { z } from 'zod'
+import { auth } from '@/lib/auth'
+import { demoAccounts } from '@/lib/auth/demo'
+import { getSession } from '@/lib/auth/session'
+import { deleteUser, renameUser } from '@/lib/db/queries/account'
+
+export type AccountState = { error?: string; savedAt?: number }
+
+const displayName = z.object({ name: z.string().trim().min(1).max(80) })
+
+/** The demo accounts are shared, so one visitor cannot rename or delete them for everybody. */
+function isDemo(email: string) {
+  return email === demoAccounts.customer.email || email === demoAccounts.admin.email
+}
+
+export async function updateName(_previous: AccountState, formData: FormData): Promise<AccountState> {
+  const session = await getSession()
+  if (!session) return { error: 'You are not signed in.' }
+  if (isDemo(session.user.email)) return { error: 'The demo accounts cannot be edited — they are shared.' }
+
+  const parsed = displayName.safeParse({ name: formData.get('name') })
+  if (!parsed.success) return { error: 'Enter a name between 1 and 80 characters.' }
+
+  await renameUser(session.user.id, parsed.data.name)
+  revalidatePath('/', 'layout')
+  return { savedAt: Date.now() }
+}
+
+export async function deleteAccount(_previous: AccountState, formData: FormData): Promise<AccountState> {
+  const session = await getSession()
+  if (!session) return { error: 'You are not signed in.' }
+  if (isDemo(session.user.email)) return { error: 'The demo accounts cannot be deleted — they are shared.' }
+
+  // Typing the address is the confirmation; a dialog alone is too easy to click through.
+  if (formData.get('confirm') !== session.user.email) {
+    return { error: 'Type your email address exactly to confirm.' }
+  }
+
+  await auth.api.signOut({ headers: await headers() })
+  await deleteUser(session.user.id)
+  redirect('/')
+}

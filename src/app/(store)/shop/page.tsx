@@ -7,7 +7,9 @@ import { ShopToolbar } from '@/features/products/components/shop-toolbar'
 import { getCatalogue } from '@/features/products/data'
 import { fromShop, shopSearchSchema } from '@/features/products/schemas'
 import { getSession } from '@/lib/auth/session'
-import { listFavouriteIds } from '@/lib/db/queries/favourites'
+import { listFavoriteIds } from '@/lib/db/queries/favorites'
+import { summariseMany } from '@/lib/db/queries/reviews'
+import { Stars } from '@/features/reviews/components/stars'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -39,7 +41,8 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
 
   // One query for the whole grid rather than one per tile.
   const session = await getSession()
-  const favourites = new Set(session ? await listFavouriteIds(session.user.id) : [])
+  const favorites = new Set(session ? await listFavoriteIds(session.user.id) : [])
+  const ratings = await summariseMany(products.map((product) => product.id))
 
   return (
     <div className="flex flex-col gap-10">
@@ -48,12 +51,22 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
         <ProductGrid
           products={products}
           from={fromShop(search)}
+          rating={(product) => {
+            const summary = ratings.get(product.id)
+            if (!summary) return null
+            return (
+              <div className="flex items-center gap-1.5 text-xs text-olive-600 dark:text-olive-400">
+                <Stars rating={summary.average} />
+                <span>({summary.count})</span>
+              </div>
+            )
+          }}
           actions={(product) => (
             <QuickActions
               productId={product.id}
               name={product.name}
               soldOut={product.stock_quantity === 0}
-              favourited={favourites.has(product.id)}
+              favorited={favorites.has(product.id)}
             />
           )}
         />

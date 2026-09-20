@@ -2,6 +2,7 @@ import { categories } from '@/lib/db/types'
 import { clsx } from 'clsx/lite'
 import Link from 'next/link'
 import { categoryLabels, shopHref, sortLabels, sorts, type ShopSearch } from '../schemas'
+import { SearchBox } from './search-box'
 import { SortSelect } from './sort-select'
 
 export function ShopToolbar({ search, count }: { search: ShopSearch; count: number }) {
@@ -21,25 +22,7 @@ export function ShopToolbar({ search, count }: { search: ShopSearch; count: numb
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        {/* A plain GET form, so search works with JavaScript disabled. */}
-        <form action="/shop" className="flex items-center gap-2">
-          {search.category && <input type="hidden" name="category" value={search.category} />}
-          {search.sort !== 'newest' && <input type="hidden" name="sort" value={search.sort} />}
-          <input
-            type="search"
-            name="q"
-            defaultValue={search.q ?? ''}
-            placeholder="Search the collection"
-            aria-label="Search the collection"
-            className="w-56 rounded-lg border border-olive-300 bg-transparent px-3 py-1.5 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
-          />
-          <button
-            type="submit"
-            className="rounded-lg border border-olive-300 px-3 py-1.5 text-sm text-olive-700 hover:bg-olive-200/50 dark:border-olive-800 dark:text-olive-300 dark:hover:bg-olive-800/50"
-          >
-            Search
-          </button>
-        </form>
+        <SearchBox search={search} />
 
         <SortSelect
           value={search.sort}
