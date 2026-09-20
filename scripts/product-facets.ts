@@ -8,7 +8,7 @@
 export type Facets = { materials: string[]; color: string | null }
 
 export const productFacets: Record<string, Facets> = {
-  // Furniture — the timber is the material and the finish leaves it its own colour.
+  // Furniture — the timber is the material and the finish leaves it its own color.
   'ash-dining-table': { materials: ['ash', 'steel'], color: 'natural' },
   'elm-side-table': { materials: ['elm'], color: 'natural' },
   'low-workshop-stool': { materials: ['pine', 'reclaimed-timber'], color: 'natural' },

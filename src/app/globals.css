@@ -26,6 +26,8 @@
   --font-sans: var(--font-inter);
   /* Ground that product photography sits on, so it reads as deliberate in both themes. */
   --color-tile: var(--tile);
+  --color-chart-1: var(--chart-1);
+  --color-chart-grid: var(--chart-grid);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -78,6 +80,9 @@
   --accent: var(--color-olive-200);
   --accent-foreground: var(--color-olive-950);
   --destructive: oklch(0.577 0.245 27.325);
+  /* Terracotta: olive is too close to grey to carry data. Each step checked on its own surface. */
+  --chart-1: #a85c3e;
+  --chart-grid: oklch(15.3% 0.006 107.1 / 12%);
   --border: var(--color-olive-300);
   --input: var(--color-olive-300);
   --ring: var(--color-olive-500);
@@ -111,6 +116,8 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: var(--color-olive-400);
+  --chart-1: #c2764e;
+  --chart-grid: oklch(100% 0 0 / 14%);
   --tile: var(--color-olive-900);
   --sidebar: var(--color-olive-900);
   --sidebar-foreground: var(--color-olive-50);

@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Suspense } from 'react'
 import { FavoriteButton } from '@/app/_components/favorite-button'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
+import { TrackProduct } from '@/components/analytics'
 import { ReviewForm } from '@/features/reviews/components/review-form'
 import { ReviewList } from '@/features/reviews/components/review-list'
 import { Stars } from '@/features/reviews/components/stars'
@@ -58,6 +59,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
 
   return (
     <Container className="flex flex-col gap-16 py-10">
+      <TrackProduct productId={product.id} />
       <div className="flex flex-col gap-6">
         <Breadcrumbs search={search} category={product.category} name={product.name} />
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">

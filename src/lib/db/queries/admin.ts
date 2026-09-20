@@ -9,11 +9,12 @@ export type DashboardPoint = { day: string; revenue_cents: number; orders: numbe
 export type TopSeller = { id: number; name: string; slug: string; image_url: string | null; sold: number; revenue_cents: number }
 
 /** Paid orders only: an order nobody paid for is not revenue, whatever the dashboard would rather say. */
-const paidWithin = `status = 'paid' AND created_at >= $1 AND created_at < $2`
+// Every column is qualified: products carries a created_at too, and an unqualified one is ambiguous.
+const paidWithin = (o: string) => `${o}.status = 'paid' AND ${o}.created_at >= $1 AND ${o}.created_at < $2`
 
 export async function totalsBetween(from: Date, to: Date): Promise<Totals> {
   const { rows } = await pool.query<{ revenue: string | null; orders: string; buyers: string; repeat: string }>(
-    `WITH paid AS (SELECT user_id, total_cents FROM orders WHERE ${paidWithin}),
+    `WITH paid AS (SELECT orders.user_id, orders.total_cents FROM orders WHERE ${paidWithin('orders')}),
           per_buyer AS (SELECT user_id, count(*) AS orders FROM paid GROUP BY user_id)
      SELECT (SELECT sum(total_cents) FROM paid) AS revenue,
             (SELECT count(*) FROM paid) AS orders,
@@ -55,7 +56,7 @@ export async function topSellers(from: Date, to: Date, limit = 5): Promise<TopSe
        FROM order_items oi
        JOIN orders o ON o.id = oi.order_id
        JOIN products p ON p.id = oi.product_id
-      WHERE o.${paidWithin}
+      WHERE ${paidWithin('o')}
       GROUP BY p.id, p.name, p.slug, p.image_url
       ORDER BY sum(oi.quantity * oi.unit_price_cents) DESC
       LIMIT $3`,

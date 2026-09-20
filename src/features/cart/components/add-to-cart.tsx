@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useActionState, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/elements/button'
+import { track } from '@/components/analytics'
 import { addToCart, type CartState } from '../actions'
 import { useCartOpen } from './cart-open'
 import { QuantityStepper } from './quantity-stepper'
@@ -29,6 +30,7 @@ export function AddToCart({ productId, name, stock }: { productId: number; name:
     const token = `${productId}:${state.addedAt}`
     if (handled.has(token)) return
     handled.add(token)
+    track('add_to_cart', productId)
     setOpen(true)
     // The badge and the sheet live in the layout, whose segment the page's own action
     // does not re-render, so this route is refreshed explicitly.

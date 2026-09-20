@@ -14,7 +14,7 @@ const lines: [number, string][] = [
   [5, 'Bought as a gift and then could not part with it. Ordering a second.'],
   [
     3,
-    'The making is genuinely good. The colour is a touch greyer than it looks on screen, so be warned if you are matching something.',
+    'The making is genuinely good. The color is a touch grayer than it looks on screen, so be warned if you are matching something.',
   ],
   [5, 'Has lived on the table for six months and still looks new. No crazing, no staining from tea.'],
   [4, 'Handsome and solid. The oil finish needs redoing sooner than I would like, but that is oil for you.'],

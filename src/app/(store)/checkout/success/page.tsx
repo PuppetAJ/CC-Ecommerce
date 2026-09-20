@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { requireUser } from '@/lib/auth/session'
 import { getOrderByStripeSession } from '@/lib/db/queries/orders'
 import { OrderSummary } from '@/features/checkout/components/order-summary'
+import { TrackPurchase } from '@/components/analytics'
 
 export const metadata = { title: 'Order confirmed' }
 
@@ -47,6 +48,7 @@ async function Confirmation({ sessionId }: { sessionId?: string }) {
 
   return (
     <div className="flex max-w-2xl flex-col gap-6">
+      <TrackPurchase orderId={order.id} />
       <Text size="lg">
         <p>
           {order.status === 'paid'

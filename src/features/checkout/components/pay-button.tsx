@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react'
 import { Button } from '@/components/elements/button'
+import { track } from '@/components/analytics'
 import { startCheckout, type CheckoutState } from '../actions'
 
 export function PayButton({ total }: { total: string }) {
@@ -9,7 +10,7 @@ export function PayButton({ total }: { total: string }) {
 
   return (
     <form action={action} className="grid gap-3">
-      <Button type="submit" size="lg" disabled={pending} className="w-full">
+      <Button type="submit" size="lg" disabled={pending} onClick={() => track('checkout_started')} className="w-full">
         {pending ? 'Opening Stripe…' : `Pay ${total}`}
       </Button>
       {state?.error ? (
