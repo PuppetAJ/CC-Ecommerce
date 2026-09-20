@@ -34,3 +34,21 @@ export function adminHref(path: string, params: Record<string, string | undefine
   const query = search.toString()
   return query ? `${path}?${query}` : path
 }
+
+export const productEdit = z.object({
+  id: z.coerce.number().int().positive(),
+  priceDollars: z.coerce.number().min(0).max(100000),
+  salePriceDollars: z.union([z.coerce.number().min(0).max(100000), z.literal('')]).optional(),
+  stock: z.coerce.number().int().min(0).max(9999),
+  featured: z.union([z.literal('on'), z.literal(null), z.undefined()]).transform(Boolean),
+})
+
+export const orderStatusEdit = z.object({
+  id: z.coerce.number().int().positive(),
+  status: z.enum(['pending', 'paid', 'cancelled']),
+})
+
+export const reviewTarget = z.object({
+  userId: z.string().min(1).max(200),
+  productId: z.coerce.number().int().positive(),
+})

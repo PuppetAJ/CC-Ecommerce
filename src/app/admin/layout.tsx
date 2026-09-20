@@ -23,6 +23,17 @@ export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
         </Container>
       </header>
 
+      {/* Said once, at the top: the writes here are real, and the night takes them back. */}
+      <div className="border-b border-amber-500/25 bg-amber-500/10 dark:bg-amber-400/10">
+        <Container className="py-2.5">
+          <p className="text-xs/5 text-amber-900 dark:text-amber-200">
+            <span className="font-medium">This admin writes to the real database.</span> Prices, stock and order
+            statuses change for everybody. Everything is reseeded nightly, so nothing you do here lasts. Deleting
+            products and customers, and issuing refunds, are switched off.
+          </p>
+        </Container>
+      </div>
+
       <Container className="grid flex-1 gap-8 py-8 lg:grid-cols-[13rem_1fr] lg:gap-12">
         <AdminNav />
         <div className="min-w-0">{children}</div>

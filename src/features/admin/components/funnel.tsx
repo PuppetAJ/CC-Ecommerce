@@ -28,7 +28,10 @@ export function Funnel({ steps }: { steps: Steps }) {
               <span className="text-olive-950 tabular-nums dark:text-white">
                 {count.toLocaleString('en-US')}
                 {kept !== null && (
-                  <span className="ml-2 text-xs text-olive-600 dark:text-olive-400">{kept.toFixed(0)}% of above</span>
+                  <span className="text-xs text-olive-600 dark:text-olive-400">
+                    {' · '}
+                    {kept.toFixed(0)}% of above
+                  </span>
                 )}
               </span>
             </div>

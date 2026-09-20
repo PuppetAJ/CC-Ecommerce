@@ -89,6 +89,11 @@ export async function listAdminProducts({ q, category, stock }: ProductFilters =
   return rows
 }
 
+export async function getAdminProduct(id: number): Promise<Product | null> {
+  const { rows } = await pool.query<Product>('SELECT * FROM products WHERE id = $1', [id])
+  return rows[0] ?? null
+}
+
 export type ProductEdit = {
   price_cents: number
   sale_price_cents: number | null

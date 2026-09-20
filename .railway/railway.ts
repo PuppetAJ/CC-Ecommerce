@@ -31,5 +31,22 @@ export default defineRailway(() => {
     },
   })
 
-  return project('wicken', { resources: [database, app] })
+  // The demo admin writes for real, so something has to put the shop back. Runs nightly at
+  // 04:00 UTC, which is the quietest hour for a portfolio nobody is reading at 4am.
+  const reset = service('Reset', {
+    source: repository,
+    build: 'pnpm install --frozen-lockfile',
+    start: 'pnpm db:migrate && pnpm db:seed',
+    deploy: {
+      cronSchedule: '0 4 * * *',
+      // A failed run waits for the next schedule rather than looping.
+      restartPolicyType: 'NEVER',
+    },
+    env: {
+      NODE_ENV: 'production',
+      DATABASE_URL: '${{Postgres.DATABASE_URL}}',
+    },
+  })
+
+  return project('wicken', { resources: [database, app, reset] })
 })
