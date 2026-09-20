@@ -184,6 +184,65 @@ section('Where login sends you afterwards')
   }
 }
 
+section('Finding your way back')
+{
+  const { context, page: nav } = await freshPage(browser)
+  const filtered = `${BASE}/shop?category=furniture&sort=price-asc`
+
+  await nav.goto(filtered, { waitUntil: 'networkidle' })
+  const href = await nav.locator('a[href^="/products/"]').first().getAttribute('href')
+  check(
+    'a product link carries the filters',
+    href.includes('category=furniture') && href.includes('sort=price-asc'),
+    href,
+  )
+
+  await nav.locator('a[href^="/products/"]').first().click()
+  await nav.waitForTimeout(1500)
+  const crumbs = await nav.locator('nav[aria-label="Breadcrumb"]').innerText()
+  check('the product page offers a way back', /Back to results/.test(crumbs), crumbs.replace(/\n/g, ' '))
+
+  await nav.locator('nav[aria-label="Breadcrumb"] a').first().click()
+  await nav.waitForTimeout(1500)
+  check(
+    'and it lands on the same results',
+    nav.url().includes('category=furniture') && nav.url().includes('sort=price-asc'),
+    nav.url(),
+  )
+
+  // Landing on a product directly has no filters to go back to.
+  await nav.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
+  check('arriving cold says Shop instead', /Shop/.test(await nav.locator('nav[aria-label="Breadcrumb"]').innerText()))
+
+  await nav.goto(filtered, { waitUntil: 'networkidle' })
+  const loginHref = await nav.getByRole('banner').getByRole('link', { name: 'Log in' }).getAttribute('href')
+  check('the header login link remembers where you are', loginHref.includes('next='), loginHref)
+
+  await nav.getByRole('banner').getByRole('link', { name: 'Log in' }).click()
+  await nav.waitForTimeout(1200)
+  await nav.getByRole('button', { name: 'Demo shopper' }).click()
+  await nav.waitForTimeout(2500)
+  check('and signing in returns you there', nav.url().includes('category=furniture'), nav.url())
+  await context.close()
+}
+
+section('More from a category')
+{
+  const { context, page: nav } = await freshPage(browser)
+  await nav.goto(`${BASE}/products/ash-glaze-dinner-plate`, { waitUntil: 'networkidle' })
+  const rail = nav.locator('ul:has(> li a[href^="/products/"])').last()
+  check('the rail offers more than a single row', (await rail.locator('li').count()) > 4)
+
+  const forward = nav.getByRole('button', { name: 'More products' })
+  check('an arrow is offered when there is overflow', (await forward.count()) === 1)
+  const before = await rail.evaluate((element) => element.scrollLeft)
+  await forward.click()
+  await nav.waitForTimeout(900)
+  const after = await rail.evaluate((element) => element.scrollLeft)
+  check('and it pages the rail along', after > before, `scrollLeft ${before} to ${after}`)
+  await context.close()
+}
+
 section('Cart')
 {
   const { context, page: shop } = await freshPage(browser)
