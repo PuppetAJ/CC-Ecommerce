@@ -27,49 +27,51 @@ const lines: [number, string][] = [
   [4, 'Handsome and solid. The oil finish needs redoing sooner than I would like, but that is oil for you.'],
 ]
 
-const client = await pool.connect()
-try {
-  await client.query('BEGIN')
+/** Called by scripts/seed.ts, so one command produces the whole demo dataset. */
+export async function seedDemoReviews(): Promise<number> {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
 
-  const ids: string[] = []
-  for (const [name, email] of reviewers) {
-    // Reviewers exist only to have a name against a review; they never sign in.
-    const { rows } = await client.query<{ id: string }>(
-      `INSERT INTO users (id, name, email, email_verified)
-       VALUES (encode(sha256($1::bytea), 'hex'), $2, $1, true)
-       ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
-       RETURNING id`,
-      [email, name],
-    )
-    ids.push(rows[0].id)
-  }
-
-  const { rows: products } = await client.query<{ id: number }>('SELECT id FROM products ORDER BY id')
-  await client.query('DELETE FROM reviews WHERE user_id = ANY($1)', [ids])
-
-  let written = 0
-  for (const [index, product] of products.entries()) {
-    // A deterministic spread: some products carry four reviews, some none at all, which is
-    // what a real catalogue looks like.
-    const howMany = [3, 0, 2, 4, 1, 0, 2, 1][index % 8]
-    for (let n = 0; n < howMany; n++) {
-      const [rating, body] = lines[(index * 3 + n) % lines.length]
-      await client.query(
-        `INSERT INTO reviews (user_id, product_id, rating, body, created_at)
-         VALUES ($1, $2, $3, $4, now() - ($5 || ' days')::interval)
-         ON CONFLICT DO NOTHING`,
-        [ids[n % ids.length], product.id, rating, body, (index * 7 + n * 11) % 180],
+    const ids: string[] = []
+    for (const [name, email] of reviewers) {
+      // Reviewers exist only to have a name against a review; they never sign in.
+      const { rows } = await client.query<{ id: string }>(
+        `INSERT INTO users (id, name, email, email_verified)
+         VALUES (encode(sha256($1::bytea), 'hex'), $2, $1, true)
+         ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
+         RETURNING id`,
+        [email, name],
       )
-      written++
+      ids.push(rows[0].id)
     }
-  }
 
-  await client.query('COMMIT')
-  console.log(`Seeded ${written} reviews from ${reviewers.length} reviewers`)
-} catch (error) {
-  await client.query('ROLLBACK')
-  throw error
-} finally {
-  client.release()
-  await pool.end()
+    const { rows: products } = await client.query<{ id: number }>('SELECT id FROM products ORDER BY id')
+    await client.query('DELETE FROM reviews WHERE user_id = ANY($1)', [ids])
+
+    let written = 0
+    for (const [index, product] of products.entries()) {
+      // A deterministic spread: some products carry four reviews, some none at all, which
+      // is what a real catalogue looks like and lets the empty state be seen.
+      const howMany = [3, 0, 2, 4, 1, 0, 2, 1][index % 8]
+      for (let n = 0; n < howMany; n++) {
+        const [rating, body] = lines[(index * 3 + n) % lines.length]
+        await client.query(
+          `INSERT INTO reviews (user_id, product_id, rating, body, created_at)
+           VALUES ($1, $2, $3, $4, now() - ($5 || ' days')::interval)
+           ON CONFLICT DO NOTHING`,
+          [ids[n % ids.length], product.id, rating, body, (index * 7 + n * 11) % 180],
+        )
+        written++
+      }
+    }
+
+    await client.query('COMMIT')
+    return written
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
 }
