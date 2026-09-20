@@ -16,12 +16,15 @@ export async function listProducts({
   search,
   materials,
   colors,
+  priceRanges,
   sort = 'newest',
 }: {
   category?: Category
   search?: string
   materials?: string[]
   colors?: string[]
+  /** Inclusive lower bound, exclusive upper; null upper means open-ended. */
+  priceRanges?: [number, number | null][]
   sort?: ProductSort
 } = {}): Promise<Product[]> {
   // Every parameter is always bound; a null means "no filter" so the SQL stays one
@@ -32,8 +35,21 @@ export async function listProducts({
        AND ($2::text IS NULL OR name ILIKE '%' || $2 || '%' OR description ILIKE '%' || $2 || '%')
        AND ($3::text[] IS NULL OR material_tags && $3)
        AND ($4::text[] IS NULL OR color = ANY($4))
+       -- Any chosen band matching is enough, so the bands read as "or" like every other facet.
+       AND ($5::int[] IS NULL OR EXISTS (
+         SELECT 1 FROM unnest($5::int[], $6::int[]) AS band(lo, hi)
+         WHERE COALESCE(sale_price_cents, price_cents) >= band.lo
+           AND (band.hi IS NULL OR COALESCE(sale_price_cents, price_cents) < band.hi)
+       ))
      ORDER BY ${orderBy[sort]}`,
-    [category ?? null, search ?? null, materials?.length ? materials : null, colors?.length ? colors : null],
+    [
+      category ?? null,
+      search ?? null,
+      materials?.length ? materials : null,
+      colors?.length ? colors : null,
+      priceRanges?.length ? priceRanges.map(([lo]) => lo) : null,
+      priceRanges?.length ? priceRanges.map(([, hi]) => hi) : null,
+    ],
   )
   return rows
 }

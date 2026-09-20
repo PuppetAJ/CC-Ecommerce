@@ -85,6 +85,25 @@ export const colorSwatches: Record<(typeof colors)[number], string> = {
   mixed: 'conic-gradient(#e8e0cf 0deg 120deg, #b0674a 120deg 240deg, #2f4f7a 240deg 360deg)',
 }
 
+// Bands rather than a slider: the catalogue runs $18 to $1,280 with most of it under $200,
+// so a slider would spend most of its travel on four products.
+export const priceBands = ['under-50', '50-100', '100-200', 'over-200'] as const
+
+export const priceBandLabels: Record<(typeof priceBands)[number], string> = {
+  'under-50': 'Under $50',
+  '50-100': '$50 to $100',
+  '100-200': '$100 to $200',
+  'over-200': 'Over $200',
+}
+
+/** Inclusive of the lower bound, exclusive of the upper, in cents. */
+export const priceBandRanges: Record<(typeof priceBands)[number], [number, number | null]> = {
+  'under-50': [0, 5000],
+  '50-100': [5000, 10000],
+  '100-200': [10000, 20000],
+  'over-200': [20000, null],
+}
+
 export const sorts = ['newest', 'price-asc', 'price-desc', 'name'] as const
 
 export const sortLabels: Record<(typeof sorts)[number], string> = {
@@ -110,6 +129,11 @@ export const shopSearchSchema = z.object({
     .transform((value) => (Array.isArray(value) ? value : [value]))
     .optional()
     .catch(undefined),
+  price: z
+    .union([z.enum(priceBands), z.array(z.enum(priceBands))])
+    .transform((value) => (Array.isArray(value) ? value : [value]))
+    .optional()
+    .catch(undefined),
 })
 
 export type ShopSearch = z.infer<typeof shopSearchSchema>
@@ -122,6 +146,7 @@ export function shopHref(search: Partial<ShopSearch>): string {
   if (search.q) params.set('q', search.q)
   for (const material of search.material ?? []) params.append('material', material)
   for (const color of search.color ?? []) params.append('color', color)
+  for (const band of search.price ?? []) params.append('price', band)
   const query = params.toString()
   return query ? `/shop?${query}` : '/shop'
 }

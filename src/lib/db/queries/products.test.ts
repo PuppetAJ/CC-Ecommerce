@@ -120,3 +120,52 @@ describe('filtering by material and color', () => {
     assert.equal(materials[0], 'stoneware', 'two carry it, the rest one each')
   })
 })
+
+describe('filtering by price band', () => {
+  const priced = async () => {
+    await pool.query(
+      `INSERT INTO products (slug, name, description, category, price_cents, stock_quantity, sale_price_cents)
+       VALUES ('cheap', 'Cheap', 'x', 'tableware', 3000, 1, NULL),
+              ('mid', 'Mid', 'x', 'tableware', 7000, 1, NULL),
+              ('dear', 'Dear', 'x', 'furniture', 30000, 1, NULL),
+              ('reduced', 'Reduced', 'x', 'furniture', 30000, 1, 4000)`,
+    )
+  }
+
+  it('bands on what the shopper pays, not the list price', async () => {
+    await priced()
+    const found = await listProducts({ priceRanges: [[0, 5000]] })
+    assert.deepEqual(
+      found.map((p) => p.slug).sort(),
+      ['cheap', 'reduced'],
+      'a £300 chair reduced to £40 belongs in the cheapest band',
+    )
+  })
+
+  it('excludes the upper bound and includes the lower', async () => {
+    await priced()
+    // cheap is 3000 and reduced costs 4000; mid is exactly 7000 and so falls outside.
+    const found = await listProducts({ priceRanges: [[3000, 7000]] })
+    assert.deepEqual(found.map((p) => p.slug).sort(), ['cheap', 'reduced'])
+    assert.ok(!found.some((p) => p.slug === 'mid'), '7000 is the exclusive upper bound')
+  })
+
+  it('treats a null upper bound as open ended', async () => {
+    await priced()
+    assert.deepEqual(
+      (await listProducts({ priceRanges: [[20000, null]] })).map((p) => p.slug),
+      ['dear'],
+    )
+  })
+
+  it('returns anything in any chosen band', async () => {
+    await priced()
+    const found = await listProducts({
+      priceRanges: [
+        [0, 5000],
+        [20000, null],
+      ],
+    })
+    assert.deepEqual(found.map((p) => p.slug).sort(), ['cheap', 'dear', 'reduced'])
+  })
+})
