@@ -1,12 +1,49 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "react", "unicorn", "oxc", "nextjs"],
+  "plugins": ["typescript", "react", "unicorn", "oxc", "nextjs", "import"],
   "categories": {
     "correctness": "error"
   },
   "rules": {
     // The automatic JSX transform means React need not be imported to use JSX.
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "import/no-cycle": "error"
   },
+  // Imports run one way: app -> features -> components | lib. The leaves may not reach back up.
+  "overrides": [
+    {
+      "files": ["src/components/**", "src/lib/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/*", "@/features/**", "@/app/*", "@/app/**"],
+                "message": "components and lib are leaves; they must not import from features or app."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/features/*", "@/features/**"],
+                "message": "A feature must not import another feature; go down to lib or components instead."
+              },
+              { "group": ["@/app/*", "@/app/**"], "message": "A feature must not import from app." }
+            ]
+          }
+        ]
+      }
+    }
+  ],
   "ignorePatterns": ["**/.next/**", "docs/**", "next-env.d.ts", "src/components/ui/**"]
 }

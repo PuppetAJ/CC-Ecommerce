@@ -1,4 +1,4 @@
-import { PlaceholderPage } from '@/components/placeholder-page'
+import { PlaceholderPage } from '@/app/_components/placeholder-page'
 import { requireAdmin } from '@/lib/auth/session'
 
 // Silences instant-navigation validation for the session read; it does not change
