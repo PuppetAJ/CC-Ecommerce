@@ -1,12 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { shopHref, type ShopSearch } from '../schemas'
+import { useEffect, useState, useTransition } from 'react'
+import { searchMaxLength, shopHref, type ShopSearch } from '../schemas'
 
 /**
- * Filters as you type. Fine at this size — a few dozen products and a LIKE query — and
- * honestly wrong at ten thousand, where this belongs in a search index instead.
+ * Filters as you type, against a trigram index rather than a warm cache, so the cost does not
+ * grow with how many distinct things people search for.
  *
  * It stays a real GET form so search still works with JavaScript off; the typing is the
  * enhancement on top.
@@ -15,17 +15,27 @@ export function SearchBox({ search }: { search: ShopSearch }) {
   const [value, setValue] = useState(search.q ?? '')
   const [pending, start] = useTransition()
   const router = useRouter()
-  const typed = useRef(false)
+
+  // Primitives, not the `search` object: a fresh identity each render relooped the effect.
+  const applied = search.q ?? ''
+  const withoutQuery = shopHref({ ...search, q: undefined })
 
   useEffect(() => {
-    if (!typed.current) return
+    // The schema's own bound: what it rejects comes back as no query, which never matches.
+    const wanted = value.trim().slice(0, searchMaxLength)
+    // Already showing this query, so there is nothing to ask for.
+    if (wanted === applied) return
 
     // A pause rather than a keystroke, or every letter is a round trip.
     const timer = setTimeout(() => {
-      start(() => router.replace(shopHref({ ...search, q: value.trim() || undefined }), { scroll: false }))
-    }, 250)
+      const [path, existing = ''] = withoutQuery.split('?')
+      const params = new URLSearchParams(existing)
+      if (wanted) params.set('q', wanted)
+      const query = params.toString()
+      start(() => router.replace(query ? `${path}?${query}` : path, { scroll: false }))
+    }, 300)
     return () => clearTimeout(timer)
-  }, [value, search, router])
+  }, [value, applied, withoutQuery, router])
 
   return (
     <form action="/shop" className="flex items-center gap-2">
@@ -35,10 +45,8 @@ export function SearchBox({ search }: { search: ShopSearch }) {
         type="search"
         name="q"
         value={value}
-        onChange={(event) => {
-          typed.current = true
-          setValue(event.target.value)
-        }}
+        onChange={(event) => setValue(event.target.value)}
+        maxLength={searchMaxLength}
         placeholder="Search the collection"
         aria-label="Search the collection"
         className="w-56 rounded-lg border border-olive-300 bg-transparent px-3 py-1.5 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
@@ -46,7 +54,7 @@ export function SearchBox({ search }: { search: ShopSearch }) {
       <span aria-live="polite" className="sr-only">
         {pending ? 'Searching' : ''}
       </span>
-      {/* Only reachable without JavaScript; typing already submits otherwise. */}
+      {/* Only reachable without JavaScript; typing already navigates otherwise. */}
       <noscript>
         <button
           type="submit"

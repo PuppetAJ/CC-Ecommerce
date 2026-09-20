@@ -8,17 +8,26 @@ import {
   listRelatedProducts,
 } from '@/lib/db/queries/products'
 import type { Product } from '@/lib/db/types'
-import type { ShopSearch } from './schemas'
+import { priceBandRanges, type ShopSearch } from './schemas'
 
 // Sits above src/lib/db, which must stay importable by plain Node for the tests and seed.
 
 // Takes the parsed search params whole, so the URL's `q` cannot drift from the query's
 // `search` the way it silently did once.
-export async function getCatalogue({ category, sort, q, material, color }: ShopSearch): Promise<Product[]> {
+export async function getCatalogue({ category, sort, q, material, color, price }: ShopSearch): Promise<Product[]> {
   'use cache'
-  cacheLife('hours')
   cacheTag('products')
-  return listProducts({ category, sort, search: q, materials: material, colors: color })
+  // Free text is unbounded, so a long life would pin one entry per query ever typed.
+  if (q) cacheLife('seconds')
+  else cacheLife('hours')
+  return listProducts({
+    category,
+    sort,
+    search: q,
+    materials: material,
+    colors: color,
+    priceRanges: price?.map((band) => priceBandRanges[band]),
+  })
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {
