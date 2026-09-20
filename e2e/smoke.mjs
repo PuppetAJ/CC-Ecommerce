@@ -295,42 +295,76 @@ section('Favorites, signed in')
   await context.close()
 }
 
-section('Material and colour filters')
+section('Material and color filters')
 {
   const { context, page: shop } = await freshPage(browser)
   const tiles = () => shop.locator('article').count()
 
   await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
   const all = await tiles()
-  check('the filters offer what the catalogue carries', (await shop.locator('a[data-facet]').count()) > 10)
+  check('materials are checkboxes', (await shop.locator('input[type="checkbox"][name="material"]').count()) > 5)
+  check('colors are swatches', (await shop.locator('input[type="checkbox"][name="color"]').count()) > 5)
+  check('no counts beside the materials', !/\d/.test(await shop.locator('fieldset').first().innerText()))
 
-  await shop.locator('a[data-facet][href*="material=oak"]').first().click()
-  await shop.waitForTimeout(1200)
+  await shop.locator('input[name="material"][value="oak"]').check()
+  await shop.waitForTimeout(1500)
   const oak = await tiles()
-  check('a material narrows the grid', oak > 0 && oak < all, `${all} to ${oak}`)
-  check('and the pill reads as selected', (await shop.locator('a[data-facet][aria-current="true"]').count()) === 1)
+  check('checking a box filters the grid', oak > 0 && oak < all, `${all} to ${oak}`)
+  check('and the URL carries it', shop.url().includes('material=oak'), shop.url())
+  check('the box stays checked', await shop.locator('input[name="material"][value="oak"]').isChecked())
 
-  await shop.goto(`${BASE}/shop?material=oak&material=ash`, { waitUntil: 'networkidle' })
+  await shop.locator('input[name="material"][value="ash"]').check()
+  await shop.waitForTimeout(1500)
   // Overlap, not intersection: nothing is made of oak *and* ash.
   check('two materials returns either, not both', (await tiles()) > oak, `${await tiles()} tiles`)
 
-  const ashPill = shop.locator('a[data-facet][aria-current="true"]').filter({ hasText: 'Ash' }).first()
-  await ashPill.click()
-  await shop.waitForTimeout(1200)
+  await shop.locator('input[name="material"][value="oak"]').uncheck()
+  await shop.waitForTimeout(1500)
   check(
-    'a pressed pill removes only itself',
-    shop.url().includes('material=oak') && !shop.url().includes('ash'),
+    'unchecking removes only that one',
+    shop.url().includes('material=ash') && !shop.url().includes('oak'),
     shop.url(),
   )
 
   await shop.goto(`${BASE}/shop?color=blue`, { waitUntil: 'networkidle' })
-  check('colour filters too', (await tiles()) > 0 && (await tiles()) < all)
+  check('color filters too', (await tiles()) > 0 && (await tiles()) < all)
 
   await shop.goto(`${BASE}/shop?material=stoneware&color=cream`, { waitUntil: 'networkidle' })
-  check('material and colour combine', (await tiles()) > 0 && (await tiles()) < all, `${await tiles()} tiles`)
+  check('material and color combine', (await tiles()) > 0 && (await tiles()) < all, `${await tiles()} tiles`)
+
+  await shop.goto(`${BASE}/shop?category=vases&material=stoneware`, { waitUntil: 'networkidle' })
+  check('filtering keeps the category', shop.url().includes('category=vases'), shop.url())
 
   await shop.goto(`${BASE}/shop?material=bogus&color=nonsense`, { waitUntil: 'networkidle' })
   check('nonsense facets fall back rather than throwing', (await tiles()) === all, `${await tiles()} tiles`)
+
+  // The quick actions overlay the whole tile, so it must not swallow the card's own link.
+  await shop.goto(`${BASE}/shop?material=oak`, { waitUntil: 'networkidle' })
+  const image = await shop.locator('article').first().locator('img').first().boundingBox()
+  await shop.mouse.click(image.x + image.width / 2, image.y + image.height / 2)
+  await shop.waitForTimeout(1800)
+  check('clicking a tile image opens the product', shop.url().includes('/products/'), shop.url())
+  await context.close()
+}
+
+section('Favoriting from the product page')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await signInAsDemo(reader, 'shopper')
+  await reader.goto(`${BASE}/products/oak-wall-shelf`, { waitUntil: 'networkidle' })
+  await reader.waitForTimeout(1200)
+
+  const save = reader.locator('button[data-favorite="product"]')
+  check('the product page carries its own save control', (await save.count()) === 1)
+  const before = await save.getAttribute('aria-pressed')
+  await save.click()
+  await reader.waitForTimeout(1800)
+  check('and it toggles', (await save.getAttribute('aria-pressed')) !== before)
+
+  // Leave the demo account as it was found.
+  await save.click()
+  await reader.waitForTimeout(1500)
+  check('toggling back leaves it as found', (await save.getAttribute('aria-pressed')) === before)
   await context.close()
 }
 
