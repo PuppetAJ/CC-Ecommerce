@@ -11,7 +11,14 @@ const schema = z.object({
   BETTER_AUTH_SECRET: z.string().min(32),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+  // Test keys only; a live key here would take real money for pretend furniture.
+  STRIPE_SECRET_KEY: z.string().startsWith('sk_test_').optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_').optional(),
 })
+
+// A key left blank in .env arrives as '', which is not the same as absent to zod's
+// .optional(); without this an unused optional key fails the whole parse.
+const blankIsAbsent = (value: string | undefined) => (value === '' ? undefined : value)
 
 const parsed = schema.safeParse({
   NODE_ENV: process.env.NODE_ENV,
@@ -19,8 +26,10 @@ const parsed = schema.safeParse({
   // Tests run against their own database, so a test run cannot truncate dev data.
   DATABASE_URL: process.env.NODE_ENV === 'test' ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_CLIENT_ID: blankIsAbsent(process.env.GOOGLE_CLIENT_ID),
+  GOOGLE_CLIENT_SECRET: blankIsAbsent(process.env.GOOGLE_CLIENT_SECRET),
+  STRIPE_SECRET_KEY: blankIsAbsent(process.env.STRIPE_SECRET_KEY),
+  STRIPE_WEBHOOK_SECRET: blankIsAbsent(process.env.STRIPE_WEBHOOK_SECRET),
 })
 
 if (!parsed.success) {
@@ -29,6 +38,10 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data
+
+// Only the secret key is needed to open a checkout session; the webhook secret gates the
+// webhook route on its own, so a deployment without it can still take a test payment.
+export const stripeEnabled = Boolean(env.STRIPE_SECRET_KEY)
 
 /** Google sign-in is only offered when both halves of the credential are present. */
 export const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET)

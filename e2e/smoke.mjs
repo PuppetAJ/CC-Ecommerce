@@ -415,6 +415,77 @@ section('A claimed cart cannot be reached by its old cookie')
   await victimContext.close()
 }
 
+section('Checkout')
+{
+  const { context, page: buyer } = await freshPage(browser)
+
+  await buyer.goto(`${BASE}/checkout`, { waitUntil: 'networkidle' })
+  check('checkout needs a login', buyer.url().includes('/login'), buyer.url())
+
+  await signInAsDemo(buyer, 'shopper')
+
+  // The demo account persists between runs, so start from a known cart.
+  const emptyTheCart = async () => {
+    await buyer.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
+    for (let line = 0; line < 20; line++) {
+      const remove = buyer.getByRole('button', { name: 'Remove', exact: true }).first()
+      if ((await remove.count()) === 0) break
+      await remove.click()
+      await buyer.waitForTimeout(900)
+    }
+  }
+  await emptyTheCart()
+
+  await buyer.goto(`${BASE}/checkout`, { waitUntil: 'networkidle' })
+  check('an empty cart has nothing to pay for', /Nothing to pay for/.test(await visibleText(buyer)))
+
+  await buyer.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
+  await buyer.getByRole('button', { name: 'Add to cart' }).click()
+  await buyer.waitForTimeout(2000)
+  await buyer.keyboard.press('Escape')
+  await buyer.goto(`${BASE}/checkout`, { waitUntil: 'networkidle' })
+  const summary = await visibleText(buyer)
+  check('the cart is summarised before paying', /Ash Dining Table/.test(summary))
+
+  // CI has no Stripe key, so the handover is checked only where one is configured. The
+  // order still has to be created either way, which is the part that is ours.
+  const payable = !/not configured/.test(summary)
+  if (payable) {
+    check('the test card is offered, so nobody uses a real one', /4242 4242 4242 4242/.test(summary))
+    // Stripe's own page is somebody else's to break, so the suite stops at the handover.
+    await buyer.getByRole('button', { name: /^Pay / }).click()
+    await buyer.waitForURL(/checkout\.stripe\.com/, { timeout: 30000 }).catch(() => {})
+    check('paying hands over to Stripe', buyer.url().includes('checkout.stripe.com'), buyer.url())
+  } else {
+    check('checkout says so plainly when Stripe is not configured', /not configured/.test(summary))
+  }
+
+  await buyer.goto(`${BASE}/account/orders`, { waitUntil: 'networkidle' })
+  const orders = await visibleText(buyer)
+  let orderUrl = null
+  if (payable) {
+    check('the order is recorded as awaiting payment', /Awaiting payment/.test(orders), orders.slice(0, 120))
+    await buyer.locator('a[href^="/account/orders/"]').first().click()
+    await buyer.waitForTimeout(1500)
+    orderUrl = buyer.url()
+    check('and it opens', /Ash Dining Table/.test(await visibleText(buyer)))
+    // Nothing marked it paid, so the page must not pretend otherwise.
+    check('an unpaid order is not called confirmed', !/confirmed/i.test(await visibleText(buyer)))
+  }
+
+  await emptyTheCart()
+  check('the demo cart is left as it was found', /Nothing in here yet/.test(await visibleText(buyer)))
+  await context.close()
+
+  if (orderUrl) {
+    const { context: nosy, page: other } = await freshPage(browser)
+    await signInAsDemo(other, 'admin')
+    await other.goto(orderUrl, { waitUntil: 'networkidle' })
+    check("another account cannot open somebody else's order", !/Ash Dining Table/.test(await visibleText(other)))
+    await nosy.close()
+  }
+}
+
 section('Throttling')
 {
   const { context, page: fresh } = await freshPage(browser)

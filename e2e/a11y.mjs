@@ -60,6 +60,8 @@ for (const colorScheme of ['light', 'dark']) {
   await page.getByRole('button', { name: 'Demo shopper' }).click()
   await page.waitForURL(`${BASE}/`)
   await audit(page, 'landing, signed in', '/')
+  await audit(page, 'checkout', '/checkout')
+  await audit(page, 'your orders', '/account/orders')
   await context.close()
 }
 
