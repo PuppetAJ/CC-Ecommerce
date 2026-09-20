@@ -9,7 +9,7 @@ import {
 } from '@/lib/db/queries/cart'
 import type { CartItem } from '@/lib/db/types'
 import { getSession } from '@/lib/auth/session'
-import { readCartCookie, writeCartCookie } from './cookie'
+import { readCartCookie, writeCartCookie } from '@/lib/cart/cookie'
 
 /** Read-only, because a render cannot set a cookie; nothing is created here. */
 async function currentCartId(): Promise<string | null> {

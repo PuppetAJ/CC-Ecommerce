@@ -1,7 +1,7 @@
 import { ButtonLink } from '@/components/elements/button'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { Feature, FeaturesThreeColumn } from '@/components/sections/features-three-column'
-import { LandingHero } from '@/features/landing/hero'
+import { LandingHero } from '@/app/(store)/_components/hero'
 import { Stat, StatsThreeColumnWithDescription } from '@/components/sections/stats-three-column-with-description'
 
 export default function HomePage() {
