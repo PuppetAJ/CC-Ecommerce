@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeftIcon } from 'lucide-react'
 import { Container } from '@/components/elements/container'
+import { Logo } from '@/components/elements/logo'
 import { AdminNav } from '@/features/admin/components/admin-nav'
 
 // Chrome only: a layout serialises children into the payload, so each page checks the role itself.
@@ -9,7 +10,8 @@ export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-olive-950/10 dark:border-white/10">
         <Container className="flex h-14 items-center justify-between gap-6">
-          <div className="flex items-baseline gap-3">
+          <div className="flex items-center gap-2.5">
+            <Logo className="size-5 shrink-0 text-olive-950 dark:text-white" />
             <span className="font-display text-lg font-medium text-olive-950 dark:text-white">Wicken</span>
             <span className="text-sm text-olive-600 dark:text-olive-400">Admin</span>
           </div>

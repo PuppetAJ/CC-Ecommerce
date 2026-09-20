@@ -8,7 +8,7 @@ const lines: [number, string][] = [
     5,
     'Better in person than in the photographs. The glaze pools slightly at the foot, which I did not expect and now like a lot.',
   ],
-  [5, 'Third piece I have bought from here. The weight is the thing — it feels like it will outlast me.'],
+  [5, 'Third piece I have bought from here. The weight is the thing. It feels like it will outlast me.'],
   [4, 'Lovely object, slightly smaller than I pictured. That is on me for not reading the dimensions properly.'],
   [4, 'Arrived well packed in straw board, no plastic anywhere. Took a fortnight rather than the week I expected.'],
   [5, 'Bought as a gift and then could not part with it. Ordering a second.'],

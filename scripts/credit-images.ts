@@ -30,5 +30,5 @@ for (const credit of credits) {
 writeFileSync('public/images/credits.json', JSON.stringify(credits, null, 2) + '\n')
 const pending = credits.filter((c) => !c.credited)
 console.log(
-  `\n${credits.length - pending.length} of ${credits.length} credited${pending.length ? `, ${pending.length} pending — rerun when the rate limit resets` : ''}`,
+  `\n${credits.length - pending.length} of ${credits.length} credited${pending.length ? `, ${pending.length} pending, rerun when the rate limit resets` : ''}`,
 )

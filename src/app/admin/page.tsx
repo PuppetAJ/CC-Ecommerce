@@ -106,7 +106,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
 
       <Panel
         title="Signed-in shoppers"
-        note="Accounts, not sessions — the only people the shop can recognise across visits."
+        note="Accounts, not sessions. The only people the shop can recognize across visits."
       >
         {visitors.known === 0 ? (
           <Empty>No signed-in shopper looked at anything in this period.</Empty>

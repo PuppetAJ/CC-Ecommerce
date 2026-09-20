@@ -52,7 +52,7 @@ async function Confirmation({ sessionId }: { sessionId?: string }) {
       <Text size="lg">
         <p>
           {order.status === 'paid'
-            ? 'Your order is confirmed. Nothing was really charged — this is a demo.'
+            ? 'Your order is confirmed. Nothing was really charged, because this is a demo.'
             : 'Your payment is still settling. This page will show it as paid once Stripe confirms.'}
         </p>
       </Text>

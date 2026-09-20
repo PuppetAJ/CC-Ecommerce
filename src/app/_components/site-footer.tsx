@@ -33,7 +33,7 @@ export function SiteFooter() {
           </FooterCategory>
         </>
       }
-      fineprint="© 2026 Wicken · A portfolio demo — no real orders are fulfilled."
+      fineprint="© 2026 Wicken · A portfolio demo. No real orders are fulfilled."
     />
   )
 }

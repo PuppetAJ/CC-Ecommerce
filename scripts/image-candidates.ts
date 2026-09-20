@@ -103,7 +103,7 @@ const html = `<!doctype html>
   <p>Click to select. Aim for ${sections.map((s) => `${s.want} ${s.name.toLowerCase()}`).join(', ')}. Copy the box below back to me.</p>
   <textarea id="picked" readonly placeholder="Selected ids appear here"></textarea>
 </header>
-${sections.map((s) => `  <h2>${s.name} — pick ${s.want}</h2>\n  <div class="grid">${s.candidates.map((c) => tile(c, s.name)).join('')}\n  </div>`).join('\n')}
+${sections.map((s) => `  <h2>${s.name}: pick ${s.want}</h2>\n  <div class="grid">${s.candidates.map((c) => tile(c, s.name)).join('')}\n  </div>`).join('\n')}
 <script>
   const out = document.getElementById('picked')
   document.addEventListener('change', () => {

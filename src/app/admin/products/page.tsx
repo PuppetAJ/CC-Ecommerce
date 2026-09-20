@@ -111,7 +111,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
             >
               {product.stock_quantity}
             </Cell>
-            <Cell className="text-olive-600 dark:text-olive-400">{product.is_featured ? 'Yes' : '—'}</Cell>
+            <Cell className="text-olive-600 dark:text-olive-400">{product.is_featured ? 'Yes' : 'No'}</Cell>
             <Cell align="right">
               <Link
                 href={`/admin/products/${product.id}`}

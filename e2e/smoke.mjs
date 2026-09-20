@@ -253,6 +253,16 @@ section('Admin lists')
   await openAdmin(admin, `/admin/reviews`)
   check('showing different rows', second !== (await admin.locator('tbody').innerText()))
 
+  // The orders list read "1-NaN of NaN": its SELECT lives in a shared string that never got the
+  // count. Every list is checked, because the next one to be added will share the same helper.
+  for (const list of ['orders', 'products', 'customers', 'reviews']) {
+    await openAdmin(admin, `/admin/${list}`)
+    const footer = await visibleText(admin)
+    check(`${list} counts its rows`, !/NaN/.test(footer), (footer.match(/[\d,NaN–-]+ of [\d,NaN]+/) ?? ['no count'])[0])
+    const total = Number((footer.match(/of ([\d,]+)/) ?? [0, '0'])[1].replace(/,/g, ''))
+    check(`and ${list} reports a real total`, total > 0, `${total}`)
+  }
+
   // A filter and a page have to travel together, or paging silently widens the list.
   await openAdmin(admin, `/admin/customers?q=a&page=2`)
   check('paging keeps the filter', /q=a/.test(admin.url()) || (await rows()) >= 0, admin.url())

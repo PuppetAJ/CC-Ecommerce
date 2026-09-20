@@ -145,8 +145,10 @@ export async function updateProduct(id: number, edit: ProductEdit): Promise<Prod
   return rows[0] ?? null
 }
 
-const orderWithItems = `
-  SELECT o.*, u.name AS customer_name, u.email AS customer_email, COALESCE(
+// A function, not a constant: the list needs a row count in the same statement and the single
+// order does not. count(*) OVER () lands after GROUP BY, so it counts orders, not order items.
+const orderWithItems = (extra = '') => `
+  SELECT o.*, u.name AS customer_name, u.email AS customer_email${extra}, COALESCE(
     json_agg(
       json_build_object(
         'product_id', oi.product_id, 'product_name', oi.product_name, 'product_slug', oi.product_slug,
@@ -167,7 +169,7 @@ export async function listAdminOrders({
   page = 1,
 }: { status?: OrderStatus; q?: string; page?: number } = {}): Promise<Page<AdminOrder>> {
   const { rows } = await pool.query<AdminOrder & { total_rows: string }>(
-    `${orderWithItems}
+    `${orderWithItems(`, ${withTotal}`)}
       WHERE ($1::text IS NULL OR o.status = $1)
         AND ($2::text IS NULL OR u.name ILIKE '%' || $2 || '%' OR u.email ILIKE '%' || $2 || '%')
       GROUP BY o.id, u.name, u.email
@@ -179,7 +181,10 @@ export async function listAdminOrders({
 }
 
 export async function getAdminOrder(id: number): Promise<AdminOrder | null> {
-  const { rows } = await pool.query<AdminOrder>(`${orderWithItems} WHERE o.id = $1 GROUP BY o.id, u.name, u.email`, [id])
+  const { rows } = await pool.query<AdminOrder>(
+    `${orderWithItems()} WHERE o.id = $1 GROUP BY o.id, u.name, u.email`,
+    [id],
+  )
   return rows[0] ?? null
 }
 

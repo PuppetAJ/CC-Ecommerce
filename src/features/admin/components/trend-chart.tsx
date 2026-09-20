@@ -5,7 +5,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 
 /**
  * One measure, one axis. Revenue and sessions are different scales, so they are two charts
- * sharing an x-axis rather than one chart with two y-axes — which is the commonest way to
+ * sharing an x-axis rather than one chart with two y-axes, which is the commonest way to
  * make a chart say something untrue.
  *
  * A single series needs no legend: the heading names it.

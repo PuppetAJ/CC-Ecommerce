@@ -58,7 +58,7 @@ async function Rows({ q, page }: { q?: string; page: number }) {
             <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
               {customer.last_order
                 ? customer.last_order.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
-                : '—'}
+                : 'Never'}
             </Cell>
             <Cell align="right" className="font-medium text-olive-950 tabular-nums dark:text-white">
               {formatPrice(customer.spent_cents)}

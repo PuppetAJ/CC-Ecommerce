@@ -50,7 +50,7 @@ export function adminHref(path: string, params: Record<string, string | undefine
 export const productEdit = z.object({
   id: z.coerce.number().int().positive(),
   priceDollars: z.coerce.number().min(0).max(100000),
-  // An empty field arrives as '', and z.coerce.number() turns that into 0 — which stored a
+  // An empty field arrives as '', and z.coerce.number() turns that into 0, which stored a
   // sale at $0.00 and made the product free. Emptiness has to become null before coercion.
   salePriceDollars: z.preprocess(
     (value) => (value === '' || value === null || value === undefined ? null : value),

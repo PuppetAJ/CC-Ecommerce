@@ -2,7 +2,7 @@ import type { PoolClient } from 'pg'
 
 /**
  * The invented cast the demo data hangs on. Names are made up; nobody here is real, and
- * none of these accounts can sign in — they exist to have a name against a row.
+ * none of these accounts can sign in; they exist to have a name against a row.
  *
  * Shared by the review and order seeders so a reviewer and a customer can be the same
  * person, which is what makes the returning-customer figure on the dashboard mean anything.
