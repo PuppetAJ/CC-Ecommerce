@@ -3,7 +3,7 @@ import { clsx } from 'clsx/lite'
 import Link from 'next/link'
 import { categoryLabels, shopHref, sortLabels, sorts, type ShopSearch } from '../schemas'
 import { SearchBox } from './search-box'
-import { SortSelect } from './sort-select'
+import { SortSelect } from '@/components/elements/sort-select'
 
 export function ShopToolbar({ search, count }: { search: ShopSearch; count: number }) {
   const filtered = Boolean(search.category || search.q)

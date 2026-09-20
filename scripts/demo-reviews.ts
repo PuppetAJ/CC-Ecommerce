@@ -66,6 +66,26 @@ export async function seedDemoReviews(): Promise<number> {
       }
     }
 
+    // Helpfulness votes among the same invented reviewers, so "most helpful" has something to
+    // order by on a fresh database. Deterministic, so a reseed does not shuffle the ranking.
+    await client.query('DELETE FROM review_votes WHERE voter_id = ANY($1)', [ids])
+    const { rows: seeded } = await client.query<{ user_id: string; product_id: number }>(
+      'SELECT user_id, product_id FROM reviews WHERE user_id = ANY($1) ORDER BY product_id, user_id',
+      [ids],
+    )
+    for (const [index, review] of seeded.entries()) {
+      for (const [offset, voter] of ids.entries()) {
+        if (voter === review.user_id) continue
+        const roll = (index * 5 + offset * 3) % 7
+        if (roll > 3) continue
+        await client.query(
+          `INSERT INTO review_votes (voter_id, review_user_id, product_id, helpful) VALUES ($1, $2, $3, $4)
+           ON CONFLICT DO NOTHING`,
+          [voter, review.user_id, review.product_id, roll !== 3],
+        )
+      }
+    }
+
     await client.query('COMMIT')
     return written
   } catch (error) {

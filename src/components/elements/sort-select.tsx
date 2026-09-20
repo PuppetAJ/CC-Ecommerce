@@ -7,16 +7,18 @@ import { useId } from 'react'
 export function SortSelect({
   value,
   options,
+  label = 'Sort',
 }: {
   value: string
   options: { value: string; label: string; href: string }[]
+  label?: string
 }) {
   const router = useRouter()
   const id = useId()
   return (
     <div className="flex items-center gap-2">
       <label htmlFor={id} className="text-sm text-olive-600 dark:text-olive-400">
-        Sort
+        {label}
       </label>
       <select
         id={id}

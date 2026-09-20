@@ -1,7 +1,16 @@
 import type { Review } from '@/lib/db/queries/reviews'
+import { ReviewVotes } from './review-votes'
 import { Stars } from './stars'
 
-export function ReviewList({ reviews }: { reviews: Review[] }) {
+export function ReviewList({
+  reviews,
+  productId,
+  viewerId,
+}: {
+  reviews: Review[]
+  productId: number
+  viewerId?: string
+}) {
   if (reviews.length === 0) {
     return <p className="text-sm text-olive-600 dark:text-olive-400">No reviews yet. Yours would be the first.</p>
   }
@@ -18,6 +27,22 @@ export function ReviewList({ reviews }: { reviews: Review[] }) {
             </span>
           </div>
           <p className="text-sm/6 text-olive-700 dark:text-olive-300">{item.body}</p>
+          <div className="mt-1">
+            {item.user_id === viewerId ? (
+              <p className="text-xs text-olive-600 dark:text-olive-400">
+                Your review · {item.helpful} found it helpful
+              </p>
+            ) : (
+              <ReviewVotes
+                productId={productId}
+                reviewUserId={item.user_id}
+                author={item.author}
+                helpful={item.helpful}
+                unhelpful={item.unhelpful}
+                own={item.own_vote}
+              />
+            )}
+          </div>
         </li>
       ))}
     </ul>

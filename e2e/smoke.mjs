@@ -49,6 +49,14 @@ section('Product page')
   const beforeAccordion = await page.locator('button[aria-label^="View"]').boundingBox()
   await page.getByRole('button', { name: /Product information/i }).click()
   await page.waitForTimeout(500)
+
+  const specs = await page.locator('[data-slot="accordion-content"]').first().innerText()
+  check(
+    'product information carries three sections',
+    /Measurements/.test(specs) && /Materials and care/.test(specs) && /Item details/.test(specs),
+    specs.split('\n')[0],
+  )
+  check('and nothing beyond them', !/Made in|In the studio|Electrical|Assembly/.test(specs))
   const afterAccordion = await page.locator('button[aria-label^="View"]').boundingBox()
   check(
     'opening the accordion does not stretch the photograph',
@@ -499,9 +507,17 @@ section('Cart')
   await shop.locator('text=/Subtotal|Nothing in here yet/').first().waitFor({ timeout: 15000 })
   check('the cart survives a reload', /Ash Dining Table/.test(await visibleText(shop)))
 
-  await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
+  // Two of them, so stepping down once is an ordinary decrement and the second empties it.
+  const lastOne = shop.locator('button[aria-label="Remove Ash Dining Table from the cart"]')
+  check('above one the minus is still a minus', (await lastOne.count()) === 0)
+  await shop.locator('button[aria-label="Remove one Ash Dining Table"]').click()
   await shop.waitForTimeout(1800)
-  check('removing drops the line', !/Ash Dining Table/.test(await visibleText(shop)))
+  check('at one left it becomes a remove', (await lastOne.count()) === 1)
+  check('and the badge follows it down', (await badge().innerText()) === '2')
+
+  await lastOne.click()
+  await shop.waitForTimeout(1800)
+  check('stepping past one drops the line', !/Ash Dining Table/.test(await visibleText(shop)))
   check('and the badge counts down', (await badge().innerText()) === '1')
 
   await shop.getByRole('button', { name: 'Remove', exact: true }).first().click()
@@ -759,6 +775,94 @@ section('Writing a review')
   await author.waitForTimeout(1200)
   const after = await author.locator('#reviews').innerText()
   check('editing replaces rather than duplicates', after.includes(revised) && !after.includes(words))
+  await context.close()
+}
+
+section('Helpful votes on reviews')
+{
+  const { context, page: reader } = await freshPage(browser)
+  await signInAsDemo(reader, 'shopper')
+
+  const open = async (query = '') => {
+    await reader.goto(`${BASE}/products/harvest-vase${query}`, { waitUntil: 'networkidle' })
+    await reader.locator('#reviews').scrollIntoViewIfNeeded()
+    await reader.waitForTimeout(1200)
+  }
+
+  await open()
+  const thumbs = reader.locator('#reviews button[aria-label^="Helpful,"]')
+  check('each review offers a thumb', (await thumbs.count()) > 0, `${await thumbs.count()} votable reviews`)
+
+  const before = Number(await thumbs.first().innerText())
+  await thumbs.first().click()
+  await reader.waitForTimeout(1800)
+  const after = Number(await thumbs.first().innerText())
+  check('a thumb up counts', after === before + 1, `${before} to ${after}`)
+  check('and the button reads as pressed', (await thumbs.first().getAttribute('aria-pressed')) === 'true')
+
+  await open()
+  check('the vote survives a reload', Number(await thumbs.first().innerText()) === after)
+
+  // The same thumb again clears it, rather than counting twice.
+  await thumbs.first().click()
+  await reader.waitForTimeout(1800)
+  check('pressing it again takes it back', Number(await thumbs.first().innerText()) === before)
+
+  // A review of your own is not something to vote on, and the table refuses it too.
+  await open('?reviews=recent')
+  const panel = await reader.locator('#reviews').innerText()
+  check('your own review is not votable', /Your review ·/.test(panel), panel.split('\n').slice(0, 3).join(' | '))
+  await context.close()
+}
+
+section('Sorting reviews')
+{
+  const { context, page: reader } = await freshPage(browser)
+
+  const open = async (query = '') => {
+    await reader.goto(`${BASE}/products/harvest-vase${query}`, { waitUntil: 'networkidle' })
+    await reader.locator('#reviews').scrollIntoViewIfNeeded()
+    await reader.waitForTimeout(1200)
+  }
+  // Stars put the rating in an aria-label, not in the text, so read it there.
+  const ratings = async () =>
+    Promise.all(
+      (await reader.locator('#reviews li [role="img"]').all()).map(async (star) =>
+        Number((await star.getAttribute('aria-label')).split(' ')[0]),
+      ),
+    )
+  const scores = async () =>
+    (await reader.locator('#reviews li').allInnerTexts()).map((text) => {
+      const [up = 0, down = 0] = (text.match(/\d+/g) ?? []).slice(-2).map(Number)
+      return up - down
+    })
+
+  const falling = (values) => values.every((value, index) => index === 0 || values[index - 1] >= value)
+  const rising = (values) => values.every((value, index) => index === 0 || values[index - 1] <= value)
+
+  await open()
+  const helpful = await scores()
+  const helpfulStars = await ratings()
+  check('reviews are listed', helpful.length > 1, `${helpful.length} reviews`)
+  check('most helpful runs down the net score', falling(helpful), helpful.join(' then '))
+  check('the sort control is offered', (await reader.getByLabel('Sort reviews').count()) === 1)
+
+  await open('?reviews=highest')
+  const high = await ratings()
+  check('highest rated runs down the stars', falling(high), high.join(' then '))
+  // Without this the two sorts could be agreeing by chance and neither check would mean much.
+  check(
+    'and it is not the order most helpful gave',
+    high.join() !== helpfulStars.join(),
+    `${helpfulStars.join()} then ${high.join()}`,
+  )
+
+  await open('?reviews=lowest')
+  const low = await ratings()
+  check('lowest rated runs up them', rising(low), low.join(' then '))
+
+  await open('?reviews=bogus')
+  check('a bogus sort falls back rather than throwing', (await scores()).length === helpful.length)
   await context.close()
 }
 

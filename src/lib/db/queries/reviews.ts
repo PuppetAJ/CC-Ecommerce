@@ -7,19 +7,50 @@ export type Review = {
   rating: number
   body: string
   created_at: Date
+  helpful: number
+  unhelpful: number
+  /** True for up, false for down, null where the reader has not voted or is signed out. */
+  own_vote: boolean | null
 }
 
 export type ReviewSummary = { count: number; average: number }
 
-export async function listReviews(productId: number): Promise<Review[]> {
-  const { rows } = await pool.query<Review>(
-    `SELECT r.user_id, u.name AS author, r.rating, r.body, r.created_at
-     FROM reviews r JOIN users u ON u.id = r.user_id
-     WHERE r.product_id = $1
-     ORDER BY r.created_at DESC`,
-    [productId],
+export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
+export type ReviewSort = (typeof reviewSorts)[number]
+
+const net = "count(*) FILTER (WHERE v.helpful) - count(*) FILTER (WHERE NOT v.helpful)"
+
+const reviewOrder: Record<ReviewSort, string> = {
+  // Net score, so a review nobody found helpful does not outrank one people disagreed about.
+  helpful: `${net} DESC, r.created_at DESC`,
+  recent: 'r.created_at DESC',
+  highest: 'r.rating DESC, r.created_at DESC',
+  lowest: 'r.rating ASC, r.created_at DESC',
+}
+
+type Row = Omit<Review, 'helpful' | 'unhelpful'> & { helpful: string; unhelpful: string }
+
+export async function listReviews(
+  productId: number,
+  { sort = 'helpful', viewerId }: { sort?: ReviewSort; viewerId?: string } = {},
+): Promise<Review[]> {
+  // Two joins: one to count everybody's votes, one to find this reader's own.
+  const { rows } = await pool.query<Row>(
+    `SELECT r.user_id, u.name AS author, r.rating, r.body, r.created_at,
+            count(*) FILTER (WHERE v.helpful) AS helpful,
+            count(*) FILTER (WHERE NOT v.helpful) AS unhelpful,
+            mine.helpful AS own_vote
+       FROM reviews r
+       JOIN users u ON u.id = r.user_id
+       LEFT JOIN review_votes v ON v.review_user_id = r.user_id AND v.product_id = r.product_id
+       LEFT JOIN review_votes mine
+              ON mine.review_user_id = r.user_id AND mine.product_id = r.product_id AND mine.voter_id = $2
+      WHERE r.product_id = $1
+      GROUP BY r.user_id, u.name, r.rating, r.body, r.created_at, mine.helpful
+      ORDER BY ${reviewOrder[sort]}`,
+    [productId, viewerId ?? null],
   )
-  return rows
+  return rows.map((row) => ({ ...row, helpful: Number(row.helpful), unhelpful: Number(row.unhelpful) }))
 }
 
 export async function summariseReviews(productId: number): Promise<ReviewSummary> {
@@ -39,14 +70,38 @@ export async function saveReview(userId: string, productId: number, rating: numb
   )
 }
 
-export async function getOwnReview(userId: string, productId: number): Promise<Review | null> {
-  const { rows } = await pool.query<Review>(
-    `SELECT r.user_id, u.name AS author, r.rating, r.body, r.created_at
-     FROM reviews r JOIN users u ON u.id = r.user_id
-     WHERE r.user_id = $1 AND r.product_id = $2`,
+export async function getOwnReview(
+  userId: string,
+  productId: number,
+): Promise<{ rating: number; body: string } | null> {
+  const { rows } = await pool.query<{ rating: number; body: string }>(
+    'SELECT rating, body FROM reviews WHERE user_id = $1 AND product_id = $2',
     [userId, productId],
   )
   return rows[0] ?? null
+}
+
+/** Null clears the vote, so pressing the same thumb twice undoes it. */
+export async function voteOnReview(
+  voterId: string,
+  reviewUserId: string,
+  productId: number,
+  helpful: boolean | null,
+): Promise<void> {
+  if (helpful === null) {
+    await pool.query('DELETE FROM review_votes WHERE voter_id = $1 AND review_user_id = $2 AND product_id = $3', [
+      voterId,
+      reviewUserId,
+      productId,
+    ])
+    return
+  }
+
+  await pool.query(
+    `INSERT INTO review_votes (voter_id, review_user_id, product_id, helpful) VALUES ($1, $2, $3, $4)
+     ON CONFLICT (voter_id, review_user_id, product_id) DO UPDATE SET helpful = EXCLUDED.helpful`,
+    [voterId, reviewUserId, productId, helpful],
+  )
 }
 
 /** Ratings for a whole grid in one query, rather than one per tile. */

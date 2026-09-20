@@ -18,7 +18,9 @@ import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/
 import { Price } from '@/features/products/components/price'
 import { getSession } from '@/lib/auth/session'
 import { listFavoriteIds } from '@/lib/db/queries/favorites'
-import { getOwnReview, listReviews, summariseReviews } from '@/lib/db/queries/reviews'
+import { getOwnReview, listReviews, summariseReviews, type ReviewSort } from '@/lib/db/queries/reviews'
+import { SortSelect } from '@/components/elements/sort-select'
+import { reviewSortLabels, reviewSorts, reviewSortSchema, reviewsHref } from '@/features/reviews/schemas'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -49,6 +51,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
 
   // The same schema the shop parses, because these are the shop's own params riding along.
   const search = shopSearchSchema.parse(await searchParams)
+  const reviewSort = reviewSortSchema.parse((await searchParams).reviews)
   const related = await getRelated(product, 12)
   const soldOut = product.stock_quantity === 0
   const low = !soldOut && product.stock_quantity <= 3
@@ -121,9 +124,20 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
 
       <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <section id="reviews" className="flex min-w-0 flex-col gap-8">
-          <Subheading>Reviews</Subheading>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <Subheading>Reviews</Subheading>
+            <SortSelect
+              label="Sort reviews"
+              value={reviewSort}
+              options={reviewSorts.map((sort) => ({
+                value: sort,
+                label: reviewSortLabels[sort],
+                href: reviewsHref(product.slug, fromShop(search), sort),
+              }))}
+            />
+          </div>
           <Suspense fallback={<p className="text-sm text-olive-600 dark:text-olive-400">Loading reviews…</p>}>
-            <Reviews productId={product.id} slug={product.slug} />
+            <Reviews productId={product.id} slug={product.slug} sort={reviewSort} />
           </Suspense>
         </section>
 
@@ -190,16 +204,16 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
 }
 
 // Request-time, because it depends on who is reading; the cached product shell above is not.
-async function Reviews({ productId, slug }: { productId: number; slug: string }) {
+async function Reviews({ productId, slug, sort }: { productId: number; slug: string; sort: ReviewSort }) {
   const session = await getSession()
   const [reviews, own] = await Promise.all([
-    listReviews(productId),
+    listReviews(productId, { sort, viewerId: session?.user.id }),
     session ? getOwnReview(session.user.id, productId) : null,
   ])
 
   return (
     <div className="flex flex-col gap-10">
-      <ReviewList reviews={reviews} />
+      <ReviewList reviews={reviews} productId={productId} viewerId={session?.user.id} />
       <div className="flex flex-col gap-4 border-t border-olive-950/10 pt-8 dark:border-white/10">
         <h3 className="font-medium text-olive-950 dark:text-white">{own ? 'Your review' : 'Write a review'}</h3>
         <ReviewForm productId={productId} slug={slug} existing={own} signedIn={Boolean(session)} />
