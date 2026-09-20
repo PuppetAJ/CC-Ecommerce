@@ -27,7 +27,14 @@ export async function seedDemoOrders(): Promise<number> {
     const roll = rolls(20260920)
     let written = 0
     // Built up as we go and inserted in one statement at the end, rather than a round trip per row.
-    const events: { name: string; session: string; path: string; productId: number | null; at: Date }[] = []
+    const events: {
+      name: string
+      session: string
+      path: string
+      productId: number | null
+      at: Date
+      userId: string | null
+    }[] = []
 
     for (let back = DAYS; back >= 0; back--) {
       const day = new Date()
@@ -46,15 +53,17 @@ export async function seedDemoOrders(): Promise<number> {
         const at = new Date(day)
         at.setUTCHours(7 + Math.floor(roll() * 15), Math.floor(roll() * 60), 0, 0)
         const product = catalogue[Math.floor(roll() * catalogue.length)]
+        // Most browsing is anonymous, which is the honest split for a shop this size.
+        const userId = roll() < 0.35 ? people[Math.floor(roll() * people.length)] : null
 
-        events.push({ name: 'view', session, path: roll() < 0.5 ? '/' : '/shop', productId: null, at })
+        events.push({ name: 'view', session, path: roll() < 0.5 ? '/' : '/shop', productId: null, at, userId })
         const depth = roll()
         if (depth < 0.42) {
-          events.push({ name: 'view', session, path: `/products/${product.slug}`, productId: null, at })
-          events.push({ name: 'product_view', session, path: `/products/${product.slug}`, productId: product.id, at })
+          events.push({ name: 'view', session, path: `/products/${product.slug}`, productId: null, at, userId })
+          events.push({ name: 'product_view', session, path: `/products/${product.slug}`, productId: product.id, at, userId })
         }
-        if (depth < 0.16) events.push({ name: 'add_to_cart', session, path: `/products/${product.slug}`, productId: product.id, at })
-        if (depth < 0.08) events.push({ name: 'checkout_started', session, path: '/checkout', productId: null, at })
+        if (depth < 0.16) events.push({ name: 'add_to_cart', session, path: `/products/${product.slug}`, productId: product.id, at, userId })
+        if (depth < 0.08) events.push({ name: 'checkout_started', session, path: '/checkout', productId: null, at, userId })
       }
 
       for (let n = 0; n < howMany; n++) {
@@ -109,6 +118,9 @@ export async function seedDemoOrders(): Promise<number> {
         // A sale is a session that got all the way through, so it gets one of its own.
         if (status === 'paid') {
           const session = `seed-buy-${back}-${n}`
+          // A sale is always attributable: checkout requires an account.
+          const buyer = rows[0] ? await client.query<{ user_id: string }>('SELECT user_id FROM orders WHERE id = $1', [rows[0].id]) : null
+          const userId = buyer?.rows[0]?.user_id ?? null
           for (const [name, path] of [
             ['view', '/shop'],
             ['product_view', `/products/${items[0].product.slug}`],
@@ -122,6 +134,7 @@ export async function seedDemoOrders(): Promise<number> {
               path,
               productId: name === 'view' || name === 'checkout_started' || name === 'purchase' ? null : items[0].product.id,
               at: placed,
+              userId,
             })
           }
         }
@@ -130,14 +143,15 @@ export async function seedDemoOrders(): Promise<number> {
     }
 
     await client.query(
-      `INSERT INTO events (name, session, path, product_id, created_at)
-       SELECT * FROM unnest($1::text[], $2::text[], $3::text[], $4::int[], $5::timestamptz[])`,
+      `INSERT INTO events (name, session, path, product_id, created_at, user_id)
+       SELECT * FROM unnest($1::text[], $2::text[], $3::text[], $4::int[], $5::timestamptz[], $6::text[])`,
       [
         events.map((e) => e.name),
         events.map((e) => e.session),
         events.map((e) => e.path),
         events.map((e) => e.productId),
         events.map((e) => e.at),
+        events.map((e) => e.userId),
       ],
     )
 

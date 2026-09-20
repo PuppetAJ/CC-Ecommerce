@@ -15,8 +15,9 @@ const links = [
 export function AdminNav() {
   const path = usePathname()
 
+  // min-w-0, or a grid item's automatic minimum stops overflow-x-auto taking effect at all.
   return (
-    <nav aria-label="Admin" className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
+    <nav aria-label="Admin" className="flex min-w-0 gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
       {links.map(({ href, label, icon: Icon }) => {
         // Overview would otherwise light up on every page beneath it.
         const active = href === '/admin' ? path === href : path.startsWith(href)

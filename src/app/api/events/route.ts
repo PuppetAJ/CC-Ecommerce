@@ -1,3 +1,4 @@
+import { getSession } from '@/lib/auth/session'
 import { recordEvent } from '@/lib/db/queries/events'
 import { consume } from '@/lib/db/queries/rate-limit'
 import { trackedEvent } from '@/lib/analytics'
@@ -13,6 +14,8 @@ export async function POST(request: Request): Promise<Response> {
   const { allowed } = await consume(`events:${parsed.data.session}`, { window: 60, max: 60 })
   if (!allowed) return new Response(null, { status: 204 })
 
-  await recordEvent(parsed.data).catch(() => {})
+  // Read from the session, never from the body: the browser does not get to say who it is.
+  const session = await getSession().catch(() => null)
+  await recordEvent({ ...parsed.data, userId: session?.user.id ?? null }).catch(() => {})
   return new Response(null, { status: 204 })
 }

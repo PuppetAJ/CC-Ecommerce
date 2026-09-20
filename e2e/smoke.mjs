@@ -422,6 +422,53 @@ section('A Server Action is not protected by its button')
   await checkContext.close()
 }
 
+section('Nothing scrolls sideways on a phone')
+{
+  // 320px is the narrowest phone still in use. A document wider than its viewport means the
+  // page slides under the thumb, which is the thing people actually notice.
+  const context = await browser.newContext({ viewport: { width: 320, height: 900 } })
+  const narrow = await context.newPage()
+  narrow.setDefaultTimeout(20_000)
+  const fits = async (label, path) => {
+    await narrow.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
+    await narrow.waitForTimeout(1200)
+    const width = await narrow.evaluate(() => document.documentElement.scrollWidth)
+    check(`${label} fits a 320px screen`, width <= 321, `${width}px wide`)
+  }
+
+  for (const [label, path] of [
+    ['the landing page', '/'],
+    ['the shop', '/shop'],
+    ['a filtered shop', '/shop?material=oak&price=over-200'],
+    ['a product', '/products/spouted-pendant'],
+    ['the cart', '/cart'],
+  ]) {
+    await fits(label, path)
+  }
+
+  await signInAsDemo(narrow, 'shopper')
+  await fits('your orders', '/account/orders')
+  await fits('settings', '/account/settings')
+  await context.close()
+
+  const adminContext = await browser.newContext({ viewport: { width: 320, height: 900 } })
+  const tiny = await adminContext.newPage()
+  tiny.setDefaultTimeout(20_000)
+  await signInAsDemo(tiny, 'admin')
+  for (const [label, path] of [
+    ['the dashboard', '/admin'],
+    ['the orders list', '/admin/orders'],
+    ['the products list', '/admin/products'],
+  ]) {
+    await tiny.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
+    await tiny.locator('h1').first().waitFor()
+    await tiny.waitForTimeout(1800)
+    const width = await tiny.evaluate(() => document.documentElement.scrollWidth)
+    check(`${label} fits a 320px screen`, width <= 321, `${width}px wide`)
+  }
+  await adminContext.close()
+}
+
 section('Where login sends you afterwards')
 {
   const { context, page: fresh } = await freshPage(browser)

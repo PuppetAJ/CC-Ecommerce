@@ -11,7 +11,7 @@ import { adminHref, adminSearchSchema, rangeLabels, ranges, windows } from '@/fe
 import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/admin'
-import { funnelBetween, sessionsByDay } from '@/lib/db/queries/events'
+import { funnelBetween, sessionsByDay, visitorsBetween } from '@/lib/db/queries/events'
 import { formatPrice } from '@/lib/format'
 
 export const metadata = { title: 'Admin' }
@@ -48,7 +48,7 @@ export default async function Page({ searchParams }: PageProps<'/admin'>) {
 
 async function Figures({ range }: { range: '7' | '30' | '90' }) {
   const { from, to, wasFrom, wasTo } = windows(range)
-  const [now, before, revenue, sessions, funnel, wasFunnel, sellers, low, split] = await Promise.all([
+  const [now, before, revenue, sessions, funnel, wasFunnel, sellers, low, split, visitors] = await Promise.all([
     totalsBetween(from, to),
     totalsBetween(wasFrom, wasTo),
     revenueByDay(from, to),
@@ -58,6 +58,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
     topSellers(from, to),
     lowStock(),
     salesByCategory(from, to),
+    visitorsBetween(from, to),
   ])
 
   const conversion = funnel.sessions > 0 ? (funnel.purchases / funnel.sessions) * 100 : 0
@@ -101,7 +102,42 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
         <Panel title="How far people get" note="Sessions reaching each step.">
           <Funnel steps={funnel} />
         </Panel>
+      </div>
 
+      <Panel
+        title="Signed-in shoppers"
+        note="Accounts, not sessions — the only people the shop can recognise across visits."
+      >
+        {visitors.known === 0 ? (
+          <Empty>No signed-in shopper looked at anything in this period.</Empty>
+        ) : (
+          <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-3">
+            {[
+              ['Visited', String(visitors.known), 'accounts that looked at anything'],
+              [
+                'Been before',
+                `${visitors.returning} · ${((visitors.returning / visitors.known) * 100).toFixed(0)}%`,
+                'had visited before this period',
+              ],
+              [
+                'Bought',
+                `${visitors.bought} · ${((visitors.bought / visitors.known) * 100).toFixed(0)}%`,
+                'of those who visited',
+              ],
+            ].map(([label, value, note]) => (
+              <div key={label} className="flex flex-col gap-0.5">
+                <dt className="text-sm text-olive-600 dark:text-olive-400">{label}</dt>
+                <dd className="font-display text-xl font-medium text-olive-950 tabular-nums dark:text-white">
+                  {value}
+                </dd>
+                <dd className="text-xs text-olive-600 dark:text-olive-400">{note}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </Panel>
+
+      <div className="grid gap-6 xl:grid-cols-2">
         <Panel title="Best sellers">
           {sellers.length === 0 ? (
             <Empty>Nothing sold in this period.</Empty>
@@ -128,42 +164,43 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
             </ul>
           )}
         </Panel>
-      </div>
 
-      <Panel title="Running low" note="Three left or fewer.">
-        {low.length === 0 ? (
-          <Empty>Everything is well stocked.</Empty>
-        ) : (
-          <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
-            {low.map((product) => (
-              <li key={product.id} className="flex items-baseline justify-between gap-4 text-sm">
-                <Link
-                  href={`/admin/products/${product.id}`}
-                  className="truncate text-olive-950 hover:underline dark:text-white"
-                >
-                  {product.name}
-                </Link>
-                <span
-                  className={`shrink-0 tabular-nums ${
-                    product.stock_quantity === 0
-                      ? 'text-red-700 dark:text-red-400'
-                      : 'text-olive-600 dark:text-olive-400'
-                  }`}
-                >
-                  {product.stock_quantity === 0 ? 'Sold out' : `${product.stock_quantity} left`}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Panel>
+        <Panel title="Running low" note="Three left or fewer.">
+          {low.length === 0 ? (
+            <Empty>Everything is well stocked.</Empty>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {low.map((product) => (
+                <li key={product.id} className="flex items-baseline justify-between gap-4 text-sm">
+                  <Link
+                    href={`/admin/products/${product.id}`}
+                    className="truncate text-olive-950 hover:underline dark:text-white"
+                  >
+                    {product.name}
+                  </Link>
+                  <span
+                    className={`shrink-0 tabular-nums ${
+                      product.stock_quantity === 0
+                        ? 'text-red-700 dark:text-red-400'
+                        : 'text-olive-600 dark:text-olive-400'
+                    }`}
+                  >
+                    {product.stock_quantity === 0 ? 'Sold out' : `${product.stock_quantity} left`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
     </div>
   )
 }
 
+// min-w-0, or a grid item refuses to shrink below its content and widens the whole page.
 function Panel({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-olive-950/10 p-5 dark:border-white/10">
+    <section className="flex min-w-0 flex-col gap-4 rounded-xl border border-olive-950/10 p-5 dark:border-white/10">
       <div className="flex flex-col gap-0.5">
         <h2 className="font-medium text-olive-950 dark:text-white">{title}</h2>
         {note && <p className="text-xs text-olive-600 dark:text-olive-400">{note}</p>}

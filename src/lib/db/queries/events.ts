@@ -9,13 +9,48 @@ export async function recordEvent(event: {
   session: string
   path: string
   productId?: number | null
+  userId?: string | null
 }): Promise<void> {
-  await pool.query('INSERT INTO events (name, session, path, product_id) VALUES ($1, $2, $3, $4)', [
+  await pool.query('INSERT INTO events (name, session, path, product_id, user_id) VALUES ($1, $2, $3, $4, $5)', [
     event.name,
     event.session,
     event.path.slice(0, 512),
     event.productId ?? null,
+    event.userId ?? null,
   ])
+}
+
+export type Visitors = {
+  /** Accounts that looked at anything in the window. */
+  known: number
+  /** Of those, the ones that had also looked before it. */
+  returning: number
+  /** Of those, the ones that bought. */
+  bought: number
+}
+
+/**
+ * The visitor-level view, which sessions alone cannot give. Only signed-in accounts appear
+ * here: everybody else is counted as sessions, because there is nothing to join them on.
+ */
+export async function visitorsBetween(from: Date, to: Date): Promise<Visitors> {
+  const { rows } = await pool.query<{ known: string; returning: string; bought: string }>(
+    `WITH seen AS (
+       SELECT DISTINCT user_id FROM events
+        WHERE user_id IS NOT NULL AND created_at >= $1 AND created_at < $2
+     )
+     SELECT (SELECT count(*) FROM seen) AS known,
+            (SELECT count(*) FROM seen s
+              WHERE EXISTS (SELECT 1 FROM events e
+                             WHERE e.user_id = s.user_id AND e.created_at < $1)) AS returning,
+            (SELECT count(*) FROM seen s
+              WHERE EXISTS (SELECT 1 FROM events e
+                             WHERE e.user_id = s.user_id AND e.name = 'purchase'
+                               AND e.created_at >= $1 AND e.created_at < $2)) AS bought`,
+    [from, to],
+  )
+  const row = rows[0]
+  return { known: Number(row.known), returning: Number(row.returning), bought: Number(row.bought) }
 }
 
 export type Funnel = {
