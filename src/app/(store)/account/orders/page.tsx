@@ -1,4 +1,4 @@
-import { PlaceholderPage } from '@/components/placeholder-page'
+import { PlaceholderPage } from '@/app/_components/placeholder-page'
 import { requireUser } from '@/lib/auth/session'
 
 export const instant = false

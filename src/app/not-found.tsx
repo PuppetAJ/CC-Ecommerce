@@ -1,7 +1,7 @@
 import { ButtonLink } from '@/components/elements/button'
 import { HeroSimpleCentered } from '@/components/sections/hero-simple-centered'
-import { SiteFooter } from '@/components/site-footer'
-import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/app/_components/site-footer'
+import { SiteHeader } from '@/app/_components/site-header'
 
 export default function NotFound() {
   return (

@@ -1,7 +1,7 @@
 import 'server-only'
 import { betterAuth } from 'better-auth'
 import { nextCookies } from 'better-auth/next-js'
-import { adoptGuestCart } from '@/features/cart/merge'
+import { adoptGuestCart } from '@/lib/cart/merge'
 import { authOptions } from './options.ts'
 
 // nextCookies must come last, or a Server Action cannot return the session cookie.
