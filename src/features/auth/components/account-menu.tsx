@@ -1,22 +1,13 @@
-import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { hasRole } from '@/lib/auth/options'
 import { getSession } from '@/lib/auth/session'
 import { AccountDropdown } from './account-dropdown'
+import { SignedOutLinks } from './signed-out-links'
 
 /** Request-time, so the header wraps it in Suspense and the rest of the chrome stays cacheable. */
 export async function AccountMenu() {
   const session = await getSession()
 
-  if (!session) {
-    return (
-      <>
-        <PlainButtonLink href="/login" className="max-sm:hidden">
-          Log in
-        </PlainButtonLink>
-        <ButtonLink href="/register">Sign up</ButtonLink>
-      </>
-    )
-  }
+  if (!session) return <SignedOutLinks />
 
   return (
     <AccountDropdown name={session.user.name} email={session.user.email} isAdmin={hasRole(session.user, 'admin')} />

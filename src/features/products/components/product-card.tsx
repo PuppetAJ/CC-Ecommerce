@@ -9,10 +9,18 @@ import { focalPosition } from '../focal'
 // frame is discarded and fewer products need a focal point. The grid never reflows either.
 const tile = 'relative aspect-square overflow-hidden rounded-xl bg-tile'
 
-export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+export function ProductCard({
+  product,
+  priority = false,
+  from = '',
+}: {
+  product: Product
+  priority?: boolean
+  from?: string
+}) {
   const soldOut = product.stock_quantity === 0
   return (
-    <Link href={`/products/${product.slug}`} className="group flex flex-col gap-3">
+    <Link href={`/products/${product.slug}${from}`} className="group flex flex-col gap-3">
       <div className={tile}>
         {product.image_url && (
           <Image

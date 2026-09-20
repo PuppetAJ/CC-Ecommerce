@@ -83,7 +83,8 @@ export async function signInAsDemo(_previous: AuthState, formData: FormData): Pr
   } catch (error) {
     return { error: messageFor(error, 'The demo accounts are missing. Run `pnpm db:seed`.') }
   }
-  redirect(formData.get('role') === 'admin' ? '/admin' : '/')
+  // The admin button is a shortcut to the dashboard; the shopper goes back where they were.
+  redirect(formData.get('role') === 'admin' ? '/admin' : safeNext(formData.get('next')))
 }
 
 export async function signOut(): Promise<void> {
