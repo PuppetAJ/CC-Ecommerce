@@ -312,19 +312,19 @@ section('Material and color filters')
     materialList.replace(/\n/g, ' | ').slice(0, 80),
   )
 
-  await shop.locator('input[name="material"][value="oak"]').check()
+  await shop.locator('label:has(input[name="material"][value="oak"])').click()
   await shop.waitForTimeout(1500)
   const oak = await tiles()
   check('checking a box filters the grid', oak > 0 && oak < all, `${all} to ${oak}`)
   check('and the URL carries it', shop.url().includes('material=oak'), shop.url())
   check('the box stays checked', await shop.locator('input[name="material"][value="oak"]').isChecked())
 
-  await shop.locator('input[name="material"][value="ash"]').check()
+  await shop.locator('label:has(input[name="material"][value="ash"])').click()
   await shop.waitForTimeout(1500)
   // Overlap, not intersection: nothing is made of oak *and* ash.
   check('two materials returns either, not both', (await tiles()) > oak, `${await tiles()} tiles`)
 
-  await shop.locator('input[name="material"][value="oak"]').uncheck()
+  await shop.locator('label:has(input[name="material"][value="oak"])').click()
   await shop.waitForTimeout(1500)
   check(
     'unchecking removes only that one',
@@ -388,7 +388,7 @@ section('Filtering does not reload or flood')
 
   // Typing used to re-run its own effect on the render its navigation caused, which is a
   // loop. One debounced request for six keystrokes, and nothing at all once idle.
-  await shop.locator('input[name="q"]').click()
+  await shop.locator('input[type="search"][name="q"]').click()
   for (const letter of 'teapot') {
     await shop.keyboard.type(letter)
     await shop.waitForTimeout(80)
@@ -400,16 +400,23 @@ section('Filtering does not reload or flood')
   await shop.waitForTimeout(3000)
   check('and stops once idle', requests === afterTyping, `${requests - afterTyping} more while idle`)
 
+  // fill() ignores maxLength, so this is the hostile case. Unclamped, 150 characters reach the
+  // URL, the schema drops them, and the effect never sees the query it asked for come back.
+  await shop.locator('input[type="search"][name="q"]').fill('a'.repeat(150))
+  await shop.waitForTimeout(2500)
+  const asked = new URL(shop.url()).searchParams.get('q') ?? ''
+  check('an over-long query is clamped to what the schema accepts', asked.length === 100, `${asked.length} chars`)
+
   // Scrolled to where the checkbox is on screen, so the click itself cannot scroll.
   await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
   await shop.waitForTimeout(600)
-  const boxes = shop.locator('input[name="material"][value="stoneware"]')
+  const boxes = shop.locator('label:has(input[name="material"][value="stoneware"])')
   await boxes.scrollIntoViewIfNeeded()
   await shop.evaluate(() => window.scrollBy(0, 120))
   await shop.waitForTimeout(300)
   const before = await shop.evaluate(() => window.scrollY)
 
-  await boxes.check()
+  await boxes.click()
   await shop.waitForTimeout(2200)
   const after = await shop.evaluate(() => window.scrollY)
   check('filtering keeps the scroll position', Math.abs(before - after) < 60, `${before} to ${after}`)
@@ -441,6 +448,21 @@ section('Price bands')
 
   await shop.goto(`${BASE}/shop?price=bogus`, { waitUntil: 'networkidle' })
   check('a bogus band falls back rather than throwing', (await tiles()) === all)
+
+  // The box we draw ourselves, so its shape and its checked fill are both ours to assert.
+  const boxOf = (name, value) => shop.locator(`label:has(input[name="${name}"][value="${value}"]) > span`).first()
+  const radiusOf = (box) => box.evaluate((node) => parseFloat(getComputedStyle(node).borderTopLeftRadius))
+  const size = await boxOf('price', 'under-50').evaluate((node) => node.getBoundingClientRect().width)
+
+  await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
+  check('a price box is round', (await radiusOf(boxOf('price', 'under-50'))) >= size / 2, `radius of ${size}px box`)
+  check('a material box is not', (await radiusOf(boxOf('material', 'stoneware'))) < size / 2)
+
+  const fill = (box) => box.evaluate((node) => getComputedStyle(node).backgroundColor)
+  const idle = await fill(boxOf('price', 'under-50'))
+  await shop.locator('label:has(input[name="price"][value="under-50"])').click()
+  await shop.waitForTimeout(1200)
+  check('and it fills once checked', (await fill(boxOf('price', 'under-50'))) !== idle, `was ${idle}`)
   await context.close()
 }
 

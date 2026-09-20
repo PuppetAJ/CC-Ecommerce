@@ -2,11 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useTransition } from 'react'
-import { shopHref, type ShopSearch } from '../schemas'
+import { searchMaxLength, shopHref, type ShopSearch } from '../schemas'
 
 /**
- * Filters as you type. Fine at this size — a few dozen products and a LIKE query — and
- * honestly wrong at ten thousand, where this belongs in a search index instead.
+ * Filters as you type, against a trigram index rather than a warm cache, so the cost does not
+ * grow with how many distinct things people search for.
  *
  * It stays a real GET form so search still works with JavaScript off; the typing is the
  * enhancement on top.
@@ -16,14 +16,13 @@ export function SearchBox({ search }: { search: ShopSearch }) {
   const [pending, start] = useTransition()
   const router = useRouter()
 
-  // Primitives, not the `search` object. Depending on the object meant a fresh identity
-  // every render, so each navigation re-ran this effect and scheduled another — a loop
-  // that flooded the server on every keystroke. A string is stable by value.
+  // Primitives, not the `search` object: a fresh identity each render relooped the effect.
   const applied = search.q ?? ''
   const withoutQuery = shopHref({ ...search, q: undefined })
 
   useEffect(() => {
-    const wanted = value.trim()
+    // The schema's own bound: what it rejects comes back as no query, which never matches.
+    const wanted = value.trim().slice(0, searchMaxLength)
     // Already showing this query, so there is nothing to ask for.
     if (wanted === applied) return
 
@@ -47,6 +46,7 @@ export function SearchBox({ search }: { search: ShopSearch }) {
         name="q"
         value={value}
         onChange={(event) => setValue(event.target.value)}
+        maxLength={searchMaxLength}
         placeholder="Search the collection"
         aria-label="Search the collection"
         className="w-56 rounded-lg border border-olive-300 bg-transparent px-3 py-1.5 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"

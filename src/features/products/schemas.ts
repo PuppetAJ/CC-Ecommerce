@@ -113,11 +113,14 @@ export const sortLabels: Record<(typeof sorts)[number], string> = {
   name: 'Name, A to Z',
 }
 
+// Shared with the input, so a query the box accepts is never one the schema drops.
+export const searchMaxLength = 100
+
 // Search params are user-controlled, so every field falls back rather than throwing.
 export const shopSearchSchema = z.object({
   category: z.enum(categories).optional().catch(undefined),
   sort: z.enum(sorts).default('newest').catch('newest'),
-  q: z.string().trim().min(1).max(100).optional().catch(undefined),
+  q: z.string().trim().min(1).max(searchMaxLength).optional().catch(undefined),
   // Repeated params (?material=oak&material=ash) arrive as an array, one as a string.
   material: z
     .union([z.enum(materials), z.array(z.enum(materials))])

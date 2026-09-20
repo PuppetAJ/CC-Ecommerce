@@ -8,9 +8,60 @@ import type { colors, materials } from '../schemas'
 type Material = (typeof materials)[number]
 type Color = (typeof colors)[number]
 
+// Drawn, not native: accent-color reaches only the checked fill, never the unchecked box.
 const box =
-  'size-4 shrink-0 rounded border-olive-400 accent-olive-900 focus-visible:ring-2 focus-visible:ring-ring ' +
-  'dark:border-olive-500 dark:accent-olive-300'
+  'flex size-4 shrink-0 items-center justify-center border text-transparent transition-colors ' +
+  'border-olive-400 bg-white dark:border-white/20 dark:bg-white/[0.06] ' +
+  'peer-checked:border-olive-950 peer-checked:bg-olive-950 peer-checked:text-white ' +
+  'dark:peer-checked:border-olive-200 dark:peer-checked:bg-olive-200 dark:peer-checked:text-olive-950 ' +
+  'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 ' +
+  'peer-focus-visible:ring-offset-background motion-reduce:transition-none'
+
+const row = 'flex cursor-pointer items-center gap-2.5 text-sm'
+const label = 'text-olive-700 dark:text-olive-300'
+
+function Tick() {
+  return (
+    <svg viewBox="0 0 12 12" aria-hidden className="size-3">
+      <path d="M2.5 6.2 4.7 8.5 9.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+/** A checkbox we draw. Round for price, square elsewhere, but a tick either way so the round
+ * one is not mistaken for a radio when several bands can be on at once. */
+function Check({
+  name,
+  value,
+  children,
+  round = false,
+  checked,
+  onToggle,
+}: {
+  name: string
+  value: string
+  children: React.ReactNode
+  round?: boolean
+  checked: boolean
+  onToggle: () => void
+}) {
+  return (
+    <label className={row}>
+      <input
+        type="checkbox"
+        name={name}
+        value={value}
+        defaultChecked={checked}
+        onChange={onToggle}
+        className="peer sr-only"
+      />
+      <span className={`${box} ${round ? 'rounded-full' : 'rounded-sm'}`}>
+        <Tick />
+      </span>
+      <span className={label}>{children}</span>
+    </label>
+  )
+}
 
 /**
  * Real checkboxes in a GET form, so the browser builds the query string and every
@@ -30,6 +81,7 @@ export function FacetFilters({
   const form = useRef<HTMLFormElement>(null)
   const [, start] = useTransition()
   const router = useRouter()
+  const submit = () => form.current?.requestSubmit()
 
   function apply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -51,17 +103,16 @@ export function FacetFilters({
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Price</legend>
         {priceBands.map((band) => (
-          <label key={band} className="flex cursor-pointer items-center gap-2.5 text-sm">
-            <input
-              type="checkbox"
-              name="price"
-              value={band}
-              defaultChecked={search.price?.includes(band) ?? false}
-              onChange={() => form.current?.requestSubmit()}
-              className={box}
-            />
-            <span className="text-olive-700 dark:text-olive-300">{priceBandLabels[band]}</span>
-          </label>
+          <Check
+            key={band}
+            name="price"
+            value={band}
+            round
+            checked={search.price?.includes(band) ?? false}
+            onToggle={submit}
+          >
+            {priceBandLabels[band]}
+          </Check>
         ))}
       </fieldset>
 
@@ -70,17 +121,15 @@ export function FacetFilters({
         {facets.materials.map((value) => {
           const material = value as Material
           return (
-            <label key={value} className="flex cursor-pointer items-center gap-2.5 text-sm">
-              <input
-                type="checkbox"
-                name="material"
-                value={material}
-                defaultChecked={search.material?.includes(material) ?? false}
-                onChange={() => form.current?.requestSubmit()}
-                className={box}
-              />
-              <span className="text-olive-700 dark:text-olive-300">{materialLabels[material]}</span>
-            </label>
+            <Check
+              key={value}
+              name="material"
+              value={material}
+              checked={search.material?.includes(material) ?? false}
+              onToggle={submit}
+            >
+              {materialLabels[material]}
+            </Check>
           )
         })}
       </fieldset>
@@ -100,7 +149,7 @@ export function FacetFilters({
                   name="color"
                   value={color}
                   defaultChecked={on}
-                  onChange={() => form.current?.requestSubmit()}
+                  onChange={submit}
                   className="peer sr-only"
                 />
                 <span className="sr-only">{colorLabels[color]}</span>

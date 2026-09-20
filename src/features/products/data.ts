@@ -16,8 +16,10 @@ import { priceBandRanges, type ShopSearch } from './schemas'
 // `search` the way it silently did once.
 export async function getCatalogue({ category, sort, q, material, color, price }: ShopSearch): Promise<Product[]> {
   'use cache'
-  cacheLife('hours')
   cacheTag('products')
+  // Free text is unbounded, so a long life would pin one entry per query ever typed.
+  if (q) cacheLife('seconds')
+  else cacheLife('hours')
   return listProducts({
     category,
     sort,
