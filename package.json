@@ -25,7 +25,7 @@
     "lint:fix": "oxlint --fix",
     "format": "prettier --write .",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "NODE_ENV=test node --conditions=react-server --env-file-if-exists=.env scripts/setup-test-db.ts && NODE_ENV=test node --conditions=react-server --env-file-if-exists=.env --test --test-concurrency=1 \"src/**/*.test.ts\"",
+    "test": "NODE_ENV=test node --conditions=react-server --env-file-if-exists=.env scripts/setup-test-db.ts && NODE_ENV=test STRIPE_SECRET_KEY=sk_test_signing_only STRIPE_WEBHOOK_SECRET=whsec_signing_only node --conditions=react-server --env-file-if-exists=.env --test --test-concurrency=1 \"src/**/*.test.ts\"",
     "test:e2e": "node e2e/smoke.mjs",
     "test:a11y": "node e2e/a11y.mjs",
     "db:up": "docker compose up -d",

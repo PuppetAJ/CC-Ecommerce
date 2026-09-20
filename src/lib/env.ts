@@ -16,16 +16,20 @@ const schema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_').optional(),
 })
 
+// A key left blank in .env arrives as '', which is not the same as absent to zod's
+// .optional(); without this an unused optional key fails the whole parse.
+const blankIsAbsent = (value: string | undefined) => (value === '' ? undefined : value)
+
 const parsed = schema.safeParse({
   NODE_ENV: process.env.NODE_ENV,
   APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   // Tests run against their own database, so a test run cannot truncate dev data.
   DATABASE_URL: process.env.NODE_ENV === 'test' ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+  GOOGLE_CLIENT_ID: blankIsAbsent(process.env.GOOGLE_CLIENT_ID),
+  GOOGLE_CLIENT_SECRET: blankIsAbsent(process.env.GOOGLE_CLIENT_SECRET),
+  STRIPE_SECRET_KEY: blankIsAbsent(process.env.STRIPE_SECRET_KEY),
+  STRIPE_WEBHOOK_SECRET: blankIsAbsent(process.env.STRIPE_WEBHOOK_SECRET),
 })
 
 if (!parsed.success) {
