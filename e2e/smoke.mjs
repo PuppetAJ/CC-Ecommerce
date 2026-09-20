@@ -543,6 +543,81 @@ section('Checkout')
   }
 }
 
+section('Reviews')
+{
+  const { context, page: reader } = await freshPage(browser)
+
+  await reader.goto(`${BASE}/products/oak-wall-shelf`, { waitUntil: 'networkidle' })
+  await reader.locator('#reviews').scrollIntoViewIfNeeded()
+  await reader.waitForTimeout(1200)
+  const section = await reader.locator('#reviews').innerText()
+  check('a reviewed product shows its reviews', /Marta Ellison|Joseph Ndiaye|Priya Raman/.test(section))
+  check('and a rating beside the price', (await reader.locator('a[href="#reviews"]').count()) === 1)
+
+  check('a signed-out visitor is asked to log in', /Log in/.test(section), section.slice(-120))
+  await context.close()
+}
+
+section('Writing a review')
+{
+  const { context, page: author } = await freshPage(browser)
+  await signInAsDemo(author, 'shopper')
+  await author.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
+  await author.locator('#reviews').scrollIntoViewIfNeeded()
+  await author.waitForTimeout(1200)
+
+  const words = `Sturdier than it looks, run ${Date.now()}`
+  await author.getByRole('button', { name: '4 stars' }).click()
+  await author.fill('textarea[name="body"]', words)
+  await author.getByRole('button', { name: /Post review|Update your review/ }).click()
+  await author.waitForTimeout(2500)
+
+  await author.reload({ waitUntil: 'networkidle' })
+  await author.locator('#reviews').scrollIntoViewIfNeeded()
+  await author.waitForTimeout(1200)
+  check('the review appears', (await author.locator('#reviews').innerText()).includes(words))
+  check('and the form offers to update it', /Update your review/.test(await author.locator('#reviews').innerText()))
+
+  // A second submission edits rather than duplicating, because of the primary key.
+  const revised = `Edited, run ${Date.now()}`
+  await author.fill('textarea[name="body"]', revised)
+  await author.getByRole('button', { name: 'Update your review' }).click()
+  await author.waitForTimeout(2500)
+  await author.reload({ waitUntil: 'networkidle' })
+  await author.locator('#reviews').scrollIntoViewIfNeeded()
+  await author.waitForTimeout(1200)
+  const after = await author.locator('#reviews').innerText()
+  check('editing replaces rather than duplicates', after.includes(revised) && !after.includes(words))
+  await context.close()
+}
+
+section('The account area')
+{
+  const { context, page: account } = await freshPage(browser)
+  await signInAsDemo(account, 'shopper')
+
+  await account.goto(`${BASE}/account/favourites`, { waitUntil: 'networkidle' })
+  await account.waitForTimeout(1200)
+  check('favourites has its own page', /Favourites/.test(await visibleText(account)))
+  check('reachable from the account sidebar', (await account.locator('nav[aria-label="Account"] a').count()) === 2)
+
+  // Save something, then confirm it is listed there.
+  await account.goto(`${BASE}/shop?category=lighting`, { waitUntil: 'networkidle' })
+  const card = account.locator('article').first()
+  const name = await card.locator('h3').innerText()
+  await card.locator('button[aria-label^="Save"]').click()
+  await account.waitForTimeout(1500)
+
+  await account.goto(`${BASE}/account/favourites`, { waitUntil: 'networkidle' })
+  await account.waitForTimeout(1200)
+  check('a saved product is listed there', (await visibleText(account)).includes(name), name)
+
+  // Leave the demo account as it was found.
+  await account.locator('button[aria-label^="Remove"]').first().click()
+  await account.waitForTimeout(1500)
+  await context.close()
+}
+
 section('Throttling')
 {
   const { context, page: fresh } = await freshPage(browser)

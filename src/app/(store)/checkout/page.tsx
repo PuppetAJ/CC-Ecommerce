@@ -62,9 +62,27 @@ export default async function Page() {
         <Link href="/cart" className="text-sm text-olive-600 underline underline-offset-4 dark:text-olive-400">
           Change something
         </Link>
+
+        <ol className="flex flex-col gap-4 border-t border-olive-950/10 pt-8 dark:border-white/10">
+          {[
+            ['Pay with Stripe', 'You will be handed to Stripe to enter a card. We never see it.'],
+            ['We pack it', 'Straw board and paper, no plastic, usually the next working day.'],
+            ['It arrives', 'Three to five working days. Anything unused can come back within thirty.'],
+          ].map(([title, detail], step) => (
+            <li key={title} className="flex gap-4">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-olive-950/5 text-xs font-medium text-olive-950 dark:bg-white/10 dark:text-white">
+                {step + 1}
+              </span>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-medium text-olive-950 dark:text-white">{title}</span>
+                <span className="text-sm text-olive-600 dark:text-olive-400">{detail}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
 
-      <aside className="flex h-fit flex-col gap-5 rounded-xl border border-olive-950/10 p-6 dark:border-white/10">
+      <aside className="flex h-fit flex-col gap-5 rounded-xl border border-olive-950/10 p-6 lg:sticky lg:top-24 dark:border-white/10">
         <div className="flex justify-between text-sm text-olive-600 dark:text-olive-400">
           <span>Signed in as</span>
           <span className="truncate text-olive-950 dark:text-white">{user.email}</span>

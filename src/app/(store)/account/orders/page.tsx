@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { Container } from '@/components/elements/container'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
 import { ButtonLink } from '@/components/elements/button'
@@ -17,17 +16,17 @@ export const instant = false
 
 export default function Page() {
   return (
-    <Container className="flex flex-col gap-8 py-16">
+    <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <Heading>Your orders</Heading>
         <Text>
           <p>Everything you have bought, newest first. Nothing here was really charged.</p>
         </Text>
       </div>
-      <Suspense fallback={<Skeleton className="h-40 w-full max-w-3xl rounded-xl" />}>
+      <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
         <Orders />
       </Suspense>
-    </Container>
+    </div>
   )
 }
 
@@ -50,7 +49,7 @@ async function Orders() {
   }
 
   return (
-    <ul className="flex max-w-3xl flex-col gap-4">
+    <ul className="flex flex-col gap-4">
       {orders.map((order) => {
         const count = order.items.reduce((total, item) => total + item.quantity, 0)
 

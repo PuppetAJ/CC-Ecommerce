@@ -11,7 +11,7 @@ import { toggle } from '@/features/favourites/actions'
 // need the 44px target, so there the buttons simply stay visible; focus-within covers the
 // keyboard. Research on this pattern is in docs/REDESIGN.md §15.
 const shell =
-  'absolute inset-x-2 bottom-2 z-10 flex items-center justify-between gap-2 transition-opacity ' +
+  'absolute inset-x-2 bottom-2 z-10 flex items-center justify-center gap-3 transition-opacity ' +
   'pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:opacity-100 ' +
   'motion-reduce:transition-none'
 
