@@ -10,6 +10,7 @@ const pages = [
   ['landing', '/'],
   ['shop', '/shop'],
   ['shop, filtered', '/shop?category=vases&sort=price-asc'],
+  ['shop, faceted', '/shop?material=oak&color=natural'],
   ['shop, nothing found', '/shop?q=zzzznothing'],
   ['product', '/products/ash-dining-table'],
   ['product with reviews', '/products/oak-wall-shelf'],

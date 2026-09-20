@@ -9,24 +9,65 @@ export const categoryLabels: Record<(typeof categories)[number], string> = {
 }
 
 export const materials = [
-  'stoneware', 'porcelain', 'earthenware', 'stone',
-  'oak', 'ash', 'elm', 'pine', 'reclaimed-timber',
-  'steel', 'brass', 'glass', 'linen', 'wax',
+  'stoneware',
+  'porcelain',
+  'earthenware',
+  'stone',
+  'oak',
+  'ash',
+  'elm',
+  'pine',
+  'reclaimed-timber',
+  'steel',
+  'brass',
+  'glass',
+  'linen',
+  'wax',
 ] as const
 
 export const colors = [
-  'white', 'cream', 'grey', 'black', 'blue', 'red', 'yellow', 'gold', 'terracotta', 'natural', 'mixed',
+  'white',
+  'cream',
+  'grey',
+  'black',
+  'blue',
+  'red',
+  'yellow',
+  'gold',
+  'terracotta',
+  'natural',
+  'mixed',
 ] as const
 
 export const materialLabels: Record<(typeof materials)[number], string> = {
-  stoneware: 'Stoneware', porcelain: 'Porcelain', earthenware: 'Earthenware', stone: 'Stone',
-  oak: 'Oak', ash: 'Ash', elm: 'Elm', pine: 'Pine', 'reclaimed-timber': 'Reclaimed timber',
-  steel: 'Steel', brass: 'Brass', glass: 'Glass', linen: 'Linen', wax: 'Wax',
+  stoneware: 'Stoneware',
+  porcelain: 'Porcelain',
+  earthenware: 'Earthenware',
+  stone: 'Stone',
+  oak: 'Oak',
+  ash: 'Ash',
+  elm: 'Elm',
+  pine: 'Pine',
+  'reclaimed-timber': 'Reclaimed timber',
+  steel: 'Steel',
+  brass: 'Brass',
+  glass: 'Glass',
+  linen: 'Linen',
+  wax: 'Wax',
 }
 
 export const colorLabels: Record<(typeof colors)[number], string> = {
-  white: 'White', cream: 'Cream', grey: 'Grey', black: 'Black', blue: 'Blue', red: 'Red',
-  yellow: 'Yellow', gold: 'Gold', terracotta: 'Terracotta', natural: 'Natural wood', mixed: 'Mixed',
+  white: 'White',
+  cream: 'Cream',
+  grey: 'Grey',
+  black: 'Black',
+  blue: 'Blue',
+  red: 'Red',
+  yellow: 'Yellow',
+  gold: 'Gold',
+  terracotta: 'Terracotta',
+  natural: 'Natural wood',
+  mixed: 'Mixed',
 }
 
 // What each swatch shows. Approximate by nature: a glaze is not a hex code.

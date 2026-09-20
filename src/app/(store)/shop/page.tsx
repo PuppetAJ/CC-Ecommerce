@@ -3,8 +3,9 @@ import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
 import { QuickActions } from '@/app/_components/quick-actions'
 import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
+import { FacetFilters } from '@/features/products/components/facet-filters'
 import { ShopToolbar } from '@/features/products/components/shop-toolbar'
-import { getCatalogue } from '@/features/products/data'
+import { getCatalogue, getFacets } from '@/features/products/data'
 import { fromShop, shopSearchSchema } from '@/features/products/schemas'
 import { getSession } from '@/lib/auth/session'
 import { listFavoriteIds } from '@/lib/db/queries/favorites'
@@ -37,7 +38,7 @@ export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
 
 async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'>) {
   const search = shopSearchSchema.parse(await searchParams)
-  const products = await getCatalogue(search)
+  const [products, facets] = await Promise.all([getCatalogue(search), getFacets()])
 
   // One query for the whole grid rather than one per tile.
   const session = await getSession()
@@ -47,32 +48,37 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
   return (
     <div className="flex flex-col gap-10">
       <ShopToolbar search={search} count={products.length} />
-      {products.length > 0 ? (
-        <ProductGrid
-          products={products}
-          from={fromShop(search)}
-          rating={(product) => {
-            const summary = ratings.get(product.id)
-            if (!summary) return null
-            return (
-              <div className="flex items-center gap-1.5 text-xs text-olive-600 dark:text-olive-400">
-                <Stars rating={summary.average} />
-                <span>({summary.count})</span>
-              </div>
-            )
-          }}
-          actions={(product) => (
-            <QuickActions
-              productId={product.id}
-              name={product.name}
-              soldOut={product.stock_quantity === 0}
-              favorited={favorites.has(product.id)}
+      <div className="grid gap-10 lg:grid-cols-[12rem_1fr] lg:gap-12">
+        <FacetFilters search={search} facets={facets} />
+        <div className="min-w-0">
+          {products.length > 0 ? (
+            <ProductGrid
+              products={products}
+              from={fromShop(search)}
+              rating={(product) => {
+                const summary = ratings.get(product.id)
+                if (!summary) return null
+                return (
+                  <div className="flex items-center gap-1.5 text-xs text-olive-600 dark:text-olive-400">
+                    <Stars rating={summary.average} />
+                    <span>({summary.count})</span>
+                  </div>
+                )
+              }}
+              actions={(product) => (
+                <QuickActions
+                  productId={product.id}
+                  name={product.name}
+                  soldOut={product.stock_quantity === 0}
+                  favorited={favorites.has(product.id)}
+                />
+              )}
             />
+          ) : (
+            <EmptyState query={search.q} />
           )}
-        />
-      ) : (
-        <EmptyState query={search.q} />
-      )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -14,17 +14,45 @@ const orderBy: Record<ProductSort, string> = {
 export async function listProducts({
   category,
   search,
+  materials,
+  colors,
   sort = 'newest',
-}: { category?: Category; search?: string; sort?: ProductSort } = {}): Promise<Product[]> {
-  // $1 and $2 are always bound; a null means "no filter" so the SQL stays one statement.
+}: {
+  category?: Category
+  search?: string
+  materials?: string[]
+  colors?: string[]
+  sort?: ProductSort
+} = {}): Promise<Product[]> {
+  // Every parameter is always bound; a null means "no filter" so the SQL stays one
+  // statement. `&&` is array overlap, so picking oak and ash returns either, not both.
   const { rows } = await pool.query<Product>(
     `SELECT * FROM products
      WHERE ($1::text IS NULL OR category = $1)
        AND ($2::text IS NULL OR name ILIKE '%' || $2 || '%' OR description ILIKE '%' || $2 || '%')
+       AND ($3::text[] IS NULL OR material_tags && $3)
+       AND ($4::text[] IS NULL OR color = ANY($4))
      ORDER BY ${orderBy[sort]}`,
-    [category ?? null, search ?? null],
+    [category ?? null, search ?? null, materials?.length ? materials : null, colors?.length ? colors : null],
   )
   return rows
+}
+
+/** What to offer in the filters, and how many each would leave. Counted from the catalogue
+ * rather than the vocabulary, so a facet nothing carries is never shown. */
+export async function listFacets(): Promise<{ materials: [string, number][]; colors: [string, number][] }> {
+  const [materials, colors] = await Promise.all([
+    pool.query<{ value: string; count: number }>(
+      'SELECT unnest(material_tags) AS value, count(*)::int AS count FROM products GROUP BY value ORDER BY count DESC, value',
+    ),
+    pool.query<{ value: string; count: number }>(
+      'SELECT color AS value, count(*)::int AS count FROM products WHERE color IS NOT NULL GROUP BY color ORDER BY count DESC, value',
+    ),
+  ])
+  return {
+    materials: materials.rows.map((row) => [row.value, row.count]),
+    colors: colors.rows.map((row) => [row.value, row.count]),
+  }
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {

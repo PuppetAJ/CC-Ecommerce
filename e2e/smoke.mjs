@@ -295,6 +295,45 @@ section('Favorites, signed in')
   await context.close()
 }
 
+section('Material and colour filters')
+{
+  const { context, page: shop } = await freshPage(browser)
+  const tiles = () => shop.locator('article').count()
+
+  await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
+  const all = await tiles()
+  check('the filters offer what the catalogue carries', (await shop.locator('a[data-facet]').count()) > 10)
+
+  await shop.locator('a[data-facet][href*="material=oak"]').first().click()
+  await shop.waitForTimeout(1200)
+  const oak = await tiles()
+  check('a material narrows the grid', oak > 0 && oak < all, `${all} to ${oak}`)
+  check('and the pill reads as selected', (await shop.locator('a[data-facet][aria-current="true"]').count()) === 1)
+
+  await shop.goto(`${BASE}/shop?material=oak&material=ash`, { waitUntil: 'networkidle' })
+  // Overlap, not intersection: nothing is made of oak *and* ash.
+  check('two materials returns either, not both', (await tiles()) > oak, `${await tiles()} tiles`)
+
+  const ashPill = shop.locator('a[data-facet][aria-current="true"]').filter({ hasText: 'Ash' }).first()
+  await ashPill.click()
+  await shop.waitForTimeout(1200)
+  check(
+    'a pressed pill removes only itself',
+    shop.url().includes('material=oak') && !shop.url().includes('ash'),
+    shop.url(),
+  )
+
+  await shop.goto(`${BASE}/shop?color=blue`, { waitUntil: 'networkidle' })
+  check('colour filters too', (await tiles()) > 0 && (await tiles()) < all)
+
+  await shop.goto(`${BASE}/shop?material=stoneware&color=cream`, { waitUntil: 'networkidle' })
+  check('material and colour combine', (await tiles()) > 0 && (await tiles()) < all, `${await tiles()} tiles`)
+
+  await shop.goto(`${BASE}/shop?material=bogus&color=nonsense`, { waitUntil: 'networkidle' })
+  check('nonsense facets fall back rather than throwing', (await tiles()) === all, `${await tiles()} tiles`)
+  await context.close()
+}
+
 section('Cart')
 {
   const { context, page: shop } = await freshPage(browser)
