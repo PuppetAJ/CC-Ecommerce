@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Order } from '@/lib/db/types'
 import { formatPrice } from '@/lib/format'
-import { OrderStatus } from './order-status'
+import { OrderStatus } from '@/components/elements/order-status'
 
 export function OrderSummary({ order, heading = true }: { order: Order; heading?: boolean }) {
   return (

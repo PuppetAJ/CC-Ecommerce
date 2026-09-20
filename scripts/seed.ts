@@ -1,4 +1,5 @@
 import { pool } from '../src/lib/db/pool.ts'
+import { seedDemoOrders } from './demo-orders.ts'
 import { seedDemoReviews } from './demo-reviews.ts'
 import { seedDemoUsers } from './demo-users.ts'
 import type { Category } from '../src/lib/db/types.ts'
@@ -479,6 +480,7 @@ try {
   await seedDemoUsers()
   console.log('Seeded the demo shopper and demo admin')
   console.log(`Seeded ${await seedDemoReviews()} reviews`)
+  console.log(`Seeded ${await seedDemoOrders()} orders across the last 90 days`)
 } finally {
   await pool.end()
 }

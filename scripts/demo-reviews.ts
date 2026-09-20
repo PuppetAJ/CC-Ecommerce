@@ -1,18 +1,8 @@
 import { pool } from '../src/lib/db/pool.ts'
+import { ensurePeople, reviewerCount } from './demo-people.ts'
 
 // Enough voices that a product page looks lived-in, written to sound like people rather
-// than marketing. Names are invented; these are not real customers.
-const reviewers = [
-  ['Marta Ellison', 'marta.ellison@wicken.test'],
-  ['Joseph Ndiaye', 'joseph.ndiaye@wicken.test'],
-  ['Priya Raman', 'priya.raman@wicken.test'],
-  ['Tom Whitlock', 'tom.whitlock@wicken.test'],
-  ['Ana Beltrán', 'ana.beltran@wicken.test'],
-  ['Ruth Kowalski', 'ruth.kowalski@wicken.test'],
-  ['Desmond Achebe', 'desmond.achebe@wicken.test'],
-  ['Hannah Vogel', 'hannah.vogel@wicken.test'],
-] as const
-
+// than marketing.
 const lines: [number, string][] = [
   [
     5,
@@ -36,18 +26,7 @@ export async function seedDemoReviews(): Promise<number> {
   try {
     await client.query('BEGIN')
 
-    const ids: string[] = []
-    for (const [name, email] of reviewers) {
-      // Reviewers exist only to have a name against a review; they never sign in.
-      const { rows } = await client.query<{ id: string }>(
-        `INSERT INTO users (id, name, email, email_verified)
-         VALUES (encode(sha256($1::bytea), 'hex'), $2, $1, true)
-         ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
-         RETURNING id`,
-        [email, name],
-      )
-      ids.push(rows[0].id)
-    }
+    const ids = (await ensurePeople(client)).slice(0, reviewerCount)
 
     const { rows: products } = await client.query<{ id: number }>('SELECT id FROM products ORDER BY id')
     await client.query('DELETE FROM reviews WHERE user_id = ANY($1)', [ids])
