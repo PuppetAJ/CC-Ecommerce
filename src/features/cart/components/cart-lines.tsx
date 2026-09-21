@@ -42,7 +42,13 @@ export function CartLines({ items }: { items: CartItem[] }) {
           <li key={item.product_id} className="flex gap-3 py-4 sm:gap-4">
             <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-tile sm:size-20">
               {item.image_url ? (
-                <Image src={item.image_url} alt={item.name} fill sizes="(min-width: 640px) 80px, 64px" className="object-cover" />
+                <Image
+                  src={item.image_url}
+                  alt={item.name}
+                  fill
+                  sizes="(min-width: 640px) 80px, 64px"
+                  className="object-cover"
+                />
               ) : null}
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
