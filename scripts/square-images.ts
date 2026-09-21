@@ -21,7 +21,7 @@ for (const slug of wide) {
   }
 
   const ground = await sharp(source)
-    .resize(width, width, { fit: 'cover', position: 'centre' })
+    .resize(width, width, { fit: 'cover', position: 'center' })
     .blur(48)
     .modulate({ brightness: 1.02, saturation: 0.9 })
     .toBuffer()

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { MessageCircleQuestionIcon, TruckIcon, Undo2Icon, WrenchIcon } from 'lucide-react'
+import { MessageCircleQuestionIcon, PackageIcon, TruckIcon, Undo2Icon, WrenchIcon } from 'lucide-react'
 import { Container } from '@/components/elements/container'
 import { Logo } from '@/components/elements/logo'
 import { Subheading } from '@/components/elements/subheading'
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const shipping = [
   {
     question: 'How long does delivery take?',
-    answer: 'Ceramics leave within three working days. Furniture is made to order and takes four to six weeks.',
+    answer: 'Ceramics leave within three business days. Furniture is made to order and takes four to six weeks.',
   },
   {
     question: 'What does shipping cost?',
@@ -27,17 +27,12 @@ const shipping = [
   {
     question: 'How is it packed?',
     answer:
-      'Straw board and paper tape, no plastic and no polystyrene. Furniture travels in a blanket and a crate that can be flattened for recycling.',
+      'Molded paper and paper tape, no plastic and no foam. Furniture travels in a blanket and a crate that can be flattened for recycling.',
   },
   {
-    question: 'Do you ship outside the country?',
+    question: 'Do you ship outside the US?',
     answer:
       'For ceramics, yes. Furniture we will quote for, because a dining table crossing a border costs more to move than it does to make.',
-  },
-  {
-    question: 'Can I track it?',
-    answer:
-      'Every order gets a number the moment it is paid for, and you can see its state under your account at any time.',
   },
 ]
 
@@ -70,16 +65,35 @@ const care = [
   {
     question: 'Will the stoneware mark?',
     answer:
-      'Tea and turmeric will stain an unglazed foot if you let them sit. A paste of bicarbonate of soda takes it straight back off.',
+      'Tea and turmeric will stain an unglazed foot if you let them sit. A paste of baking soda takes it straight back off.',
   },
   {
-    question: 'How often does the timber need oiling?',
+    question: 'How often does the wood need oiling?',
     answer:
       'Once a year for a table, less for a shelf. A rag, a little oil, and twenty minutes. We will send you the same oil we use if you ask.',
   },
   {
     question: 'Do you repair pieces?',
-    answer: 'We do, for anything we made. Send a photograph and we will tell you honestly whether it is worth it.',
+    answer:
+      'Anything we made, yes. Send a photograph and we will tell you honestly whether it is worth it. For the lighting and the linen we will put you in touch with the workshop that made it, or deal with them ourselves if that is easier.',
+  },
+]
+
+const orders = [
+  {
+    question: 'Can I track my order?',
+    answer:
+      'Every order gets a number the moment it is paid for, and you can see its state under your account at any time.',
+  },
+  {
+    question: 'Can I order without an account?',
+    answer:
+      'You can fill a cart without one, but checkout needs an account so there is somewhere for the order to live afterwards.',
+  },
+  {
+    question: 'Can I change an order after placing it?',
+    answer:
+      'Until it ships, yes. Write to us with the order number. Made to order furniture can change until we cut the wood, which is usually the week after.',
   },
   {
     question: 'Is this a real shop?',
@@ -111,6 +125,13 @@ export default function HelpPage() {
       items: care,
       icon: <WrenchIcon className="size-5" />,
     },
+    {
+      id: 'orders',
+      title: 'Orders and account',
+      blurb: 'Tracking, changing an order, and what this demo actually does.',
+      items: orders,
+      icon: <PackageIcon className="size-5" />,
+    },
   ]
 
   return (
@@ -136,7 +157,7 @@ export default function HelpPage() {
       {/* A card each, so the three groups are visible at a glance rather than found by scrolling. */}
       <section className="py-8">
         <Container>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {topics.map((topic) => (
               <Link
                 key={topic.id}
@@ -184,8 +205,9 @@ export default function HelpPage() {
 
             <div className="flex flex-col gap-3 border-t border-olive-950/10 pt-6 text-sm/6 text-olive-700 dark:border-white/10 dark:text-olive-400">
               <p>
-                The workshop is at Unit 4, Fold Yard, open to visitors on the first Saturday of the month between ten
-                and four. No appointment, and the kettle is usually on.
+                The workshop is the old foundry on Mill Street in Hudson, New York, open to visitors on the first
+                Saturday of the month from 10 to 4. No appointment needed, and the coffee is usually on. We take a
+                handful of commissions a year; write with a sketch and a size.
               </p>
               <p className="text-olive-600 dark:text-olive-500">
                 Both the address and the email are invented. Anything you send through the form is stored in this

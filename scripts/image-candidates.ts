@@ -50,7 +50,7 @@ async function search(query: string): Promise<Photo[]> {
   const res = await fetch(url, { headers: { Authorization: `Client-ID ${key}`, 'Accept-Version': 'v1' } })
   if (!res.ok) throw new Error(`Unsplash ${res.status} for "${query}"`)
   const body = (await res.json()) as { results: Photo[] }
-  // plus.unsplash.com is the paid tier, which our licence does not cover.
+  // plus.unsplash.com is the paid tier, which our license does not cover.
   return body.results.filter((p) => !p.urls.regular.startsWith('https://plus') && p.width >= 1600)
 }
 

@@ -15,11 +15,11 @@ import {
 const { browser, page, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
 
-section('Catalogue')
+section('Catalog')
 {
   await page.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
   const all = await page.locator('a[href^="/products/"]').count()
-  check('the shop lists the seeded catalogue', all >= 30, `${all} tiles`)
+  check('the shop lists the seeded catalog', all >= 30, `${all} tiles`)
 
   await page.goto(`${BASE}/shop?category=vases`, { waitUntil: 'networkidle' })
   const vases = await page.locator('a[href^="/products/"]').count()
@@ -97,9 +97,9 @@ section('The help page')
   await help.fill('#name', 'Suite Sender')
   await help.fill('#email', 'sender@wicken.test')
   await help.fill('#body', said)
-  await help.getByRole('button', { name: 'Send it' }).click()
+  await help.getByRole('button', { name: 'Send', exact: true }).click()
   await help.waitForTimeout(2000)
-  check('the form says it arrived', /that is with us/i.test(await visibleText(help)))
+  check('the form says it arrived', /Thank you for reaching out/i.test(await visibleText(help)))
   await context.close()
 
   const { context: theirs, page: admin } = await freshPage(browser)
@@ -225,7 +225,7 @@ section('Signing in and out')
   await context.close()
 }
 
-section('Authorisation')
+section('Authorization')
 {
   const { context: shopperContext, page: shopper } = await freshPage(browser)
   await signInAsDemo(shopper, 'shopper')
@@ -309,9 +309,9 @@ section('Admin lists')
   const allOrders = await rows()
   check('orders are listed', allOrders > 0, `${allOrders} orders`)
 
-  await openAdmin(admin, `/admin/orders?status=cancelled`)
-  const cancelled = await rows()
-  check('and can be filtered by status', cancelled > 0 && cancelled < allOrders, `${cancelled} of ${allOrders}`)
+  await openAdmin(admin, `/admin/orders?status=canceled`)
+  const canceled = await rows()
+  check('and can be filtered by status', canceled > 0 && canceled < allOrders, `${canceled} of ${allOrders}`)
   check('showing only that status', !/Awaiting payment|\bPaid\b/.test(await admin.locator('tbody').innerText()))
 
   await openAdmin(admin, `/admin/products?stock=out`)
@@ -487,7 +487,7 @@ section('A Server Action is not protected by its button')
     async ([url, id, target]) => {
       const body = new FormData()
       body.set('id', target)
-      body.set('status', 'cancelled')
+      body.set('status', 'canceled')
       const response = await fetch(url, { method: 'POST', headers: { 'Next-Action': id }, body })
       return { status: response.status, body: (await response.text()).slice(0, 200) }
     },
@@ -495,7 +495,7 @@ section('A Server Action is not protected by its button')
   )
   // Not 404: a 404 would mean the id was wrong and nothing was actually tested.
   check('the replayed call reaches the action', replay.status !== 404, `responded ${replay.status}`)
-  check('but a shopper is refused', !/"status":"cancelled"|savedAt/.test(replay.body), replay.body.slice(0, 80))
+  check('but a shopper is refused', !/"status":"canceled"|savedAt/.test(replay.body), replay.body.slice(0, 80))
   await shopperContext.close()
 
   // And the order is still what it was, which is the part that actually matters.
@@ -607,7 +607,7 @@ section('Products arrive one after another')
   // The rest wait to be scrolled to, which is what makes the reveal visible down a long page.
   // Scrolled the way a person does: jumping straight to the end never intersects the middle.
   for (let step = 0; step < 24; step++) {
-    await shop.evaluate(() => window.scrollBy(0, window.innerHeight * 0.9))
+    await shop.evaluate(() => window.scrollBy({ top: window.innerHeight * 0.9, behavior: 'instant' }))
     await shop.waitForTimeout(160)
   }
   await shop.waitForTimeout(1500)
@@ -896,14 +896,14 @@ section('The shop skeleton mirrors the shop')
   check('and the category pills above it', pills > 3, `${pills} pills`)
 }
 
-section('The widened catalogue')
+section('The widened catalog')
 {
   const { context, page: shop } = await freshPage(browser)
   const tiles = () => shop.locator('article').count()
 
   await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
   const all = await tiles()
-  check('the catalogue has grown', all >= 45, `${all} pieces`)
+  check('the catalog has grown', all >= 45, `${all} pieces`)
 
   for (const [label, category] of [
     ['textiles', 'textiles'],
@@ -952,7 +952,7 @@ section('Material and color filters')
   )
 
   // The gradient is sized to the padding box by default, so a bordered circle shows a square of
-  // colour with pale crescents where the curve runs past it.
+  // color with pale crescents where the curve runs past it.
   const mixed = shop.locator('label[title="Mixed"] span[aria-hidden]')
   if ((await mixed.count()) > 0) {
     check(
@@ -1061,7 +1061,7 @@ section('Filtering does not reload or flood')
   await shop.waitForTimeout(600)
   const boxes = shop.locator('label:has(input[name="material"][value="stoneware"])')
   await boxes.scrollIntoViewIfNeeded()
-  await shop.evaluate(() => window.scrollBy(0, 120))
+  await shop.evaluate(() => window.scrollBy({ top: 120, behavior: 'instant' }))
   await shop.waitForTimeout(300)
   const before = await shop.evaluate(() => window.scrollY)
 
@@ -1330,7 +1330,7 @@ section('Checkout')
   await buyer.keyboard.press('Escape')
   await buyer.goto(`${BASE}/checkout`, { waitUntil: 'networkidle' })
   const summary = await visibleText(buyer)
-  check('the cart is summarised before paying', /Ash Dining Table/.test(summary))
+  check('the cart is summarized before paying', /Ash Dining Table/.test(summary))
 
   // CI has no Stripe key, so the handover is checked only where one is configured. The
   // order still has to be created either way, which is the part that is ours.

@@ -20,7 +20,7 @@ export const materials = [
   'elm',
   'pine',
   'walnut',
-  'reclaimed-timber',
+  'reclaimed-wood',
   'steel',
   'brass',
   'glass',
@@ -31,7 +31,7 @@ export const materials = [
 export const colors = [
   'white',
   'cream',
-  'grey',
+  'gray',
   'black',
   'blue',
   'red',
@@ -52,7 +52,7 @@ export const materialLabels: Record<(typeof materials)[number], string> = {
   elm: 'Elm',
   pine: 'Pine',
   walnut: 'Walnut',
-  'reclaimed-timber': 'Reclaimed timber',
+  'reclaimed-wood': 'Reclaimed wood',
   steel: 'Steel',
   brass: 'Brass',
   glass: 'Glass',
@@ -63,7 +63,7 @@ export const materialLabels: Record<(typeof materials)[number], string> = {
 export const colorLabels: Record<(typeof colors)[number], string> = {
   white: 'White',
   cream: 'Cream',
-  grey: 'Grey',
+  gray: 'Gray',
   black: 'Black',
   blue: 'Blue',
   red: 'Red',
@@ -78,7 +78,7 @@ export const colorLabels: Record<(typeof colors)[number], string> = {
 export const colorSwatches: Record<(typeof colors)[number], string> = {
   white: '#f4f3ef',
   cream: '#e8e0cf',
-  grey: '#9a9a95',
+  gray: '#9a9a95',
   black: '#23231f',
   blue: '#2f4f7a',
   red: '#8c3027',
@@ -89,7 +89,7 @@ export const colorSwatches: Record<(typeof colors)[number], string> = {
   mixed: 'conic-gradient(#e8e0cf 0deg 120deg, #b0674a 120deg 240deg, #2f4f7a 240deg 360deg)',
 }
 
-// Bands rather than a slider: the catalogue runs $18 to $1,280 with most of it under $200,
+// Bands rather than a slider: the catalog runs $18 to $1,280 with most of it under $200,
 // so a slider would spend most of its travel on four products.
 export const priceBands = ['under-50', '50-100', '100-200', 'over-200'] as const
 

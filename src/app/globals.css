@@ -161,6 +161,14 @@
   }
   html {
     @apply bg-background font-sans antialiased;
+    /* Anchors and scrollIntoView glide rather than cut, which is most of what a "jump" to a
+       section on this site is. */
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
   body {
     @apply bg-background text-foreground;

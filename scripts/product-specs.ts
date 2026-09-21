@@ -4,9 +4,9 @@
 export const productSpecs: Record<string, Record<string, Record<string, string>>> = {
   'ridge-breakfast-mug': {
     Measurements: {
-      Dimensions: '9 cm tall, 8.5 cm across',
-      Weight: '356 g',
-      Capacity: '300 ml',
+      Dimensions: '3.5 in tall, 3.5 in across',
+      Weight: '13 oz',
+      Capacity: '10 fl oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -18,8 +18,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'ash-glaze-dinner-plate': {
     Measurements: {
-      Dimensions: '26 cm across, 2.5 cm deep',
-      Weight: '420 g',
+      Dimensions: '10 in across, 1 in deep',
+      Weight: '15 oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -31,13 +31,13 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'deep-serving-bowl': {
     Measurements: {
-      Dimensions: '28 cm across, 11 cm deep',
-      Weight: '654 g',
-      Capacity: '2.4 l',
+      Dimensions: '11 in across, 4.5 in deep',
+      Weight: '23 oz',
+      Capacity: '2.5 qt',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
-      Glaze: 'Matt white glaze',
+      Glaze: 'Matte white glaze',
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
@@ -45,8 +45,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'everyday-side-plate': {
     Measurements: {
-      Dimensions: '21 cm across',
-      Weight: '293 g',
+      Dimensions: '8.5 in across',
+      Weight: '10 oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -58,9 +58,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'stacking-bowl-pair': {
     Measurements: {
-      Dimensions: '16 cm across, 7 cm deep',
-      Weight: '569 g',
-      Capacity: '500 ml',
+      Dimensions: '6.5 in across, 3 in deep',
+      Weight: '20 oz',
+      Capacity: '17 fl oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -75,8 +75,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'salt-cellar': {
     Measurements: {
-      Dimensions: '7 cm across, 5 cm tall',
-      Weight: '250 g',
+      Dimensions: '3 in across, 2 in tall',
+      Weight: '9 oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -88,12 +88,12 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'tall-stem-vase': {
     Measurements: {
-      Dimensions: '22 cm tall, 11 cm across the belly',
-      Weight: '700 g',
+      Dimensions: '8.5 in tall, 4.5 in across the belly',
+      Weight: '25 oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
-      Glaze: 'Matt white glaze',
+      Glaze: 'Matte white glaze',
       Dishwasher: 'Yes',
       Microwave: 'Yes',
       'Food safe': 'Yes',
@@ -101,8 +101,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'wide-mouth-vessel': {
     Measurements: {
-      Dimensions: '18 cm across, 14 cm tall',
-      Weight: '1.7 kg',
+      Dimensions: '7 in across, 5.5 in tall',
+      Weight: '3.5 lb',
     },
     'Materials and care': {
       'Clay body': 'Porcelain',
@@ -114,69 +114,69 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'kiln-table-lamp': {
     Measurements: {
-      Dimensions: '42 cm tall, 26 cm shade',
-      Weight: '3.5 kg',
-      'Cable length': '2 m braided flex',
+      Dimensions: '17 in tall, 10 in shade',
+      Weight: '7.5 lb',
+      'Cable length': '2 m braided cord',
     },
     'Materials and care': {
-      Materials: 'Stoneware base, opal glass shade, E27',
+      Materials: 'Stoneware base, opal glass shade, E26',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E27',
+      Fitting: 'E26',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
-      Switch: 'Inline on the flex',
+      Switch: 'Inline on the cord',
     },
   },
   'hanging-pendant-shade': {
     Measurements: {
-      Dimensions: '24 cm across, 18 cm deep',
-      Weight: '1.9 kg',
-      'Cable length': '2 m braided flex',
+      Dimensions: '9.5 in across, 7 in deep',
+      Weight: '4 lb',
+      'Cable length': '2 m braided cord',
     },
     'Materials and care': {
-      Materials: 'Porcelain, braided flex, E27',
+      Materials: 'Porcelain, braided cord, E26',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E27',
+      Fitting: 'E26',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
-      Switch: 'Inline on the flex',
+      Switch: 'Inline on the cord',
     },
   },
   'spouted-pendant': {
     Measurements: {
-      Dimensions: '26 cm tall, 12 cm across',
-      Weight: '674 g',
-      'Cable length': '2 m braided flex',
+      Dimensions: '10 in tall, 4.5 in across',
+      Weight: '24 oz',
+      'Cable length': '2 m braided cord',
     },
     'Materials and care': {
-      Materials: 'Stoneware, braided flex, E14',
+      Materials: 'Stoneware, braided cord, E12',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E14',
+      Fitting: 'E12',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
-      Switch: 'Inline on the flex',
+      Switch: 'Inline on the cord',
     },
   },
   'column-table-lamp': {
     Measurements: {
-      Dimensions: '46 cm tall, 14 cm shade',
-      Weight: '2.7 kg',
-      'Cable length': '2 m braided flex',
+      Dimensions: '18 in tall, 5.5 in shade',
+      Weight: '6 lb',
+      'Cable length': '2 m braided cord',
     },
     'Materials and care': {
-      Materials: 'Linen shade, steel column, E14',
+      Materials: 'Linen shade, steel column, E12',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E14',
+      Fitting: 'E12',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
-      Switch: 'Inline on the flex',
+      Switch: 'Inline on the cord',
     },
   },
   'oak-dining-chair': {
     Measurements: {
-      Dimensions: '80 cm tall, 46 cm seat height',
-      Weight: '10.9 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '31 in tall, 18 in seat height',
+      Weight: '24 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
       Construction: 'Solid oak, oiled',
@@ -190,9 +190,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'ash-dining-table': {
     Measurements: {
-      Dimensions: '180 × 90 cm, 74 cm tall',
-      Weight: '32.0 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '71 × 35 in, 29 in tall',
+      Weight: '71 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
       Construction: 'Ash top, brushed steel base',
@@ -206,9 +206,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'low-workshop-stool': {
     Measurements: {
-      Dimensions: '45 cm tall, 40 × 28 cm seat',
-      Weight: '5.3 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '18 in tall, 16 × 11 in seat',
+      Weight: '12 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
       Construction: 'Reclaimed pine, oiled',
@@ -222,9 +222,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'elm-side-table': {
     Measurements: {
-      Dimensions: '55 × 35 cm, 45 cm tall',
-      Weight: '9.4 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '22 × 14 in, 18 in tall',
+      Weight: '21 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
       Construction: 'Solid elm, oiled',
@@ -238,8 +238,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'harvest-vase': {
     Measurements: {
-      Dimensions: '24 cm tall, 17 cm across',
-      Weight: '1.2 kg',
+      Dimensions: '9.5 in tall, 6.5 in across',
+      Weight: '2.5 lb',
     },
     'Materials and care': {
       'Clay body': 'Earthenware',
@@ -251,8 +251,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'oxblood-vase': {
     Measurements: {
-      Dimensions: '30 cm tall, 12 cm across',
-      Weight: '2.1 kg',
+      Dimensions: '12 in tall, 4.5 in across',
+      Weight: '4.5 lb',
     },
     'Materials and care': {
       'Clay body': 'Porcelain',
@@ -264,8 +264,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'cobalt-column-vase': {
     Measurements: {
-      Dimensions: '34 cm tall, 13 cm across',
-      Weight: '2.8 kg',
+      Dimensions: '13 in tall, 5 in across',
+      Weight: '6 lb',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -277,8 +277,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'smoke-glaze-vase': {
     Measurements: {
-      Dimensions: '19 cm tall, 10 cm across',
-      Weight: '1.5 kg',
+      Dimensions: '7.5 in tall, 4 in across',
+      Weight: '3.5 lb',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -290,9 +290,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'stoneware-teapot': {
     Measurements: {
-      Dimensions: '16 cm tall',
-      Weight: '994 g',
-      Capacity: '1 l',
+      Dimensions: '6.5 in tall',
+      Weight: '35 oz',
+      Capacity: '1 qt',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -304,8 +304,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'butter-dish': {
     Measurements: {
-      Dimensions: '18 × 10 cm, 7 cm tall',
-      Weight: '399 g',
+      Dimensions: '7 × 4 in, 3 in tall',
+      Weight: '14 oz',
     },
     'Materials and care': {
       'Clay body': 'Porcelain',
@@ -317,9 +317,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'teapot-trio': {
     Measurements: {
-      Dimensions: '12 cm tall each',
-      Weight: '1.6 kg',
-      Capacity: '500 ml',
+      Dimensions: '4.5 in tall each',
+      Weight: '3.5 lb',
+      Capacity: '17 fl oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -334,9 +334,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'tall-pitcher': {
     Measurements: {
-      Dimensions: '24 cm tall',
-      Weight: '739 g',
-      Capacity: '1.5 l',
+      Dimensions: '9.5 in tall',
+      Weight: '26 oz',
+      Capacity: '1.5 qt',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -348,12 +348,12 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'gilt-rim-plate': {
     Measurements: {
-      Dimensions: '20 cm across',
-      Weight: '463 g',
+      Dimensions: '8 in across',
+      Weight: '16 oz',
     },
     'Materials and care': {
       'Clay body': 'Porcelain',
-      Glaze: 'Gold lustre rim',
+      Glaze: 'Gold luster rim',
       Dishwasher: 'No, hand wash only',
       Microwave: 'No',
       'Food safe': 'Yes',
@@ -361,9 +361,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'studio-mug-set': {
     Measurements: {
-      Dimensions: '9 cm tall· set of four',
-      Weight: '824 g',
-      Capacity: '250 ml',
+      Dimensions: '3.5 in tall· set of four',
+      Weight: '29 oz',
+      Capacity: '8 fl oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -378,8 +378,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'butter-glaze-plate': {
     Measurements: {
-      Dimensions: '22 cm across',
-      Weight: '378 g',
+      Dimensions: '8.5 in across',
+      Weight: '13 oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -391,9 +391,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'tumbler-set': {
     Measurements: {
-      Dimensions: '10 cm tall· set of six',
-      Weight: '781 g',
-      Capacity: '300 ml',
+      Dimensions: '4 in tall· set of six',
+      Weight: '28 oz',
+      Capacity: '10 fl oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -408,9 +408,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'ridged-tumblers': {
     Measurements: {
-      Dimensions: '9 cm tall· set of four',
-      Weight: '654 g',
-      Capacity: '250 ml',
+      Dimensions: '3.5 in tall· set of four',
+      Weight: '23 oz',
+      Capacity: '8 fl oz',
     },
     'Materials and care': {
       'Clay body': 'Stoneware',
@@ -425,8 +425,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'taper-candle-holders': {
     Measurements: {
-      Dimensions: '5 cm tall, 11 cm dish · set of three',
-      Weight: '500 g',
+      Dimensions: '2 in tall, 4.5 in dish · set of three',
+      Weight: '18 oz',
     },
     'Materials and care': {
       Materials: 'Porcelain, fits standard tapers',
@@ -441,8 +441,8 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'stone-candle-set': {
     Measurements: {
-      Dimensions: '8-14 cm across · set of four',
-      Weight: '761 g',
+      Dimensions: '3-5.5 in across · set of four',
+      Weight: '27 oz',
     },
     'Materials and care': {
       Materials: 'Cast stone, unscented soy wax',
@@ -457,29 +457,29 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'bedside-lamp': {
     Measurements: {
-      Dimensions: '34 cm tall, 20 cm shade',
-      Weight: '3.1 kg',
-      'Cable length': '2 m braided flex',
+      Dimensions: '13 in tall, 8 in shade',
+      Weight: '7 lb',
+      'Cable length': '2 m braided cord',
     },
     'Materials and care': {
-      Materials: 'Stoneware base, linen shade, E14',
+      Materials: 'Stoneware base, linen shade, E12',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E14',
+      Fitting: 'E12',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
-      Switch: 'Inline on the flex',
+      Switch: 'Inline on the cord',
     },
   },
   'globe-wall-light': {
     Measurements: {
-      Dimensions: '32 cm out from the wall, 15 cm globe',
-      Weight: '3.8 kg',
+      Dimensions: '13 in out from the wall, 6 in globe',
+      Weight: '8.5 lb',
       'Cable length': 'Hard wired',
     },
     'Materials and care': {
       Materials: 'Solid brass, opal glass, hard wired',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E14',
+      Fitting: 'E12',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
       Switch: 'Wall switch, not supplied',
@@ -487,24 +487,24 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'fluted-pendant': {
     Measurements: {
-      Dimensions: '28 cm across, 40 cm drop',
-      Weight: '3.3 kg',
-      'Cable length': '2 m braided flex',
+      Dimensions: '11 in across, 16 in drop',
+      Weight: '7.5 lb',
+      'Cable length': '2 m braided cord',
     },
     'Materials and care': {
-      Materials: 'Porcelain, brass arm, E27',
+      Materials: 'Porcelain, brass arm, E26',
       Care: 'Dust with a dry brush; never immerse a fitting',
-      Fitting: 'E27',
+      Fitting: 'E26',
       'Maximum wattage': '40 W, LED recommended',
       'Bulb included': 'No',
-      Switch: 'Inline on the flex',
+      Switch: 'Inline on the cord',
     },
   },
   'oak-book-table': {
     Measurements: {
-      Dimensions: '48 × 40 cm, 52 cm tall',
-      Weight: '8.9 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '19 × 16 in, 20 in tall',
+      Weight: '20 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
       Construction: 'Solid oak, oiled, no visible fixings',
@@ -518,9 +518,9 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'oak-wall-shelf': {
     Measurements: {
-      Dimensions: '90 × 22 cm, 18 kg rated',
-      Weight: '4.1 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '35 × 8.5 in, 40 lb rated',
+      Weight: '9 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
       Construction: 'Solid oak, oiled',
@@ -534,12 +534,12 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
   },
   'weathered-stool': {
     Measurements: {
-      Dimensions: '42 cm tall, 34 × 26 cm seat',
-      Weight: '3.5 kg',
-      'Minimum door width': '76 cm',
+      Dimensions: '17 in tall, 13 × 10 in seat',
+      Weight: '7.5 lb',
+      'Minimum door width': '30 in',
     },
     'Materials and care': {
-      Construction: 'Reclaimed timber, wedged joints',
+      Construction: 'Reclaimed wood, wedged joints',
       Finish: 'Hardwax oil, three coats',
       Care: 'Wipe with a damp cloth; re-oil yearly in dry rooms',
       Repair: 'Scratches sand back and re-oil',
@@ -549,25 +549,25 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
     },
   },
   'washed-linen-napkins': {
-    Measurements: { Dimensions: '45 × 45 cm each', Weight: '280 g the set' },
+    Measurements: { Dimensions: '18 × 18 in each', Weight: '10 oz the set' },
     'Materials and care': {
       Cloth: 'Washed European linen, 185 gsm',
-      Hem: 'Hand-turned, mitred corners',
+      Hem: 'Hand-turned, mitered corners',
       Wash: 'Forty degrees, tumble low',
       Ironing: 'Not if you can help it',
     },
     'Item details': { 'Unit count': 'Sold as a set of four' },
   },
   'linen-bread-cloth': {
-    Measurements: { Dimensions: '60 × 60 cm', Weight: '120 g' },
+    Measurements: { Dimensions: '24 × 24 in', Weight: '4 oz' },
     'Materials and care': {
       Cloth: 'Loose-weave linen, 140 gsm',
       Wash: 'Forty degrees, no softener',
-      Use: 'Proving, carrying, covering',
+      Use: 'Proofing, carrying, covering',
     },
   },
   'studio-apron': {
-    Measurements: { Dimensions: '86 cm long, cross-back straps', Weight: '420 g' },
+    Measurements: { Dimensions: '34 in long, cross-back straps', Weight: '15 oz' },
     'Materials and care': {
       Cloth: 'Heavyweight linen, 260 gsm',
       Fixings: 'Brass rivets, no plastic',
@@ -576,7 +576,7 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
     },
   },
   'heavy-linen-throw': {
-    Measurements: { Dimensions: '130 × 180 cm', Weight: '1.1 kg' },
+    Measurements: { Dimensions: '51 × 71 in', Weight: '2.5 lb' },
     'Materials and care': {
       Cloth: 'Heavy linen, 320 gsm',
       Border: 'Hemstitched by hand',
@@ -584,26 +584,26 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
     },
   },
   'linen-table-runner': {
-    Measurements: { Dimensions: '45 × 200 cm', Weight: '340 g' },
+    Measurements: { Dimensions: '18 × 79 in', Weight: '12 oz' },
     'Materials and care': {
       Cloth: 'Washed European linen, 185 gsm',
-      Hem: 'Hand-turned, mitred corners',
+      Hem: 'Hand-turned, mitered corners',
       Wash: 'Forty degrees, tumble low',
     },
   },
   'lidded-keepsake-box': {
-    Measurements: { Dimensions: '24 × 14 cm, 9 cm deep', Weight: '760 g' },
+    Measurements: { Dimensions: '9.5 × 5.5 in, 3.5 in deep', Weight: '27 oz' },
     'Materials and care': {
-      Timber: 'Solid walnut',
-      Joints: 'Mitred, grain continuous',
+      Wood: 'Solid walnut',
+      Joints: 'Mitered, grain continuous',
       Finish: 'Hardwax oil inside and out',
       Care: 'Wipe dry; re-oil yearly in dry rooms',
     },
   },
   'turned-serving-trays': {
-    Measurements: { Dimensions: '46 × 14 cm and 30 × 12 cm', Weight: '690 g the pair' },
+    Measurements: { Dimensions: '18 × 5.5 in and 12 × 4.5 in', Weight: '24 oz the pair' },
     'Materials and care': {
-      Timber: 'Solid oak, one board',
+      Wood: 'Solid oak, one board',
       Finish: 'Hardwax oil, three coats',
       Dishwasher: 'No, hand wash only',
       Care: 'Re-oil when the grain looks thirsty',
@@ -611,10 +611,14 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
     'Item details': { 'Unit count': 'Sold as a set of two' },
   },
   'stoneware-storage-jars': {
-    Measurements: { Dimensions: '12 cm and 9 cm tall', Weight: '1.2 kg the pair', Capacity: '600 ml and 350 ml' },
+    Measurements: {
+      Dimensions: '4.5 in and 3.5 in tall',
+      Weight: '2.5 lb the pair',
+      Capacity: '20 fl oz and 12 fl oz',
+    },
     'Materials and care': {
       'Clay body': 'Stoneware',
-      Glaze: 'Matt white, unglazed rims',
+      Glaze: 'Matte white, unglazed rims',
       Lids: 'Ground to their own jar, marked underneath',
       Dishwasher: 'Yes',
       'Food safe': 'Yes',
@@ -622,18 +626,18 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
     'Item details': { 'Unit count': 'Sold as a set of two' },
   },
   'turned-walnut-bowl': {
-    Measurements: { Dimensions: '26 cm across, 8 cm deep', Weight: '840 g' },
+    Measurements: { Dimensions: '10 in across, 3 in deep', Weight: '30 oz' },
     'Materials and care': {
-      Timber: 'Solid walnut, single block',
+      Wood: 'Solid walnut, single block',
       Finish: 'Food-safe oil',
       Dishwasher: 'No, hand wash only',
       Care: 'Dry immediately; re-oil when dull',
     },
   },
   'carved-catch-all': {
-    Measurements: { Dimensions: '22 cm across, 7 cm deep', Weight: '620 g' },
+    Measurements: { Dimensions: '8.5 in across, 3 in deep', Weight: '22 oz' },
     'Materials and care': {
-      Timber: 'Carved walnut, tool marks left in',
+      Wood: 'Carved walnut, tool marks left in',
       Finish: 'Hardwax oil',
       Dishwasher: 'No, hand wash only',
       Care: 'Dry items only',

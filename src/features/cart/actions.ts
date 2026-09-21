@@ -5,7 +5,7 @@ import { resolveCartId } from './cart'
 import { cartLine, cartTarget } from './schemas'
 
 // No revalidatePath here. A form action re-renders its own route tree, and the imperative
-// ones are refreshed by the client that called them, which keeps the catalogue cache intact.
+// ones are refreshed by the client that called them, which keeps the catalog cache intact.
 
 // addedAt is a fresh number every time, so the client can tell one success from the next.
 export type CartState = { error?: string; addedAt?: number } | undefined

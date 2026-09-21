@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { Categories, CategoriesSkeleton } from '@/app/(store)/_components/categories'
 import { Featured, FeaturedSkeleton } from '@/app/(store)/_components/featured'
@@ -12,7 +13,7 @@ export default function HomePage() {
     <>
       <LandingHero />
       {/* Each band reads the database, so each gets its own boundary and the hero is never
-          waiting on the catalogue to be counted. */}
+          waiting on the catalog to be counted. */}
       <Suspense fallback={<CategoriesSkeleton />}>
         <Categories />
       </Suspense>
@@ -26,7 +27,8 @@ export default function HomePage() {
 
       <CallToActionSimple
         tight
-        headline="Come and see."
+        reveal
+        headline="Come and visit."
         subheadline={
           <p>
             The workshop is open on the first Saturday of the month. Everything else we answer by email, usually the
@@ -39,7 +41,7 @@ export default function HomePage() {
               Shop the collection
             </ButtonLink>
             <PlainButtonLink href="/help" size="lg">
-              Visit or ask
+              Visit or ask <ArrowNarrowRightIcon />
             </PlainButtonLink>
           </div>
         }

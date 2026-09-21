@@ -78,7 +78,7 @@ async function Orders() {
               </dl>
             </div>
 
-            {/* Thumbnails, because people recognise what they bought long before they read an order number. */}
+            {/* Thumbnails, because people recognize what they bought long before they read an order number. */}
             <div className="flex flex-wrap items-center gap-3">
               {order.items.slice(0, 5).map((item) => (
                 <div

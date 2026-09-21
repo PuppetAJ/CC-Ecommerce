@@ -55,7 +55,7 @@ export async function listProducts({
   return rows
 }
 
-/** What to offer in the filters. Read from the catalogue rather than the vocabulary, so a facet
+/** What to offer in the filters. Read from the catalog rather than the vocabulary, so a facet
  * nothing carries is never shown. Materials read alphabetically, because that is a list somebody
  * scans for a word; colors stay commonest-first, because a swatch has no word to scan for. */
 export async function listFacets(): Promise<{ materials: string[]; colors: string[] }> {

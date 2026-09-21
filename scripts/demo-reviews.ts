@@ -10,7 +10,7 @@ const lines: [number, string][] = [
   ],
   [5, 'Third piece I have bought from here. The weight is the thing. It feels like it will outlast me.'],
   [4, 'Lovely object, slightly smaller than I pictured. That is on me for not reading the dimensions properly.'],
-  [4, 'Arrived well packed in straw board, no plastic anywhere. Took a fortnight rather than the week I expected.'],
+  [4, 'Arrived well packed in molded paper, no plastic anywhere. Took two weeks rather than the one I expected.'],
   [5, 'Bought as a gift and then could not part with it. Ordering a second.'],
   [
     3,
@@ -48,7 +48,7 @@ export async function seedDemoReviews(): Promise<number> {
     let written = 0
     for (const [index, product] of products.entries()) {
       // A deterministic spread: some products carry four reviews, some none at all, which
-      // is what a real catalogue looks like and lets the empty state be seen.
+      // is what a real catalog looks like and lets the empty state be seen.
       const howMany = [3, 0, 7, 4, 1, 0, 2, 1][index % 8]
       for (let n = 0; n < howMany; n++) {
         const [rating, body] = lines[(index * 3 + n) % lines.length]

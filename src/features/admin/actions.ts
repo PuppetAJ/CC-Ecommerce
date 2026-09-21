@@ -37,7 +37,7 @@ export async function saveProduct(_previous: AdminState, formData: FormData): Pr
   })
   if (!saved) return { error: 'That product could not be found.' }
 
-  // The catalogue is cached by tag, so the storefront has to be told the price moved.
+  // The catalog is cached by tag, so the storefront has to be told the price moved.
   revalidatePath('/', 'layout')
   return { savedAt: Date.now() }
 }

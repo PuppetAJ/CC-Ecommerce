@@ -15,7 +15,7 @@ import { priceBandRanges, type ShopSearch } from './schemas'
 
 // Takes the parsed search params whole, so the URL's `q` cannot drift from the query's
 // `search` the way it silently did once.
-export async function getCatalogue({ category, sort, q, material, color, price }: ShopSearch): Promise<Product[]> {
+export async function getCatalog({ category, sort, q, material, color, price }: ShopSearch): Promise<Product[]> {
   'use cache'
   cacheTag('products')
   // Free text is unbounded, so a long life would pin one entry per query ever typed.
@@ -38,7 +38,7 @@ export async function getProduct(slug: string): Promise<Product | null> {
   return getProductBySlug(slug)
 }
 
-// Uncached, unlike its neighbours. A "use cache" result sitting in the landing page's
+// Uncached, unlike its neighbors. A "use cache" result sitting in the landing page's
 // prerendered shell leaves the router's segment prefetch of "/" open for good; these are three
 // small indexed reads behind a Suspense boundary, so paying them per request costs nothing.
 export async function getFeatured(limit = 4): Promise<Product[]> {

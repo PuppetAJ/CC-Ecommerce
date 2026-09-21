@@ -2,25 +2,25 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Container } from '@/components/elements/container'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Stagger } from '@/components/motion'
+import { Rise, Stagger } from '@/components/motion'
 import { getCategoryCovers } from '@/features/products/data'
 import { focalPosition } from '@/features/products/focal'
 import { categoryLabels } from '@/features/products/schemas'
 
 // Landscape tiles with the name written on the photograph, so the strip reads as a way through
-// the catalogue rather than as a second grid of things for sale.
+// the catalog rather than as a second grid of things for sale.
 const grid = 'grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6'
 const tile = 'relative aspect-4/3 overflow-hidden rounded-xl bg-tile'
 const sizes = '(min-width: 1280px) 195px, (min-width: 1024px) 16vw, (min-width: 640px) 31vw, 47vw'
 
-/** The way into the catalogue for somebody who does not yet know what they want. */
+/** The way into the catalog for somebody who does not yet know what they want. */
 export async function Categories() {
   const covers = await getCategoryCovers()
 
   return (
     <section className="py-10 sm:py-14">
       <Container className="flex flex-col gap-4">
-        <div className="flex items-baseline justify-between gap-4">
+        <Rise className="flex items-baseline justify-between gap-4">
           <h2 className="text-sm font-medium text-olive-950 dark:text-white">Browse by what it is</h2>
           <Link
             href="/shop"
@@ -28,7 +28,7 @@ export async function Categories() {
           >
             All {covers.reduce((all, cover) => all + cover.count, 0)} pieces
           </Link>
-        </div>
+        </Rise>
 
         <Stagger className={grid}>
           {covers.map((cover) => (

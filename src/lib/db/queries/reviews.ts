@@ -53,7 +53,7 @@ export async function listReviews(
   return rows.map((row) => ({ ...row, helpful: Number(row.helpful), unhelpful: Number(row.unhelpful) }))
 }
 
-export async function summariseReviews(productId: number): Promise<ReviewSummary> {
+export async function summarizeReviews(productId: number): Promise<ReviewSummary> {
   const { rows } = await pool.query<{ count: string; average: string | null }>(
     'SELECT count(*) AS count, avg(rating) AS average FROM reviews WHERE product_id = $1',
     [productId],
@@ -105,7 +105,7 @@ export async function voteOnReview(
 }
 
 /** Ratings for a whole grid in one query, rather than one per tile. */
-export async function summariseMany(productIds: number[]): Promise<Map<number, ReviewSummary>> {
+export async function summarizeMany(productIds: number[]): Promise<Map<number, ReviewSummary>> {
   if (productIds.length === 0) return new Map()
 
   const { rows } = await pool.query<{ product_id: number; count: string; average: string }>(

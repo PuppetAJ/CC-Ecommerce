@@ -6,7 +6,7 @@ import { Button } from '@/components/elements/button'
 import type { OrderStatus } from '@/lib/db/types'
 import { moveOrder, type AdminState } from '../actions'
 
-const labels: Record<OrderStatus, string> = { pending: 'Awaiting payment', paid: 'Paid', cancelled: 'Cancelled' }
+const labels: Record<OrderStatus, string> = { pending: 'Awaiting payment', paid: 'Paid', canceled: 'Canceled' }
 
 export function OrderMover({ orderId, status }: { orderId: number; status: OrderStatus }) {
   const [state, action, pending] = useActionState<AdminState, FormData>(moveOrder, undefined)

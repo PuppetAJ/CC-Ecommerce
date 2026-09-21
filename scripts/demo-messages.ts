@@ -11,10 +11,10 @@ const notes: [number, string, boolean][] = [
   ],
   [
     3,
-    'Do you ever take commissions? I am after a side table in elm, roughly 60cm square, to fit a very specific alcove.',
+    'Do you ever take commissions? I am after a side table in elm, roughly two feet square, to fit a very specific alcove.',
     false,
   ],
-  [7, 'Ordered last Thursday and I have not had a dispatch note. Order is under this email address.', false],
+  [7, 'Ordered last Thursday and I have not had a shipping confirmation. Order is under this email address.', false],
   [
     5,
     'Is the workshop open this Saturday? I would like to see the dinner plates before committing to eight of them.',

@@ -24,23 +24,26 @@ export function HowItIsMade() {
         <Rise className="flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <Eyebrow>How it is made</Eyebrow>
-            <Subheading>We make all of it ourselves</Subheading>
+            <Subheading>Made here, or by people we know</Subheading>
           </div>
           <Text className="text-pretty">
-            <p>Two people, four materials, and a kiln that decides what the rest of the week looks like.</p>
+            <p>
+              The clay and the wood are ours. The lighting, the glass and the linen come from four workshops we have
+              bought from for years and can still call.
+            </p>
           </Text>
           <div className="flex flex-col gap-6">
             <Feature
-              headline="Fired in small batches"
-              subheadline="Each glaze is mixed for the kiln it goes into, so no two pieces are quite alike."
+              headline="Thrown and turned here"
+              subheadline="Clay and wood, in batches small enough that somebody has held every piece before it ships."
             />
             <Feature
-              headline="Timber that ages well"
-              subheadline="Oak, ash and elm, finished with oil rather than lacquer so the surface can be repaired."
+              headline="The rest from four workshops"
+              subheadline="Lighting, glass and linen from makers we buy from by name rather than by catalog number."
             />
             <Feature
               headline="Built to be mended"
-              subheadline="Joinery you can take apart. We keep spares for everything we have ever sold."
+              subheadline="Joinery you can take apart, and spares for everything we make."
             />
           </div>
         </Rise>

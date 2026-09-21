@@ -22,10 +22,11 @@ export function ContactForm({
   if (state.sentAt) {
     return (
       <p role="status" className="rounded-xl bg-olive-950/2.5 p-6 text-sm/7 dark:bg-white/5">
-        Thank you, that is with us. The studio answers within a day or two.
+        Thank you for reaching out. Somebody reads these every morning, and you would normally hear back within a day or
+        two.
         <br />
         <span className="text-olive-600 dark:text-olive-400">
-          Wicken is a portfolio project, so nobody is really going to write back.
+          Wicken is a portfolio demo, so your message was saved to its database rather than sent anywhere.
         </span>
       </p>
     )
@@ -41,11 +42,11 @@ export function ContactForm({
 
       <fieldset disabled={waiting} className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="grid gap-1.5">
+          <div className="grid gap-2.5">
             <Label htmlFor="name">Your name</Label>
             <Input id="name" name="name" required maxLength={80} defaultValue={name} className="h-10" />
           </div>
-          <div className="grid gap-1.5">
+          <div className="grid gap-2.5">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -59,7 +60,7 @@ export function ContactForm({
           </div>
         </div>
 
-        <div className="grid gap-1.5">
+        <div className="grid gap-2.5">
           <Label htmlFor="body">What can we help with?</Label>
           <textarea
             id="body"
@@ -81,7 +82,7 @@ export function ContactForm({
       )}
 
       <Button type="submit" size="lg" disabled={pending} className="self-start">
-        {pending ? 'Sending…' : 'Send it'}
+        {pending ? 'Sending…' : 'Send'}
       </Button>
     </form>
   )

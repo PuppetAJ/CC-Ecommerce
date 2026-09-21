@@ -20,7 +20,7 @@ import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/
 import { Price } from '@/features/products/components/price'
 import { getSession } from '@/lib/auth/session'
 import { listFavoriteIds } from '@/lib/db/queries/favorites'
-import { getOwnReview, listReviews, summariseReviews, type ReviewSort } from '@/lib/db/queries/reviews'
+import { getOwnReview, listReviews, summarizeReviews, type ReviewSort } from '@/lib/db/queries/reviews'
 import { SortSelect } from '@/components/elements/sort-select'
 import { reviewSortLabels, reviewSorts, reviewSortSchema, reviewsHref } from '@/features/reviews/schemas'
 import type { Metadata } from 'next'
@@ -177,15 +177,15 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             <AccordionItem value="care">
               <AccordionTrigger>Care and repair</AccordionTrigger>
               <AccordionContent>
-                Dishwasher safe, though handwashing keeps the glaze brighter for longer. Timber is oiled rather than
+                Dishwasher safe, though handwashing keeps the glaze brighter for longer. Wood is oiled rather than
                 lacquered, so a scratch can be sanded back and re-oiled. We keep spares for everything we have sold.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="shipping">
               <AccordionTrigger>Shipping and returns</AccordionTrigger>
               <AccordionContent>
-                Shipped in 3–5 working days, packed in straw board rather than plastic. Return anything unused within 30
-                days and we will collect it.
+                Shipped in 3–5 business days, packed in molded paper rather than plastic. Return anything unused within
+                30 days and we will collect it.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -236,7 +236,7 @@ async function Reviews({ productId, slug, sort }: { productId: number; slug: str
 
 /** Sits by the price, where a rating is actually used, rather than only far below. */
 async function RatingSummary({ productId }: { productId: number }) {
-  const { count, average } = await summariseReviews(productId)
+  const { count, average } = await summarizeReviews(productId)
   if (count === 0) return null
 
   return (

@@ -8,7 +8,7 @@ import { listAdminProducts, listAllReviews, listCustomers } from './admin.ts'
 after(() => pool.end())
 beforeEach(resetDatabase)
 
-// The payloads a scanner would send. They are only interesting if the catalogue survives them
+// The payloads a scanner would send. They are only interesting if the catalog survives them
 // and still answers honestly, so each one checks both.
 const payloads = [
   "'; DROP TABLE products; --",
@@ -25,7 +25,7 @@ const payloads = [
 const survives = async () => (await pool.query<{ count: string }>('SELECT count(*) FROM products')).rows[0].count
 
 describe('hostile input reaches the database as a value, never as SQL', () => {
-  it('leaves the catalogue standing whatever is typed into the search box', async () => {
+  it('leaves the catalog standing whatever is typed into the search box', async () => {
     await insertProduct({ name: 'Ridge Mug' })
     await insertProduct({ name: 'Ash Plate' })
 
@@ -60,10 +60,10 @@ describe('hostile input reaches the database as a value, never as SQL', () => {
    * only ever supply the key; every value is a literal in a frozen map. This asserts the map
    * cannot be walked off, including through the prototype chain.
    */
-  it('refuses a sort it does not recognise instead of splicing it in', async () => {
+  it('refuses a sort it does not recognize instead of splicing it in', async () => {
     await insertProduct({ name: 'Ridge Mug' })
 
-    const hostile = ["newest; DROP TABLE products; --", 'constructor', '__proto__', 'toString', '']
+    const hostile = ['newest; DROP TABLE products; --', 'constructor', '__proto__', 'toString', '']
     for (const sort of hostile) {
       const asIfUnchecked = sort as ProductSort
       const found = await listProducts({ sort: asIfUnchecked }).catch(() => 'refused' as const)

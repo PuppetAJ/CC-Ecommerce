@@ -14,11 +14,17 @@ export async function seedDemoOrders(): Promise<number> {
     await client.query('BEGIN')
     const people = await ensurePeople(client)
 
-    const { rows: catalogue } = await client.query<{ id: number; name: string; slug: string; image_url: string | null; price: number }>(
+    const { rows: catalog } = await client.query<{
+      id: number
+      name: string
+      slug: string
+      image_url: string | null
+      price: number
+    }>(
       `SELECT id, name, slug, image_url, COALESCE(sale_price_cents, price_cents) AS price
        FROM products ORDER BY id`,
     )
-    if (catalogue.length === 0) return 0
+    if (catalog.length === 0) return 0
 
     await client.query('DELETE FROM orders WHERE user_id = ANY($1)', [people])
 
@@ -52,7 +58,7 @@ export async function seedDemoOrders(): Promise<number> {
         const session = `seed-${back}-${visit}-${Math.floor(roll() * 1e6)}`
         const at = new Date(day)
         at.setUTCHours(7 + Math.floor(roll() * 15), Math.floor(roll() * 60), 0, 0)
-        const product = catalogue[Math.floor(roll() * catalogue.length)]
+        const product = catalog[Math.floor(roll() * catalog.length)]
         // Most browsing is anonymous, which is the honest split for a shop this size.
         const userId = roll() < 0.35 ? people[Math.floor(roll() * people.length)] : null
 
@@ -60,10 +66,26 @@ export async function seedDemoOrders(): Promise<number> {
         const depth = roll()
         if (depth < 0.42) {
           events.push({ name: 'view', session, path: `/products/${product.slug}`, productId: null, at, userId })
-          events.push({ name: 'product_view', session, path: `/products/${product.slug}`, productId: product.id, at, userId })
+          events.push({
+            name: 'product_view',
+            session,
+            path: `/products/${product.slug}`,
+            productId: product.id,
+            at,
+            userId,
+          })
         }
-        if (depth < 0.16) events.push({ name: 'add_to_cart', session, path: `/products/${product.slug}`, productId: product.id, at, userId })
-        if (depth < 0.08) events.push({ name: 'checkout_started', session, path: '/checkout', productId: null, at, userId })
+        if (depth < 0.16)
+          events.push({
+            name: 'add_to_cart',
+            session,
+            path: `/products/${product.slug}`,
+            productId: product.id,
+            at,
+            userId,
+          })
+        if (depth < 0.08)
+          events.push({ name: 'checkout_started', session, path: '/checkout', productId: null, at, userId })
       }
 
       for (let n = 0; n < howMany; n++) {
@@ -73,12 +95,12 @@ export async function seedDemoOrders(): Promise<number> {
         const lines = 1 + Math.floor(roll() * 3)
         const picked = new Map<number, number>()
         for (let line = 0; line < lines; line++) {
-          const product = catalogue[Math.floor(roll() * catalogue.length)]
+          const product = catalog[Math.floor(roll() * catalog.length)]
           picked.set(product.id, (picked.get(product.id) ?? 0) + 1 + Math.floor(roll() * 2))
         }
 
         const items = [...picked].map(([id, quantity]) => ({
-          product: catalogue.find((row) => row.id === id)!,
+          product: catalog.find((row) => row.id === id)!,
           quantity,
         }))
         const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
@@ -86,7 +108,7 @@ export async function seedDemoOrders(): Promise<number> {
         // Most went through. A few stalled and a few were called off, so the status filters
         // and the "awaiting payment" path have something real to show.
         const fate = roll()
-        const status = fate < 0.86 ? 'paid' : fate < 0.95 ? 'pending' : 'cancelled'
+        const status = fate < 0.86 ? 'paid' : fate < 0.95 ? 'pending' : 'canceled'
 
         const { rows } = await client.query<{ id: number }>(
           `INSERT INTO orders (user_id, status, total_cents, created_at, paid_at)
@@ -119,7 +141,9 @@ export async function seedDemoOrders(): Promise<number> {
         if (status === 'paid') {
           const session = `seed-buy-${back}-${n}`
           // A sale is always attributable: checkout requires an account.
-          const buyer = rows[0] ? await client.query<{ user_id: string }>('SELECT user_id FROM orders WHERE id = $1', [rows[0].id]) : null
+          const buyer = rows[0]
+            ? await client.query<{ user_id: string }>('SELECT user_id FROM orders WHERE id = $1', [rows[0].id])
+            : null
           const userId = buyer?.rows[0]?.user_id ?? null
           for (const [name, path] of [
             ['view', '/shop'],
@@ -132,7 +156,8 @@ export async function seedDemoOrders(): Promise<number> {
               name,
               session,
               path,
-              productId: name === 'view' || name === 'checkout_started' || name === 'purchase' ? null : items[0].product.id,
+              productId:
+                name === 'view' || name === 'checkout_started' || name === 'purchase' ? null : items[0].product.id,
               at: placed,
               userId,
             })

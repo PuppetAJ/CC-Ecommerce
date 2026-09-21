@@ -62,7 +62,7 @@ export const productEdit = z.object({
 
 export const orderStatusEdit = z.object({
   id: z.coerce.number().int().positive(),
-  status: z.enum(['pending', 'paid', 'cancelled']),
+  status: z.enum(['pending', 'paid', 'canceled']),
 })
 
 export const reviewTarget = z.object({

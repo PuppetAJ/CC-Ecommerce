@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { ButtonLink } from '@/components/elements/button'
+import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
+import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
 import { Container } from '@/components/elements/container'
 import { Eyebrow } from '@/components/elements/eyebrow'
 import { Subheading } from '@/components/elements/subheading'
@@ -13,7 +14,8 @@ import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testim
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Two makers, four materials, and a kiln that decides what the rest of the week looks like.',
+  description:
+    'Two makers, four workshops they buy from, and a kiln that decides what the rest of the week looks like.',
 }
 
 export default function AboutPage() {
@@ -58,20 +60,20 @@ export default function AboutPage() {
         </p>
         <p>
           Pieces dry on the shelf for a week, get turned, get glazed, and wait for a kiln that is only worth firing
-          full. That is why a sold out piece takes a fortnight to come back rather than an afternoon.
+          full. That is why a sold out piece takes two weeks to come back rather than an afternoon.
         </p>
       </Step>
 
       <Step
         eyebrow="Afternoons"
-        headline="Timber, and a lot of measuring"
+        headline="Wood, and a lot of measuring"
         image="/images/editorial-timber.jpg"
         alt="A hand marking a pine board with a pencil, surrounded by shavings and a chisel"
         reversed
       >
         <p>
-          Oak, ash, elm and a little walnut, bought as boards rather than sheets and cut down here. Joints are cut to be
-          taken apart again, because a chair that cannot be repaired is a chair with an expiry date.
+          Oak, ash, elm and a little walnut, bought as boards rather than sheets and cut to size here. Joints are cut to
+          be taken apart again, because a chair that cannot be repaired is a chair with an expiry date.
         </p>
         <p>
           Nothing is lacquered. Oil marks more easily and needs doing again every few years, which people sometimes hold
@@ -79,47 +81,61 @@ export default function AboutPage() {
         </p>
       </Step>
 
-      <TestimonialTwoColumnWithLargePhoto
-        quote={
-          <>
-            <p>
-              I bought two mugs in 2021 expecting them to be the nice ones you keep in the cupboard. They have been in
-              daily use ever since. Four winters, a house move and a toddler, and not a chip between them.
-            </p>
-          </>
-        }
-        img={
-          <Image
-            src="/images/editorial-studio.jpg"
-            alt="A wall shelf of pottery and books above a scrubbed wooden table in a calm, warm room"
-            width={1600}
-            height={1058}
-            sizes="(min-width: 1024px) 50vw, 96vw"
-            className="w-full"
-          />
-        }
-        name="Maren Solheim"
-        byline="Bought two mugs in 2021, and rather more since"
-      />
+      <Rise>
+        <TestimonialTwoColumnWithLargePhoto
+          quote={
+            <>
+              <p>
+                I bought two mugs in 2021 expecting them to be the nice ones you keep in the cupboard. They have been in
+                daily use ever since. Four winters, a house move and a toddler, and not a chip between them.
+              </p>
+            </>
+          }
+          img={
+            <Image
+              src="/images/editorial-studio.jpg"
+              alt="A wall shelf of pottery and books above a scrubbed wooden table in a calm, warm room"
+              width={1600}
+              height={1058}
+              sizes="(min-width: 1024px) 50vw, 96vw"
+              className="w-full"
+            />
+          }
+          name="Maren Solheim"
+          byline="Bought two mugs in 2021, and rather more since"
+        />
+      </Rise>
 
-      <StatsThreeColumnWithDescription
-        heading="A studio, not a warehouse"
-        description={
-          <p>
-            We would rather make fewer things properly. The numbers below are the whole operation, and we intend to keep
-            it that way.
-          </p>
-        }
-      >
-        <Stat stat="2" text="makers" />
-        <Stat stat="4" text="materials, no more" />
-        <Stat stat="0" text="pieces made offshore" />
-      </StatsThreeColumnWithDescription>
+      <Rise>
+        <StatsThreeColumnWithDescription
+          heading="A studio, not a warehouse"
+          description={
+            <p>
+              We would rather make fewer things properly, and buy the rest from people doing the same. The numbers below
+              are the whole operation, and we intend to keep it that way.
+            </p>
+          }
+        >
+          <Stat stat="2" text="makers in the workshop" />
+          <Stat stat="4" text="workshops we buy the rest from" />
+          <Stat stat="1974" text="the year the doors opened" />
+        </StatsThreeColumnWithDescription>
+      </Rise>
 
       <CallToActionSimple
-        headline="Come and see."
+        reveal
+        headline="Come and visit."
         subheadline={<p>The workshop is open on the first Saturday of the month, and email is answered faster.</p>}
-        cta={<ButtonLink href="/help">Visit, or ask us something</ButtonLink>}
+        cta={
+          <div className="flex flex-wrap items-center gap-2">
+            <ButtonLink href="/help" size="lg">
+              Plan a visit
+            </ButtonLink>
+            <PlainButtonLink href="/shop" size="lg">
+              See the collection <ArrowNarrowRightIcon />
+            </PlainButtonLink>
+          </div>
+        }
       />
     </>
   )

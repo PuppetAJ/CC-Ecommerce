@@ -16,6 +16,7 @@ export async function Featured() {
   return (
     <Section
       tight
+      reveal
       headline="Start with one good thing"
       subheadline={<p>A mug you reach for every morning is a better beginning than a whole dinner service.</p>}
       cta={
