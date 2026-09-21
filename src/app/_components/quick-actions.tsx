@@ -14,7 +14,7 @@ import { toggle } from '@/features/favorites/actions'
 // pointer-events-none, or this covers the whole tile and swallows clicks meant for the
 // card's link; the buttons themselves opt back in.
 const shell =
-  'pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-3 transition-opacity ' +
+  'pointer-events-none absolute inset-0 z-10 hidden items-center justify-center gap-3 transition-opacity pointer-fine:flex ' +
   'pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:opacity-100 ' +
   'motion-reduce:transition-none'
 

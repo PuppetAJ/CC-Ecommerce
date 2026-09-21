@@ -20,10 +20,11 @@ export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
           </div>
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-sm text-olive-600 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white"
+            aria-label="Back to the store"
+            className="flex shrink-0 items-center gap-1.5 text-sm text-olive-600 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white"
           >
-            <ArrowLeftIcon className="size-4" aria-hidden />
-            Back to the store
+            <ArrowLeftIcon className="size-4 shrink-0" aria-hidden />
+            <span className="hidden min-[380px]:inline">Back to the store</span>
           </Link>
         </Container>
       </header>
@@ -39,7 +40,7 @@ export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
         </Container>
       </div>
 
-      <Container className="grid flex-1 gap-8 py-8 lg:grid-cols-[13rem_1fr] lg:gap-12">
+      <Container className="grid flex-1 items-start gap-8 py-8 lg:grid-cols-[13rem_1fr] lg:gap-12">
         <AdminNav />
         <div className="min-w-0">{children}</div>
       </Container>

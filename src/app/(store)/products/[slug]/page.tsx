@@ -7,6 +7,7 @@ import { Suspense } from 'react'
 import { FavoriteButton } from '@/app/_components/favorite-button'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
 import { TrackProduct } from '@/components/analytics'
+import { Rise } from '@/components/motion'
 import { ReviewForm } from '@/features/reviews/components/review-form'
 import { ReviewList } from '@/features/reviews/components/review-list'
 import { Stars } from '@/features/reviews/components/stars'
@@ -113,7 +114,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
               </dl>
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex w-full flex-wrap items-center gap-3">
               <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
               <Suspense fallback={null}>
                 <SaveControl productId={product.id} name={product.name} />
@@ -123,7 +124,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
         </div>
       </div>
 
-      <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <Rise className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <section id="reviews" className="flex min-w-0 flex-col gap-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Subheading>Reviews</Subheading>
@@ -185,21 +186,26 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             </AccordionItem>
           </Accordion>
         </div>
-      </div>
+      </Rise>
 
       {related.length > 0 && (
-        <section className="flex flex-col gap-8">
-          <Subheading>
-            More from{' '}
-            <Link
-              href={`/shop?category=${product.category}`}
-              className="text-olive-500 no-underline transition-colors hover:underline hover:decoration-1 hover:underline-offset-[6px] dark:text-olive-400"
-            >
-              {categoryLabels[product.category].toLowerCase()}
-            </Link>
-          </Subheading>
-          <ProductRail products={related} from={fromShop(search)} />
-        </section>
+        <Rise className="flex flex-col gap-8">
+          <ProductRail
+            products={related}
+            from={fromShop(search)}
+            title={
+              <Subheading className="min-w-0">
+                More from{' '}
+                <Link
+                  href={`/shop?category=${product.category}`}
+                  className="text-olive-500 no-underline transition-colors hover:underline hover:decoration-1 hover:underline-offset-[6px] dark:text-olive-400"
+                >
+                  {categoryLabels[product.category].toLowerCase()}
+                </Link>
+              </Subheading>
+            }
+          />
+        </Rise>
       )}
     </Container>
   )

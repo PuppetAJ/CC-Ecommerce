@@ -3,6 +3,7 @@
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { Logo } from '@/components/elements/logo'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { navLinks } from '@/lib/nav'
 
@@ -19,7 +20,10 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle className="font-display text-xl font-medium">Wicken</SheetTitle>
+          <SheetTitle className="flex items-center gap-1.5 font-display text-xl font-medium">
+            <Logo className="size-6 shrink-0" />
+            Wicken
+          </SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-1 px-4 pb-6">
           {navLinks.map((link) => (

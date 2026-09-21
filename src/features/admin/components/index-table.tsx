@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react'
+import { Scroller } from '@/components/elements/scroller'
+import { perPage } from '@/lib/db/queries/admin'
+import { Skeleton } from '@/components/ui/skeleton'
 
 /**
  * Shopify's resource index, in the shape their own guidance describes: one column, so the
@@ -24,7 +27,7 @@ export function IndexTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-olive-950/10 dark:border-white/10">
+    <Scroller className="rounded-xl border border-olive-950/10 dark:border-white/10">
       <table className="w-full min-w-3xl border-collapse text-sm">
         <thead>
           <tr className="border-b border-olive-950/10 dark:border-white/10">
@@ -43,7 +46,7 @@ export function IndexTable({
         </thead>
         <tbody className="divide-y divide-olive-950/10 dark:divide-white/10">{children}</tbody>
       </table>
-    </div>
+    </Scroller>
   )
 }
 
@@ -57,4 +60,26 @@ export function Cell({
   className?: string
 }) {
   return <td className={`px-4 py-3 ${align === 'right' ? 'text-right' : ''} ${className}`}>{children}</td>
+}
+
+/** A full page of rows, so waiting for one does not shorten the page and then stretch it back. */
+export function IndexTableSkeleton({ rows = perPage }: { rows?: number }) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-olive-950/10 dark:border-white/10">
+      <div className="border-b border-olive-950/10 px-4 py-3 dark:border-white/10">
+        <Skeleton className="h-4 w-24" />
+      </div>
+      <div className="divide-y divide-olive-950/10 dark:divide-white/10">
+        {Array.from({ length: rows }, (_, row) => (
+          <div key={row} className="flex items-center justify-between gap-4 px-4 py-4">
+            <div className="flex flex-col gap-1.5">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-4 w-40" />
+            </div>
+            <Skeleton className="h-4 w-16" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }

@@ -492,10 +492,24 @@ section('Products arrive one after another')
   check('they do not all appear at once', new Set(during).size > 1, during.map((o) => o.toFixed(2)).join(' '))
 
   await shop.waitForTimeout(3000)
-  const settled = await shop.evaluate(() =>
+  const onScreen = await shop.evaluate(() =>
+    [...document.querySelectorAll('[data-stagger]')]
+      .filter((n) => n.getBoundingClientRect().top < window.innerHeight)
+      .map((n) => Number(getComputedStyle(n).opacity)),
+  )
+  check('the ones on screen all finish', onScreen.length > 0 && onScreen.every((o) => o === 1), `${onScreen.length} tiles`)
+
+  // The rest wait to be scrolled to, which is what makes the reveal visible down a long page.
+  // Scrolled the way a person does: jumping straight to the end never intersects the middle.
+  for (let step = 0; step < 24; step++) {
+    await shop.evaluate(() => window.scrollBy(0, window.innerHeight * 0.9))
+    await shop.waitForTimeout(160)
+  }
+  await shop.waitForTimeout(1500)
+  const all = await shop.evaluate(() =>
     [...document.querySelectorAll('[data-stagger]')].map((n) => Number(getComputedStyle(n).opacity)),
   )
-  check('and every one of them finishes', settled.length > 0 && settled.every((o) => o === 1), `${settled.length} tiles`)
+  check('and scrolling reveals the rest', all.length > 40 && all.every((o) => o === 1), `${all.length} tiles`)
   await context.close()
 
   // The animation is a flourish: the markup has to be complete without it.
@@ -514,6 +528,72 @@ section('Products arrive one after another')
     (await quiet.evaluate(() => Number(getComputedStyle(document.querySelector('article')).opacity))) === 1,
   )
   await still.close()
+}
+
+section('A phone at its narrowest')
+{
+  // 320px, with a cart that has something in it: an empty cart hides every layout problem.
+  const context = await browser.newContext({ viewport: { width: 320, height: 720 } })
+  const tiny = await context.newPage()
+  tiny.setDefaultTimeout(20_000)
+  await signInAsDemo(tiny, 'shopper')
+
+  for (const slug of ['ash-dining-table', 'harvest-vase']) {
+    await tiny.goto(`${BASE}/products/${slug}`, { waitUntil: 'domcontentloaded' })
+    await tiny.waitForTimeout(1400)
+    await tiny.getByRole('button', { name: 'Add to cart' }).click()
+    await tiny.waitForTimeout(1600)
+    await tiny.keyboard.press('Escape')
+  }
+
+  const fits = async (label, path) => {
+    await tiny.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
+    await tiny.waitForTimeout(1600)
+    const width = await tiny.evaluate(() => document.documentElement.scrollWidth)
+    check(`${label} fits`, width <= 321, `${width}px`)
+    // Nothing may run past the gutter either, which is how a clipped control goes unnoticed.
+    // Anything inside a sideways scroller is meant to be off screen, so it does not count.
+    const past = await tiny.evaluate(() =>
+      [...document.querySelectorAll('a,button,input,select')].filter((node) => {
+        const box = node.getBoundingClientRect()
+        if (!(box.width > 0 && box.right > 321)) return false
+        for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+          const overflow = getComputedStyle(parent).overflowX
+          if (overflow === 'auto' || overflow === 'scroll') return false
+        }
+        return true
+      }).length,
+    )
+    check(`and nothing on ${label} is cut off`, past === 0, `${past} controls past the edge`)
+  }
+
+  await fits('a full cart', '/cart')
+  await fits('checkout', '/checkout')
+  await fits('a product', '/products/spouted-pendant')
+
+  // One column, because two at this width is 140px of photograph.
+  await tiny.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
+  await tiny.waitForTimeout(2000)
+  const columns = await tiny.evaluate(() => {
+    const tiles = [...document.querySelectorAll('article')].slice(0, 4)
+    return new Set(tiles.map((t) => Math.round(t.getBoundingClientRect().left))).size
+  })
+  check('the shop drops to one column', columns === 1, `${columns} columns`)
+
+  // The facets fold away, or they are most of the screen before a product is seen.
+  const open = await tiny.locator('details').first().evaluate((n) => n.open)
+  check('and the filters are folded away', open === false)
+  await context.close()
+
+  const wide = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+  const roomy = await wide.newPage()
+  await roomy.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
+  await roomy.waitForTimeout(2000)
+  check(
+    'but stay open where the rail has room',
+    await roomy.locator('details').first().evaluate((n) => n.open),
+  )
+  await wide.close()
 }
 
 section('Where login sends you afterwards')

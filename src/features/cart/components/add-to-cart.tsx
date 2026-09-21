@@ -47,11 +47,11 @@ export function AddToCart({ productId, name, stock }: { productId: number; name:
 
   return (
     // The server action is the form's action, so the button still posts without JavaScript.
-    <form action={action} className="flex flex-wrap items-center gap-3">
+    <form action={action} className="flex flex-1 flex-wrap items-center gap-3">
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="quantity" value={quantity} />
       <QuantityStepper quantity={quantity} max={stock} onChange={setQuantity} disabled={pending} label={name} />
-      <Button type="submit" size="lg" disabled={pending} className="w-44">
+      <Button type="submit" size="lg" disabled={pending} className="min-w-36 flex-1 sm:w-44 sm:flex-none">
         {pending ? 'Adding…' : 'Add to cart'}
       </Button>
     </form>

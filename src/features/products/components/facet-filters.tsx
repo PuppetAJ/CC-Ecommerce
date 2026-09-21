@@ -1,7 +1,8 @@
 'use client'
 
+import { ChevronDownIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useRef, useTransition, type FormEvent } from 'react'
+import { useEffect, useRef, useState, useTransition, type FormEvent } from 'react'
 import { colorLabels, colorSwatches, materialLabels, priceBandLabels, priceBands, type ShopSearch } from '../schemas'
 import type { colors, materials } from '../schemas'
 
@@ -64,6 +65,51 @@ function Check({
 }
 
 /**
+ * A heading that folds its group away on a narrow screen. Three open facet lists are most of a
+ * phone's height before a single product is seen; on a wide screen the rail has room, so the
+ * disclosure stays open and the marker is hidden.
+ */
+/**
+ * Closed on a phone, where three open lists are most of the screen before a single product is
+ * seen, and held open on a wide rail where there is room for them.
+ *
+ * `<details>` rather than a checkbox trick, because it is the element that announces itself as a
+ * disclosure. A browser hides its contents with `content-visibility`, which no amount of
+ * `display` overrides, so the wide case is driven by the media query rather than by CSS.
+ */
+function Group({ label, wide, children }: { label: string; wide: boolean; children: React.ReactNode }) {
+  return (
+    // Uncontrolled on a phone, so a shopper can open and close it freely.
+    <details open={wide || undefined} className="group/details">
+      <summary className="mb-3 flex cursor-pointer list-none items-center justify-between text-sm font-medium text-olive-950 lg:pointer-events-none dark:text-white">
+        {label}
+        <ChevronDownIcon
+          aria-hidden
+          className="size-4 text-olive-600 transition-transform group-open/details:rotate-180 lg:hidden dark:text-olive-400"
+        />
+      </summary>
+      <fieldset className="flex flex-col gap-3">
+        <legend className="sr-only">{label}</legend>
+        {children}
+      </fieldset>
+    </details>
+  )
+}
+
+/** True once the rail is wide enough to show every facet at once. */
+function useWideRail(): boolean {
+  const [wide, setWide] = useState(false)
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 1024px)')
+    const sync = () => setWide(query.matches)
+    sync()
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
+  }, [])
+  return wide
+}
+
+/**
  * Real checkboxes in a GET form, so the browser builds the query string and every
  * combination stays a URL that works with JavaScript off.
  *
@@ -79,6 +125,7 @@ export function FacetFilters({
   facets: { materials: string[]; colors: string[] }
 }) {
   const form = useRef<HTMLFormElement>(null)
+  const wide = useWideRail()
   const [, start] = useTransition()
   const router = useRouter()
   const submit = () => form.current?.requestSubmit()
@@ -100,8 +147,7 @@ export function FacetFilters({
       {search.sort !== 'newest' && <input type="hidden" name="sort" value={search.sort} />}
       {search.q && <input type="hidden" name="q" value={search.q} />}
 
-      <fieldset className="flex flex-col gap-3">
-        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Price</legend>
+      <Group label="Price" wide={wide}>
         {priceBands.map((band) => (
           <Check
             key={band}
@@ -114,10 +160,9 @@ export function FacetFilters({
             {priceBandLabels[band]}
           </Check>
         ))}
-      </fieldset>
+      </Group>
 
-      <fieldset className="flex flex-col gap-3">
-        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Material</legend>
+      <Group label="Material" wide={wide}>
         {facets.materials.map((value) => {
           const material = value as Material
           return (
@@ -132,10 +177,9 @@ export function FacetFilters({
             </Check>
           )
         })}
-      </fieldset>
+      </Group>
 
-      <fieldset>
-        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Color</legend>
+      <Group label="Color" wide={wide}>
         {/* Swatches alone: the name is the accessible label, not a column of text. */}
         <div className="flex flex-wrap gap-2">
           {facets.colors.map((value) => {
@@ -166,7 +210,7 @@ export function FacetFilters({
             )
           })}
         </div>
-      </fieldset>
+      </Group>
 
       <noscript>
         <button

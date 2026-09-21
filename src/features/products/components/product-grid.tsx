@@ -3,7 +3,7 @@ import { Stagger } from '@/components/motion'
 import type { Product } from '@/lib/db/types'
 import { ProductCard, ProductCardSkeleton } from './product-card'
 
-const grid = 'grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4'
+const grid = 'grid grid-cols-1 gap-x-6 gap-y-10 min-[400px]:grid-cols-2 lg:grid-cols-4'
 
 export function ProductGrid({
   products,
