@@ -1,41 +1,47 @@
 import type { ReactNode } from 'react'
 import { Container } from '@/components/elements/container'
 import { Subheading } from '@/components/elements/subheading'
-import { Text } from '@/components/elements/text'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
-// Replaces Oatmeal's faqs-two-column-accordion, which used @tailwindplus/elements.
+// Replaces Oatmeal's faqs-two-column-accordion, which used @tailwindplus/elements. One centered
+// column rather than two: a heading with nothing beside it leaves half the page empty.
 export function FaqAccordion({
   headline,
-  subheadline,
+  icon,
   items,
   id,
 }: {
   headline: ReactNode
-  subheadline?: ReactNode
+  icon?: ReactNode
   items: { question: string; answer: ReactNode }[]
   /** Set where the footer links straight to one group, so the heading clears the header. */
   id?: string
 }) {
   return (
-    <section id={id} className="scroll-mt-24 py-16">
-      <Container className="grid grid-cols-1 gap-x-2 gap-y-8 lg:grid-cols-2">
-        <div className="flex flex-col gap-6">
-          <Subheading>{headline}</Subheading>
-          {subheadline && <Text className="flex flex-col gap-4 text-pretty">{subheadline}</Text>}
+    <section id={id} className="scroll-mt-24 py-8">
+      <Container>
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+          <div className="flex items-center gap-3">
+            {icon && (
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-olive-950/5 text-olive-700 dark:bg-white/10 dark:text-olive-300">
+                {icon}
+              </span>
+            )}
+            <Subheading className="text-2xl/8 sm:text-2xl/8">{headline}</Subheading>
+          </div>
+          <Accordion type="single" collapsible className="border-y border-olive-950/10 dark:border-white/10">
+            {items.map((item) => (
+              <AccordionItem key={item.question} value={item.question}>
+                <AccordionTrigger className="text-base/7 text-olive-950 dark:text-white">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="pr-12 text-sm/7 text-olive-700 dark:text-olive-400">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
-        <Accordion type="single" collapsible className="border-y border-olive-950/10 dark:border-white/10">
-          {items.map((item) => (
-            <AccordionItem key={item.question} value={item.question}>
-              <AccordionTrigger className="text-base/7 text-olive-950 dark:text-white">
-                {item.question}
-              </AccordionTrigger>
-              <AccordionContent className="pr-12 text-sm/7 text-olive-700 dark:text-olive-400">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
       </Container>
     </section>
   )

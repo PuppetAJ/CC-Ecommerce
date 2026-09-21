@@ -10,6 +10,7 @@ export function Section({
   headline,
   subheadline,
   cta,
+  tight = false,
   className,
   children,
   ...props
@@ -18,10 +19,12 @@ export function Section({
   headline?: ReactNode
   subheadline?: ReactNode
   cta?: ReactNode
+  /** A closer rhythm, for a page of sections rather than one section on its own. */
+  tight?: boolean
 } & ComponentProps<'section'>) {
   return (
-    <section className={clsx('py-16', className)} {...props}>
-      <Container className="flex flex-col gap-10 sm:gap-16">
+    <section className={clsx(tight ? 'py-10 sm:py-14' : 'py-16', className)} {...props}>
+      <Container className={clsx('flex flex-col', tight ? 'gap-8 sm:gap-10' : 'gap-10 sm:gap-16')}>
         {headline && (
           <div className="flex max-w-2xl flex-col gap-6">
             <div className="flex flex-col gap-2">

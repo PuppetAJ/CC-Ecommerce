@@ -15,6 +15,7 @@ export async function Featured() {
 
   return (
     <Section
+      tight
       headline="Start with one good thing"
       subheadline={<p>A mug you reach for every morning is a better beginning than a whole dinner service.</p>}
       cta={
@@ -33,7 +34,7 @@ export async function Featured() {
 
 export function FeaturedSkeleton() {
   return (
-    <Section headline="Start with one good thing">
+    <Section tight headline="Start with one good thing">
       <ProductGridSkeleton count={4} />
     </Section>
   )

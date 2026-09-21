@@ -9,7 +9,7 @@ import { Feature } from '@/components/sections/features-three-column'
 /** The three claims the shop makes about itself, next to somebody actually making something. */
 export function HowItIsMade() {
   return (
-    <section className="py-16">
+    <section className="py-10 sm:py-14">
       <Container className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
         <Rise className="relative aspect-4/3 overflow-hidden rounded-xl bg-tile">
           <Image
@@ -24,10 +24,10 @@ export function HowItIsMade() {
         <Rise className="flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <Eyebrow>How it is made</Eyebrow>
-            <Subheading>Clay in the morning, timber in the afternoon</Subheading>
+            <Subheading>We make all of it ourselves</Subheading>
           </div>
           <Text className="text-pretty">
-            <p>Two makers, four materials, and a kiln that decides what the rest of the week looks like.</p>
+            <p>Two people, four materials, and a kiln that decides what the rest of the week looks like.</p>
           </Text>
           <div className="flex flex-col gap-6">
             <Feature

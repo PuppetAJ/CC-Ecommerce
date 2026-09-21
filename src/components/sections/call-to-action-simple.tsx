@@ -10,6 +10,7 @@ export function CallToActionSimple({
   headline,
   subheadline,
   cta,
+  tight = false,
   className,
   ...props
 }: {
@@ -17,9 +18,10 @@ export function CallToActionSimple({
   headline: ReactNode
   subheadline?: ReactNode
   cta?: ReactNode
+  tight?: boolean
 } & ComponentProps<'section'>) {
   return (
-    <section className={clsx('py-16', className)} {...props}>
+    <section className={clsx(tight ? 'py-10 sm:py-14' : 'py-16', className)} {...props}>
       <Container className="flex flex-col gap-10">
         <div className="flex flex-col gap-6">
           <div className="flex max-w-4xl flex-col gap-2">

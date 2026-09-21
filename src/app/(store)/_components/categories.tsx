@@ -1,63 +1,76 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Section } from '@/components/elements/section'
+import { Container } from '@/components/elements/container'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Stagger } from '@/components/motion'
 import { getCategoryCovers } from '@/features/products/data'
 import { focalPosition } from '@/features/products/focal'
 import { categoryLabels } from '@/features/products/schemas'
 
-// Six tiles across a 1200px container is 180px each, which is as small as a photograph can be
-// and still say what it is.
-const grid = 'grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6'
-
-const sizes = '(min-width: 1280px) 190px, (min-width: 1024px) 15vw, (min-width: 640px) 30vw, 45vw'
+// Landscape tiles with the name written on the photograph, so the strip reads as a way through
+// the catalogue rather than as a second grid of things for sale.
+const grid = 'grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6'
+const tile = 'relative aspect-4/3 overflow-hidden rounded-xl bg-tile'
+const sizes = '(min-width: 1280px) 195px, (min-width: 1024px) 16vw, (min-width: 640px) 31vw, 47vw'
 
 /** The way into the catalogue for somebody who does not yet know what they want. */
 export async function Categories() {
   const covers = await getCategoryCovers()
 
   return (
-    <Section headline="Six things we make" subheadline={<p>Clay and timber, and what comes of working in both.</p>}>
-      <Stagger className={grid}>
-        {covers.map((cover) => (
-          <Link key={cover.category} href={`/shop?category=${cover.category}`} className="group flex flex-col gap-3">
-            <div className="relative aspect-square overflow-hidden rounded-xl bg-tile">
-              {cover.image_url && (
-                <Image
-                  src={cover.image_url}
-                  alt=""
-                  fill
-                  sizes={sizes}
-                  style={{ objectPosition: focalPosition(cover.slug) }}
-                  className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                />
-              )}
-            </div>
-            <div className="flex items-baseline justify-between gap-2">
-              <h3 className="text-sm font-medium text-olive-950 group-hover:underline group-hover:underline-offset-4 dark:text-white">
-                {categoryLabels[cover.category]}
-              </h3>
-              <span className="text-xs text-olive-600 tabular-nums dark:text-olive-400">{cover.count}</span>
-            </div>
+    <section className="py-10 sm:py-14">
+      <Container className="flex flex-col gap-4">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-sm font-medium text-olive-950 dark:text-white">Browse by what it is</h2>
+          <Link
+            href="/shop"
+            className="text-sm text-olive-600 underline underline-offset-4 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white"
+          >
+            All {covers.reduce((all, cover) => all + cover.count, 0)} pieces
           </Link>
-        ))}
-      </Stagger>
-    </Section>
+        </div>
+
+        <Stagger className={grid}>
+          {covers.map((cover) => (
+            <Link key={cover.category} href={`/shop?category=${cover.category}`} className="group block">
+              <div className={tile}>
+                {cover.image_url && (
+                  <Image
+                    src={cover.image_url}
+                    alt=""
+                    fill
+                    sizes={sizes}
+                    style={{ objectPosition: focalPosition(cover.slug) }}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                  />
+                )}
+                {/* A wash rather than a flat overlay: the name has to stay legible over a pale
+                    photograph and a dark one alike. */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/10 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex items-baseline justify-between gap-2 p-3">
+                  <span className="text-sm font-medium text-white">{categoryLabels[cover.category]}</span>
+                  <span className="text-xs text-white/70 tabular-nums">{cover.count}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </Stagger>
+      </Container>
+    </section>
   )
 }
 
 export function CategoriesSkeleton() {
   return (
-    <Section headline="Six things we make" subheadline={<p>Clay and timber, and what comes of working in both.</p>}>
-      <div className={grid}>
-        {Array.from({ length: 6 }, (_, index) => (
-          <div key={index} className="flex flex-col gap-3">
-            <Skeleton className="aspect-square rounded-xl" />
-            <Skeleton className="h-4 w-20" />
-          </div>
-        ))}
-      </div>
-    </Section>
+    <section className="py-10 sm:py-14">
+      <Container className="flex flex-col gap-4">
+        <Skeleton className="h-5 w-40" />
+        <div className={grid}>
+          {Array.from({ length: 6 }, (_, index) => (
+            <Skeleton key={index} className="aspect-4/3 rounded-xl" />
+          ))}
+        </div>
+      </Container>
+    </section>
   )
 }

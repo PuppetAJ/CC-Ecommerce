@@ -25,6 +25,7 @@ export default function HomePage() {
       </Suspense>
 
       <CallToActionSimple
+        tight
         headline="Come and see."
         subheadline={
           <p>
