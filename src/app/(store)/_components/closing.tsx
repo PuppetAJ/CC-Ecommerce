@@ -8,12 +8,12 @@ import { Text } from '@/components/elements/text'
 import { Rise } from '@/components/motion'
 import { NewsletterForm } from '@/features/newsletter/components/newsletter-form'
 
-// The landing page's last word: a visit and the newsletter in one card, both ways of staying close.
+// The landing page's last word: a visit and the newsletter in one card, full bleed below sm.
 export function Closing() {
   return (
     <section className="py-10 sm:py-14">
       <Container>
-        <Rise className="grid overflow-hidden rounded-2xl bg-olive-950/2.5 lg:grid-cols-2 dark:bg-white/5">
+        <Rise className="grid overflow-hidden bg-olive-950/2.5 max-sm:-mx-6 sm:rounded-2xl lg:grid-cols-2 dark:bg-white/5">
           <div className="relative aspect-video lg:order-2 lg:aspect-auto lg:min-h-full">
             <Image
               src="/images/editorial-shelf.jpg"
