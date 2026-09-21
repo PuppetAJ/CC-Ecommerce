@@ -1,6 +1,7 @@
 'use client'
 
 import { HeartIcon, ShoppingBagIcon } from 'lucide-react'
+import { Pop } from '@/components/motion'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -75,7 +76,9 @@ export function QuickActions({
         aria-label={isFavorite ? `Remove ${name} from your favorites` : `Save ${name} to your favorites`}
         className={button}
       >
-        <HeartIcon className={isFavorite ? 'size-5 fill-current' : 'size-5'} />
+        <Pop on={isFavorite} className="inline-flex">
+          <HeartIcon className={isFavorite ? 'size-5 fill-current' : 'size-5'} />
+        </Pop>
       </button>
       {!soldOut && (
         <button

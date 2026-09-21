@@ -33,6 +33,16 @@ async function audit(page, label, path) {
   } else {
     await page.goto(BASE + path, { waitUntil: 'networkidle' })
   }
+  // Contrast is measured on the resting state. Caught mid-fade, a tile is half transparent and
+  // every color on it reads as failing, which says nothing about the design.
+  await page
+    .waitForFunction(
+      () => [...document.querySelectorAll('[data-stagger]')].every((n) => Number(getComputedStyle(n).opacity) === 1),
+      null,
+      { timeout: 10_000 },
+    )
+    .catch(() => {})
+
   await page.addScriptTag({ path: AXE_PATH })
   const violations = await page.evaluate(async (tags) => {
     const results = await window.axe.run(document, { runOnly: { type: 'tag', values: tags } })
