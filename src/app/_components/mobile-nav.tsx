@@ -2,16 +2,30 @@
 
 import { MenuIcon } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Logo } from '@/components/elements/logo'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { navLinks } from '@/lib/nav'
 
-export function MobileNav() {
-  const [open, setOpen] = useState(false)
+export function MobileNav({ account }: { account?: ReactNode }) {
+  const pathname = usePathname()
+  // Remembers where it was opened, so any navigation closes it without a click handler on every link.
+  const [openedAt, setOpenedAt] = useState<string | null>(null)
+  const open = openedAt === pathname
+
+  // The button that opens it disappears at lg, so crossing that width closes the sheet too.
+  useEffect(() => {
+    const wide = window.matchMedia('(min-width: 1024px)')
+    const close = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpenedAt(null)
+    }
+    wide.addEventListener('change', close)
+    return () => wide.removeEventListener('change', close)
+  }, [])
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={(next) => setOpenedAt(next ? pathname : null)}>
       <SheetTrigger
         aria-label="Open menu"
         className="inline-flex size-9 items-center justify-center rounded-full text-olive-700 hover:bg-olive-200 lg:hidden dark:text-olive-400 dark:hover:bg-olive-800"
@@ -27,15 +41,11 @@ export function MobileNav() {
         </SheetHeader>
         <nav className="flex flex-col gap-1 px-4 pb-6">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="py-2 text-base/7 text-olive-950 dark:text-white"
-            >
+            <Link key={link.href} href={link.href} className="py-2 text-base/7 text-olive-950 dark:text-white">
               {link.label}
             </Link>
           ))}
+          {account}
         </nav>
       </SheetContent>
     </Sheet>

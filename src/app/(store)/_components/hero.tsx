@@ -22,7 +22,7 @@ export function LandingHero() {
       }
       headline={
         // A span, because a heading holds phrasing content and a div is not that.
-        <Enter as="span" className="block" delay={0.12}>
+        <Enter as="span" className="block lg:text-5xl/12 xl:text-[3.5rem]/14" delay={0.12}>
           Made slowly, to be kept.
         </Enter>
       }
@@ -38,10 +38,10 @@ export function LandingHero() {
         <Enter delay={0.28}>
           <div className="flex flex-wrap items-center gap-2">
             <ButtonLink href="/shop" size="lg">
-              Shop the collection
+              Shop now
             </ButtonLink>
             <PlainButtonLink href="/about" size="lg">
-              See how it&rsquo;s made <ArrowNarrowRightIcon />
+              How it&rsquo;s made <ArrowNarrowRightIcon />
             </PlainButtonLink>
           </div>
         </Enter>

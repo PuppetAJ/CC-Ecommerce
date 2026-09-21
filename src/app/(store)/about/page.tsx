@@ -118,7 +118,7 @@ export default function AboutPage() {
               Plan a visit
             </ButtonLink>
             <PlainButtonLink href="/shop" size="lg">
-              See the collection <ArrowNarrowRightIcon />
+              Shop now <ArrowNarrowRightIcon />
             </PlainButtonLink>
           </div>
         }

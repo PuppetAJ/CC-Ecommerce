@@ -17,3 +17,10 @@ export async function AccountMenu() {
 export function AccountMenuFallback() {
   return <div className="h-9 w-24 animate-pulse rounded-full bg-olive-950/5 dark:bg-white/5" aria-hidden />
 }
+
+/** The sheet's copy of the signed-out links. Signed in, the avatar in the header is enough. */
+export async function SheetAccount() {
+  const session = await getSession()
+  if (session) return null
+  return <SignedOutLinks layout="sheet" />
+}

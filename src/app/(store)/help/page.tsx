@@ -183,7 +183,7 @@ export default function HelpPage() {
 
       <section id="contact" className="scroll-mt-24 py-12">
         <Container>
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 rounded-xl border border-olive-950/10 p-6 sm:p-10 dark:border-white/10">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 sm:rounded-xl sm:border sm:border-olive-950/10 sm:p-10 dark:sm:border-white/10">
             <div className="flex flex-col items-center gap-3 text-center">
               <span className="flex size-10 items-center justify-center rounded-lg bg-olive-950/5 text-olive-700 dark:bg-white/10 dark:text-olive-300">
                 <MessageCircleQuestionIcon className="size-5" />
