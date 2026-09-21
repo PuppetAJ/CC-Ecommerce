@@ -106,34 +106,50 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
 
       <Panel
         title="Signed-in shoppers"
-        note="Accounts, not sessions. The only people the shop can recognize across visits."
+        note="People with an account. Anonymous visits are counted under Sessions and cannot appear here."
       >
         {visitors.known === 0 ? (
           <Empty>No signed-in shopper looked at anything in this period.</Empty>
         ) : (
-          <dl className="grid gap-x-8 gap-y-3 sm:grid-cols-3">
+          // Every row carries its own denominator, so no percentage can be read against the
+          // wrong total. This is the one panel counting people rather than visits.
+          <ul className="flex flex-col gap-4">
             {[
-              ['Visited', String(visitors.known), 'accounts that looked at anything'],
-              [
-                'Been before',
-                `${visitors.returning} · ${((visitors.returning / visitors.known) * 100).toFixed(0)}%`,
-                'had visited before this period',
-              ],
-              [
-                'Bought',
-                `${visitors.bought} · ${((visitors.bought / visitors.known) * 100).toFixed(0)}%`,
-                'of those who visited',
-              ],
-            ].map(([label, value, note]) => (
-              <div key={label} className="flex flex-col gap-0.5">
-                <dt className="text-sm text-olive-600 dark:text-olive-400">{label}</dt>
-                <dd className="font-display text-xl font-medium text-olive-950 tabular-nums dark:text-white">
-                  {value}
-                </dd>
-                <dd className="text-xs text-olive-600 dark:text-olive-400">{note}</dd>
-              </div>
+              {
+                count: visitors.known,
+                of: null,
+                says: 'accounts signed in and looked at something',
+              },
+              {
+                count: visitors.returning,
+                of: visitors.known,
+                says: 'had also visited before this period started',
+              },
+              {
+                count: visitors.bought,
+                of: visitors.known,
+                says: 'bought something in this period',
+              },
+            ].map(({ count, of, says }) => (
+              <li key={says} className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span className="font-display text-xl font-medium text-olive-950 tabular-nums dark:text-white">
+                  {count.toLocaleString('en-US')}
+                  {of !== null && (
+                    <span className="text-base font-normal text-olive-600 dark:text-olive-400">
+                      {' of '}
+                      {of.toLocaleString('en-US')}
+                    </span>
+                  )}
+                </span>
+                <span className="text-sm text-olive-700 dark:text-olive-300">{says}</span>
+                {of !== null && (
+                  <span className="text-sm text-olive-600 tabular-nums dark:text-olive-400">
+                    ({((count / of) * 100).toFixed(0)}%)
+                  </span>
+                )}
+              </li>
             ))}
-          </dl>
+          </ul>
         )}
       </Panel>
 

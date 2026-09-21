@@ -175,7 +175,7 @@ section('Authorisation')
   check('the demo admin can', /Admin/.test(await visibleText(admin)))
   // /admin sits outside the (store) layout, so the header is only on the store pages.
   await admin.goto(`${BASE}/`, { waitUntil: 'networkidle' })
-  check('and the admin menu links there', (await openAccountMenu(admin)).includes('Admin'))
+  check('and the admin menu links there', (await openAccountMenu(admin)).includes('Admin dashboard'))
   await adminContext.close()
 
   const { context: forgedContext, page: forged } = await freshPage(browser)

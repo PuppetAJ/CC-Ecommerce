@@ -16,7 +16,7 @@ export function SiteHeader() {
       <Container className="flex h-16 items-center gap-8">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-lg font-medium tracking-tight text-olive-950 sm:text-xl dark:text-white"
+          className="flex items-center gap-1.5 font-display text-lg font-medium tracking-tight text-olive-950 sm:text-xl dark:text-white"
         >
           <Logo className="size-5 shrink-0 sm:size-6" />
           Wicken
