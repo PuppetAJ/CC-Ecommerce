@@ -58,7 +58,10 @@ section('Product page')
   await page.waitForTimeout(500)
 
   const specs = await page.locator('[data-slot="accordion-content"]').first().innerText()
-  check('product information keeps measurements and care', /Measurements/.test(specs) && /Materials and care/.test(specs))
+  check(
+    'product information keeps measurements and care',
+    /Measurements/.test(specs) && /Materials and care/.test(specs),
+  )
   check(
     'and none of the sections that were cut',
     !/Made in|In the studio|Electrical|Assembly|Model number|Packaging/.test(specs),
@@ -199,9 +202,17 @@ section('The admin dashboard')
   await openAdmin(admin, `/admin`)
   const overview = await visibleText(admin)
 
-  check('the four figures are shown', /Gross sales/.test(overview) && /Conversion/.test(overview), overview.slice(0, 80))
+  check(
+    'the four figures are shown',
+    /Gross sales/.test(overview) && /Conversion/.test(overview),
+    overview.slice(0, 80),
+  )
   check('it says the writes are real', /writes to the real database/i.test(overview))
-  check('the charts render', (await admin.locator('svg.recharts-surface').count()) >= 2, `${await admin.locator('svg.recharts-surface').count()} charts`)
+  check(
+    'the charts render',
+    (await admin.locator('svg.recharts-surface').count()) >= 2,
+    `${await admin.locator('svg.recharts-surface').count()} charts`,
+  )
   check('the funnel is shown', /How far people get/.test(overview) && /Bought something/.test(overview))
 
   // A conversion figure above its own session count would mean the funnel is counting wrong.
@@ -413,11 +424,7 @@ section('A Server Action is not protected by its button')
   )
   // Not 404: a 404 would mean the id was wrong and nothing was actually tested.
   check('the replayed call reaches the action', replay.status !== 404, `responded ${replay.status}`)
-  check(
-    'but a shopper is refused',
-    !/"status":"cancelled"|savedAt/.test(replay.body),
-    replay.body.slice(0, 80),
-  )
+  check('but a shopper is refused', !/"status":"cancelled"|savedAt/.test(replay.body), replay.body.slice(0, 80))
   await shopperContext.close()
 
   // And the order is still what it was, which is the part that actually matters.
@@ -492,12 +499,20 @@ section('Products arrive one after another')
   check('they do not all appear at once', new Set(during).size > 1, during.map((o) => o.toFixed(2)).join(' '))
 
   await shop.waitForTimeout(3000)
+  // Fully on screen: a tile hanging off the bottom edge is below the threshold that starts it.
   const onScreen = await shop.evaluate(() =>
     [...document.querySelectorAll('[data-stagger]')]
-      .filter((n) => n.getBoundingClientRect().top < window.innerHeight)
+      .filter((n) => {
+        const box = n.getBoundingClientRect()
+        return box.top >= 0 && box.bottom <= window.innerHeight
+      })
       .map((n) => Number(getComputedStyle(n).opacity)),
   )
-  check('the ones on screen all finish', onScreen.length > 0 && onScreen.every((o) => o === 1), `${onScreen.length} tiles`)
+  check(
+    'the ones on screen all finish',
+    onScreen.length > 0 && onScreen.every((o) => o === 1),
+    `${onScreen.length} tiles`,
+  )
 
   // The rest wait to be scrolled to, which is what makes the reveal visible down a long page.
   // Scrolled the way a person does: jumping straight to the end never intersects the middle.
@@ -528,6 +543,31 @@ section('Products arrive one after another')
     (await quiet.evaluate(() => Number(getComputedStyle(document.querySelector('article')).opacity))) === 1,
   )
   await still.close()
+
+  // A category is a new set of products, not the old ones relabelled, so the reveal plays again
+  // rather than swapping them in with it already spent.
+  const { context: swapped, page: swap } = await freshPage(browser)
+  await swap.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
+  await swap.waitForTimeout(3000)
+  const topRow = await swap.evaluate(() =>
+    [...document.querySelectorAll('[data-stagger]')].slice(0, 4).map((n) => Number(getComputedStyle(n).opacity)),
+  )
+  check('the first row is settled to begin with', topRow.length > 0 && topRow.every((o) => o === 1), topRow.join(' '))
+
+  await swap.getByRole('main').getByRole('link', { name: 'Vases' }).click()
+  const replayed = await swap
+    .waitForFunction(
+      () =>
+        [...document.querySelectorAll('[data-stagger]')]
+          .slice(0, 4)
+          .some((n) => Number(getComputedStyle(n).opacity) < 1),
+      null,
+      { timeout: 6000 },
+    )
+    .then(() => true)
+    .catch(() => false)
+  check('and changing it plays the reveal again', replayed)
+  await swapped.close()
 }
 
 section('A phone at its narrowest')
@@ -553,16 +593,17 @@ section('A phone at its narrowest')
     check(`${label} fits`, width <= 321, `${width}px`)
     // Nothing may run past the gutter either, which is how a clipped control goes unnoticed.
     // Anything inside a sideways scroller is meant to be off screen, so it does not count.
-    const past = await tiny.evaluate(() =>
-      [...document.querySelectorAll('a,button,input,select')].filter((node) => {
-        const box = node.getBoundingClientRect()
-        if (!(box.width > 0 && box.right > 321)) return false
-        for (let parent = node.parentElement; parent; parent = parent.parentElement) {
-          const overflow = getComputedStyle(parent).overflowX
-          if (overflow === 'auto' || overflow === 'scroll') return false
-        }
-        return true
-      }).length,
+    const past = await tiny.evaluate(
+      () =>
+        [...document.querySelectorAll('a,button,input,select')].filter((node) => {
+          const box = node.getBoundingClientRect()
+          if (!(box.width > 0 && box.right > 321)) return false
+          for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+            const overflow = getComputedStyle(parent).overflowX
+            if (overflow === 'auto' || overflow === 'scroll') return false
+          }
+          return true
+        }).length,
     )
     check(`and nothing on ${label} is cut off`, past === 0, `${past} controls past the edge`)
   }
@@ -571,28 +612,46 @@ section('A phone at its narrowest')
   await fits('checkout', '/checkout')
   await fits('a product', '/products/spouted-pendant')
 
+  // Three controls that have to stack rather than leave the heart stranded beside a wrapped form.
+  const heart = await tiny.locator('[data-favorite="product"]').boundingBox()
+  const buy = await tiny.getByRole('button', { name: 'Add to cart' }).boundingBox()
+  check(
+    'the heart keeps the line the count is on',
+    heart.y + heart.height <= buy.y + 1,
+    `${Math.round(heart.y)} then ${Math.round(buy.y)}`,
+  )
+  check('and Add to cart has the next line to itself', buy.width > 240, `${Math.round(buy.width)}px wide`)
+
   // One column, because two at this width is 140px of photograph.
   await tiny.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
   await tiny.waitForTimeout(2000)
+  // The grid's own column count, not where the tiles have landed: one still waiting to be
+  // scrolled to is scaled down, and a measured edge says more about the animation than the layout.
   const columns = await tiny.evaluate(() => {
-    const tiles = [...document.querySelectorAll('article')].slice(0, 4)
-    return new Set(tiles.map((t) => Math.round(t.getBoundingClientRect().left))).size
+    let node = document.querySelector('article')
+    while (node && getComputedStyle(node).display !== 'grid') node = node.parentElement
+    return node ? getComputedStyle(node).gridTemplateColumns.split(' ').length : 0
   })
   check('the shop drops to one column', columns === 1, `${columns} columns`)
 
-  // The facets fold away, or they are most of the screen before a product is seen.
-  const open = await tiny.locator('details').first().evaluate((n) => n.open)
-  check('and the filters are folded away', open === false)
+  // The rail here would be three lists stacked above the products rather than beside them,
+  // which is most of the screen before a single piece is seen.
+  check('the filter rail is out of the way', await tiny.locator('[data-inline-filters="rail"]').isHidden())
+  await tiny.getByRole('button', { name: /^Filters/ }).click()
+  await tiny.waitForTimeout(700)
+  const sheet = tiny.locator('[data-slot="sheet-content"]')
+  check('and one button brings them all up', await sheet.isVisible())
+  const inside = await sheet.innerText()
+  check('with the categories folded in beside them', /Category/.test(inside) && /Price/.test(inside))
+  check('and a way back to the grid', /Show \d+ piece/.test(inside))
   await context.close()
 
   const wide = await browser.newContext({ viewport: { width: 1280, height: 900 } })
   const roomy = await wide.newPage()
   await roomy.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
   await roomy.waitForTimeout(2000)
-  check(
-    'but stay open where the rail has room',
-    await roomy.locator('details').first().evaluate((n) => n.open),
-  )
+  check('where there is room the rail is simply there', await roomy.locator('[data-inline-filters="rail"]').isVisible())
+  check('and nothing is hidden behind a button', await roomy.getByRole('button', { name: /^Filters/ }).isHidden())
   await wide.close()
 }
 
@@ -791,7 +850,9 @@ section('Material and color filters')
     materialList.replace(/\n/g, ' | ').slice(0, 80),
   )
 
-  const listed = (await shop.locator('fieldset:has(legend:text-is("Material")) label span:not(.sr-only)').allInnerTexts())
+  const listed = (
+    await shop.locator('fieldset:has(legend:text-is("Material")) label span:not(.sr-only)').allInnerTexts()
+  )
     .map((text) => text.trim())
     .filter(Boolean)
   check(
@@ -1222,7 +1283,11 @@ section('Checkout')
     await buyer.goto(`${BASE}/account/orders`, { waitUntil: 'networkidle' })
     await buyer.waitForTimeout(800)
     const listEdge = (await buyer.locator('h1').first().boundingBox()).x
-    check('one order lines up with the list it came from', Math.abs(detailEdge - listEdge) < 2, `${detailEdge} vs ${listEdge}`)
+    check(
+      'one order lines up with the list it came from',
+      Math.abs(detailEdge - listEdge) < 2,
+      `${detailEdge} vs ${listEdge}`,
+    )
     await buyer.goto(orderUrl, { waitUntil: 'networkidle' })
     await buyer.waitForTimeout(800)
   }

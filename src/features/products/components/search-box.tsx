@@ -39,7 +39,7 @@ export function SearchBox({ search }: { search: ShopSearch }) {
   }, [value, applied, withoutQuery, router])
 
   return (
-    <form action="/shop" className="relative flex items-center gap-2">
+    <form action="/shop" className="relative flex w-full items-center gap-2 sm:w-auto">
       {search.category && <input type="hidden" name="category" value={search.category} />}
       {search.sort !== 'newest' && <input type="hidden" name="sort" value={search.sort} />}
       <input
@@ -50,7 +50,7 @@ export function SearchBox({ search }: { search: ShopSearch }) {
         maxLength={searchMaxLength}
         placeholder="Search the collection"
         aria-label="Search the collection"
-        className="w-56 rounded-lg border border-olive-300 bg-transparent py-1.5 pr-9 pl-3 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
+        className="w-full rounded-lg border border-olive-300 bg-transparent py-1.5 pr-9 pl-3 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none sm:w-56 dark:border-olive-800 dark:text-white"
       />
       <SearchIcon
         aria-hidden

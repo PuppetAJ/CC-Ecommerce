@@ -114,12 +114,16 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
               </dl>
             )}
 
-            <div className="flex w-full flex-wrap items-center gap-3">
-              <AddToCart productId={product.id} name={product.name} stock={product.stock_quantity} />
-              <Suspense fallback={null}>
-                <SaveControl productId={product.id} name={product.name} />
-              </Suspense>
-            </div>
+            <AddToCart
+              productId={product.id}
+              name={product.name}
+              stock={product.stock_quantity}
+              save={
+                <Suspense fallback={null}>
+                  <SaveControl productId={product.id} name={product.name} />
+                </Suspense>
+              }
+            />
           </div>
         </div>
       </div>

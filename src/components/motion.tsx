@@ -1,22 +1,19 @@
 'use client'
 
 import { domAnimation, LazyMotion, m, useReducedMotion, type Variants } from 'motion/react'
-import { Children, type ReactNode } from 'react'
+import { Children, useCallback, useState, type ReactNode } from 'react'
 
-// Past this many the delay stops growing. Forty-seven tiles at 60ms each would leave the last
-// one arriving nearly three seconds in, which is a wait rather than a flourish.
-const most = 8
-const step = 0.06
+const step = 0.07
 
 const rise: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
-  shown: (index: number) => ({
+  shown: (column: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
     // A spring rather than an ease: the small overshoot at the end is what makes the movement
     // read as arriving rather than fading.
-    transition: { delay: Math.min(index, most) * step, type: 'spring', stiffness: 260, damping: 22 },
+    transition: { delay: column * step, type: 'spring', stiffness: 260, damping: 22 },
   }),
 }
 
@@ -26,36 +23,42 @@ const rise: Variants = {
  * The children arrive **already rendered by the server** and are only wrapped here, so a grid of
  * forty-seven product tiles stays server-rendered and this wrapper is the only thing shipped.
  * Motion's features load through `LazyMotion`, which is a fraction of the whole library.
+ *
+ * The delay follows the column a tile sits in rather than its index, so a row cascades left to
+ * right and the row below it waits until it is scrolled to instead of playing off screen.
  */
-export function Stagger({
-  children,
-  className,
-  /** How many are on screen at the start; the rest wait until they are scrolled to. */
-  eager = 8,
-}: {
-  children: ReactNode
-  className?: string
-  eager?: number
-}) {
+export function Stagger({ children, className }: { children: ReactNode; className?: string }) {
   const still = useReducedMotion()
+  const [columns, setColumns] = useState(1)
+
+  // A ref callback rather than an effect: it runs before paint, so the first row already knows
+  // how wide it is by the time its animation starts.
+  const watch = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return
+    const measure = () => {
+      const template = getComputedStyle(node).gridTemplateColumns
+      setColumns(template.includes(' ') ? template.split(' ').length : 1)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
   if (still) return <div className={className}>{children}</div>
 
   return (
     <LazyMotion features={domAnimation} strict>
-      <div className={className}>
+      <div ref={watch} className={className}>
         {Children.toArray(children).map((child, index) => (
           <m.div
             key={index}
             data-stagger
-            custom={index % (most + 1)}
+            custom={index % columns}
             variants={rise}
             initial="hidden"
-            // Above the fold it plays at once; below it waits, so scrolling keeps revealing.
-            {...(index < eager
-              ? { animate: 'shown' }
-              // A generous margin, so a tile is already on its way in before it is reached and
-              // an ordinary scroll never outruns it.
-              : { whileInView: 'shown', viewport: { once: true, margin: '240px 0px' } })}
+            whileInView="shown"
+            viewport={{ once: true, amount: 0.2 }}
           >
             {child}
           </m.div>

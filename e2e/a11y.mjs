@@ -37,7 +37,14 @@ async function audit(page, label, path) {
   // every color on it reads as failing, which says nothing about the design.
   await page
     .waitForFunction(
-      () => [...document.querySelectorAll('[data-stagger]')].every((n) => Number(getComputedStyle(n).opacity) === 1),
+      // Only what is on screen: the rest is waiting to be scrolled to and never settles.
+      () =>
+        [...document.querySelectorAll('[data-stagger]')]
+          .filter((n) => {
+            const box = n.getBoundingClientRect()
+            return box.top >= 0 && box.bottom <= window.innerHeight
+          })
+          .every((n) => Number(getComputedStyle(n).opacity) === 1),
       null,
       { timeout: 10_000 },
     )

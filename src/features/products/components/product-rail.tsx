@@ -3,7 +3,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { Product } from '@/lib/db/types'
-import { ProductCard } from './product-card'
+import { ProductCard, railSizes } from './product-card'
 
 export function ProductRail({
   products,
@@ -76,9 +76,9 @@ export function ProductRail({
         onScroll={measure}
         className="-mx-6 flex snap-x snap-mandatory scroll-px-6 scroll-hint gap-6 overflow-x-auto scroll-smooth px-6 pb-2 lg:mx-0 lg:scroll-px-0 lg:px-0"
       >
-        {products.map((product) => (
+        {products.map((product, index) => (
           <li key={product.id} className="w-[calc(50%-12px)] shrink-0 snap-start lg:w-[calc(25%-18px)]">
-            <ProductCard product={product} from={from} />
+            <ProductCard product={product} from={from} sizes={railSizes} eager={index < 4} />
           </li>
         ))}
       </ul>
