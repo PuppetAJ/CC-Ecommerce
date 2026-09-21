@@ -10,6 +10,8 @@ export function SiteFooter() {
             <FooterLink href="/shop?category=vases">Vases</FooterLink>
             <FooterLink href="/shop?category=lighting">Lighting</FooterLink>
             <FooterLink href="/shop?category=furniture">Furniture</FooterLink>
+            <FooterLink href="/shop?category=textiles">Textiles</FooterLink>
+            <FooterLink href="/shop?category=storage">Storage</FooterLink>
           </FooterCategory>
           <FooterCategory title="Studio">
             <FooterLink href="/about">About</FooterLink>

@@ -548,4 +548,95 @@ export const productSpecs: Record<string, Record<string, Record<string, string>>
       'Takes apart': 'Yes, for moving',
     },
   },
+  'washed-linen-napkins': {
+    Measurements: { Dimensions: '45 × 45 cm each', Weight: '280 g the set' },
+    'Materials and care': {
+      Cloth: 'Washed European linen, 185 gsm',
+      Hem: 'Hand-turned, mitred corners',
+      Wash: 'Forty degrees, tumble low',
+      Ironing: 'Not if you can help it',
+    },
+    'Item details': { 'Unit count': 'Sold as a set of four' },
+  },
+  'linen-bread-cloth': {
+    Measurements: { Dimensions: '60 × 60 cm', Weight: '120 g' },
+    'Materials and care': {
+      Cloth: 'Loose-weave linen, 140 gsm',
+      Wash: 'Forty degrees, no softener',
+      Use: 'Proving, carrying, covering',
+    },
+  },
+  'studio-apron': {
+    Measurements: { Dimensions: '86 cm long, cross-back straps', Weight: '420 g' },
+    'Materials and care': {
+      Cloth: 'Heavyweight linen, 260 gsm',
+      Fixings: 'Brass rivets, no plastic',
+      Wash: 'Forty degrees; clay comes out cold first',
+      Pockets: 'Two, set low',
+    },
+  },
+  'heavy-linen-throw': {
+    Measurements: { Dimensions: '130 × 180 cm', Weight: '1.1 kg' },
+    'Materials and care': {
+      Cloth: 'Heavy linen, 320 gsm',
+      Border: 'Hemstitched by hand',
+      Wash: 'Forty degrees, line dry',
+    },
+  },
+  'linen-table-runner': {
+    Measurements: { Dimensions: '45 × 200 cm', Weight: '340 g' },
+    'Materials and care': {
+      Cloth: 'Washed European linen, 185 gsm',
+      Hem: 'Hand-turned, mitred corners',
+      Wash: 'Forty degrees, tumble low',
+    },
+  },
+  'lidded-keepsake-box': {
+    Measurements: { Dimensions: '24 × 14 cm, 9 cm deep', Weight: '760 g' },
+    'Materials and care': {
+      Timber: 'Solid walnut',
+      Joints: 'Mitred, grain continuous',
+      Finish: 'Hardwax oil inside and out',
+      Care: 'Wipe dry; re-oil yearly in dry rooms',
+    },
+  },
+  'turned-serving-trays': {
+    Measurements: { Dimensions: '46 × 14 cm and 30 × 12 cm', Weight: '690 g the pair' },
+    'Materials and care': {
+      Timber: 'Solid oak, one board',
+      Finish: 'Hardwax oil, three coats',
+      Dishwasher: 'No, hand wash only',
+      Care: 'Re-oil when the grain looks thirsty',
+    },
+    'Item details': { 'Unit count': 'Sold as a set of two' },
+  },
+  'stoneware-storage-jars': {
+    Measurements: { Dimensions: '12 cm and 9 cm tall', Weight: '1.2 kg the pair', Capacity: '600 ml and 350 ml' },
+    'Materials and care': {
+      'Clay body': 'Stoneware',
+      Glaze: 'Matt white, unglazed rims',
+      Lids: 'Ground to their own jar, marked underneath',
+      Dishwasher: 'Yes',
+      'Food safe': 'Yes',
+    },
+    'Item details': { 'Unit count': 'Sold as a set of two' },
+  },
+  'turned-walnut-bowl': {
+    Measurements: { Dimensions: '26 cm across, 8 cm deep', Weight: '840 g' },
+    'Materials and care': {
+      Timber: 'Solid walnut, single block',
+      Finish: 'Food-safe oil',
+      Dishwasher: 'No, hand wash only',
+      Care: 'Dry immediately; re-oil when dull',
+    },
+  },
+  'carved-catch-all': {
+    Measurements: { Dimensions: '22 cm across, 7 cm deep', Weight: '620 g' },
+    'Materials and care': {
+      Timber: 'Carved walnut, tool marks left in',
+      Finish: 'Hardwax oil',
+      Dishwasher: 'No, hand wash only',
+      Care: 'Dry items only',
+    },
+  },
 }

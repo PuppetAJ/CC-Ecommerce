@@ -630,6 +630,33 @@ section('The shop skeleton mirrors the shop')
   check('and the category pills above it', pills > 3, `${pills} pills`)
 }
 
+section('The widened catalogue')
+{
+  const { context, page: shop } = await freshPage(browser)
+  const tiles = () => shop.locator('article').count()
+
+  await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
+  const all = await tiles()
+  check('the catalogue has grown', all >= 45, `${all} pieces`)
+
+  for (const [label, category] of [
+    ['textiles', 'textiles'],
+    ['storage', 'storage'],
+  ]) {
+    await shop.goto(`${BASE}/shop?category=${category}`, { waitUntil: 'networkidle' })
+    const found = await tiles()
+    check(`${label} is a category of its own`, found > 0 && found < all, `${found} of ${all}`)
+  }
+
+  // Walnut is a material the vocabulary did not have until these pieces existed.
+  await shop.goto(`${BASE}/shop?material=walnut`, { waitUntil: 'networkidle' })
+  check('walnut filters to the pieces made of it', (await tiles()) > 0, `${await tiles()} in walnut`)
+
+  await shop.goto(`${BASE}/shop?material=linen`, { waitUntil: 'networkidle' })
+  check('and linen reaches the textiles', (await tiles()) >= 5, `${await tiles()} in linen`)
+  await context.close()
+}
+
 section('Material and color filters')
 {
   const { context, page: shop } = await freshPage(browser)

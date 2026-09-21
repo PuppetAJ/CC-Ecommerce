@@ -61,6 +61,8 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
     visitorsBetween(from, to),
   ])
 
+  // Spelled out in every row, so nobody has to remember which period is selected.
+  const since = from.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
   const conversion = funnel.sessions > 0 ? (funnel.purchases / funnel.sessions) * 100 : 0
   const wasConversion = wasFunnel.sessions > 0 ? (wasFunnel.purchases / wasFunnel.sessions) * 100 : 0
 
@@ -118,17 +120,17 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
               {
                 count: visitors.known,
                 of: null,
-                says: 'accounts signed in and looked at something',
+                says: `accounts signed in and looked at something since ${since}`,
               },
               {
                 count: visitors.returning,
                 of: visitors.known,
-                says: 'had also visited before this period started',
+                says: `had also visited before ${since}`,
               },
               {
                 count: visitors.bought,
                 of: visitors.known,
-                says: 'bought something in this period',
+                says: `bought something since ${since}`,
               },
             ].map(({ count, of, says }) => (
               <li key={says} className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">

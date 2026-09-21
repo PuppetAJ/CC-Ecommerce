@@ -10,7 +10,7 @@
     "file": "ash-glaze-dinner-plate",
     "id": "7HuTGlUfQSo",
     "photographer": "Tom Crew",
-    "profile": "https://unsplash.com/@tomcrewceramics",
+    "profile": "",
     "credited": true
   },
   {
@@ -35,9 +35,16 @@
     "credited": true
   },
   {
+    "file": "carved-catch-all",
+    "id": "5OeWJCvGJ7w",
+    "photographer": "Rick Rothenberg",
+    "profile": "https://unsplash.com/@rick_rothenberg",
+    "credited": true
+  },
+  {
     "file": "cobalt-column-vase",
     "id": "39wdffepWuM",
-    "photographer": "\u4e94\u7384\u571f ORIENTO",
+    "photographer": "五玄土 ORIENTO",
     "profile": "https://unsplash.com/@oriento",
     "credited": true
   },
@@ -53,6 +60,14 @@
     "id": "Mz__0nr1AM8",
     "photographer": "Tom Crew",
     "profile": "https://unsplash.com/@tomcrewceramics",
+    "credited": true
+  },
+  {
+    "file": "editorial-bench",
+    "source": "pexels",
+    "id": "3049121",
+    "photographer": "Catherine Augustin",
+    "profile": "https://www.pexels.com/photo/3049121/",
     "credited": true
   },
   {
@@ -86,7 +101,7 @@
   {
     "file": "editorial-wheel",
     "id": "P7X0np30w30",
-    "photographer": "Anne Nyg\u00e5rd",
+    "photographer": "Anne Nygård",
     "profile": "https://unsplash.com/@polarmermaid",
     "credited": true
   },
@@ -107,7 +122,7 @@
   {
     "file": "fluted-pendant",
     "id": "F2GhC936xqA",
-    "photographer": "\u0110\u00e0o Vi\u1ec7t Ho\u00e0ng",
+    "photographer": "Đào Việt Hoàng",
     "profile": "https://unsplash.com/@dvhoang2106",
     "credited": true
   },
@@ -140,6 +155,12 @@
     "credited": true
   },
   {
+    "file": "heavy-linen-throw",
+    "id": "kwepwyvPWmM",
+    "photographer": "Kier in Sight Archives",
+    "profile": "https://unsplash.com/@kierinsightarchives"
+  },
+  {
     "file": "hero-teaware",
     "id": "Xow_RU8rcv4",
     "photographer": "Chanhee Lee",
@@ -150,15 +171,33 @@
     "file": "hero-vases",
     "id": "yCdCM36X4mc",
     "photographer": "Anita Austvika",
-    "profile": "https://unsplash.com/@anitaaustvika",
+    "profile": "",
     "credited": true
   },
   {
     "file": "kiln-table-lamp",
     "id": "-Gem15xQAE4",
     "photographer": "Andy Bob",
-    "profile": "https://unsplash.com/@hioozlight",
+    "profile": "",
     "credited": true
+  },
+  {
+    "file": "lidded-keepsake-box",
+    "id": "GKlMfgZ2fpw",
+    "photographer": "Rumman Amin",
+    "profile": "https://unsplash.com/@rumanamin"
+  },
+  {
+    "file": "linen-bread-cloth",
+    "id": "bTJe8Wseia0",
+    "photographer": "Debby Hudson",
+    "profile": "https://unsplash.com/@hudsoncrafted"
+  },
+  {
+    "file": "linen-table-runner",
+    "id": "jM3gtQbSjnM",
+    "photographer": "Kier in Sight Archives",
+    "profile": "https://unsplash.com/@kierinsightarchives"
   },
   {
     "file": "low-workshop-stool",
@@ -191,7 +230,7 @@
   {
     "file": "oxblood-vase",
     "id": "maVIpNNtmlQ",
-    "photographer": "\u4e94\u7384\u571f ORIENTO",
+    "photographer": "五玄土 ORIENTO",
     "profile": "https://unsplash.com/@oriento",
     "credited": true
   },
@@ -219,7 +258,7 @@
   {
     "file": "smoke-glaze-vase",
     "id": "nK6iNEkLD2Y",
-    "photographer": "Mary Skrynnikova \ud83d\udc9b\ud83d\udc99",
+    "photographer": "Mary Skrynnikova 💛💙",
     "profile": "https://unsplash.com/@mary_skr",
     "credited": true
   },
@@ -245,11 +284,23 @@
     "credited": true
   },
   {
+    "file": "stoneware-storage-jars",
+    "id": "oiZAQvxTcYQ",
+    "photographer": "Tom Crew",
+    "profile": "https://unsplash.com/@tomcrewceramics"
+  },
+  {
     "file": "stoneware-teapot",
     "id": "D90_p0ZinVA",
     "photographer": "Nashad Abdu",
     "profile": "https://unsplash.com/@nashad",
     "credited": true
+  },
+  {
+    "file": "studio-apron",
+    "id": "ymSFRIA1mBM",
+    "photographer": "Valeriia Miller",
+    "profile": "https://unsplash.com/@valeriiamiller"
   },
   {
     "file": "studio-mug-set",
@@ -269,20 +320,20 @@
     "file": "tall-stem-vase",
     "id": "r0u8YuXfaho",
     "photographer": "Sixteen Miles Out",
-    "profile": "https://unsplash.com/@sixteenmilesout",
+    "profile": "",
     "credited": true
   },
   {
     "file": "taper-candle-holders",
     "id": "VETdDdf-k0o",
-    "photographer": "Mary Skrynnikova \ud83d\udc9b\ud83d\udc99",
+    "photographer": "Mary Skrynnikova 💛💙",
     "profile": "https://unsplash.com/@mary_skr",
     "credited": true
   },
   {
     "file": "teapot-trio",
     "id": "7EeeSN-eGsI",
-    "photographer": "\u96e8 \u7a7a",
+    "photographer": "雨 空",
     "profile": "https://unsplash.com/@liz99",
     "credited": true
   },
@@ -294,6 +345,24 @@
     "credited": true
   },
   {
+    "file": "turned-serving-trays",
+    "id": "MzJ6pzgLtC0",
+    "photographer": "Md Ishak Rahman",
+    "profile": "https://unsplash.com/@mdishakrahman"
+  },
+  {
+    "file": "turned-walnut-bowl",
+    "id": "Xig5z9fr0Kc",
+    "photographer": "Bryan Natanael",
+    "profile": "https://unsplash.com/@bryannatanael"
+  },
+  {
+    "file": "washed-linen-napkins",
+    "id": "tC-TOGGEODI",
+    "photographer": "Joyce Romero",
+    "profile": "https://unsplash.com/@joyceromero"
+  },
+  {
     "file": "weathered-stool",
     "id": "2KtOm9J0zGI",
     "photographer": "Zero",
@@ -303,16 +372,8 @@
   {
     "file": "wide-mouth-vessel",
     "id": "jKg4C87JB3U",
-    "photographer": "Danielle-Claude B\u00e9langer",
-    "profile": "https://unsplash.com/@dcbelanger",
-    "credited": true
-  },
-  {
-    "file": "editorial-bench",
-    "source": "pexels",
-    "id": "3049121",
-    "photographer": "Catherine Augustin",
-    "profile": "https://www.pexels.com/photo/3049121/",
+    "photographer": "Danielle-Claude Bélanger",
+    "profile": "",
     "credited": true
   }
 ]

@@ -29,6 +29,16 @@ const groups: { name: string; want: number; queries: string[] }[] = [
     queries: ['wooden dining chair', 'oak dining table', 'wooden stool minimal', 'wooden bench interior'],
   },
   {
+    name: 'Textiles',
+    want: 6,
+    queries: ['linen napkin table', 'linen tea towel kitchen', 'folded linen fabric neutral', 'linen apron'],
+  },
+  {
+    name: 'Storage',
+    want: 6,
+    queries: ['wooden box lid handmade', 'wooden tray serving', 'ceramic canister kitchen', 'wooden bowl turned'],
+  },
+  {
     name: 'Editorial',
     want: 5,
     queries: ['pottery workshop hands', 'ceramic studio shelves', 'potters wheel', 'woodworking workshop'],
