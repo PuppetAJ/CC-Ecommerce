@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { SoftButton } from '@/components/elements/button'
 import { signInAsDemo, type AuthState } from '../actions'
-import { FormError } from './field'
+import { FormError } from '@/components/elements/form-error'
 
 // Both buttons submit one form; the clicked button's name and value ride along in
 // the FormData, which is how one action serves two roles without two forms.

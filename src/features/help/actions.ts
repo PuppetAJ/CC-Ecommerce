@@ -2,15 +2,15 @@
 
 import { getSession } from '@/lib/auth/session'
 import { saveMessage } from '@/lib/db/queries/messages'
+import { isBot } from '@/lib/honeypot'
 import { limitAttempts } from '@/lib/rate-limit'
 import { message } from './schemas'
 
 export type MessageState = { error?: string; sentAt?: number }
 
 export async function sendMessage(_previous: MessageState, formData: FormData): Promise<MessageState> {
-  // A field positioned off screen, so anything in it was filled by a script rather than a person.
-  // Answered as though it worked: a bot told it failed simply tries again.
-  if (formData.get('website')) return { sentAt: Date.now() }
+  // Answered as though it worked, because a bot told it failed simply tries again.
+  if (isBot(formData)) return { sentAt: Date.now() }
 
   const parsed = message.safeParse({
     name: formData.get('name'),

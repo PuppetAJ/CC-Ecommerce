@@ -12,7 +12,7 @@ import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/admin'
 import { funnelBetween, sessionsByDay, visitorsBetween } from '@/lib/db/queries/events'
-import { formatPrice } from '@/lib/format'
+import { formatCount, formatDay, formatPrice } from '@/lib/format'
 
 export const metadata = { title: 'Admin' }
 
@@ -62,7 +62,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
   ])
 
   // Spelled out in every row, so nobody has to remember which period is selected.
-  const since = from.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  const since = formatDay(from)
   const conversion = funnel.sessions > 0 ? (funnel.purchases / funnel.sessions) * 100 : 0
   const wasConversion = wasFunnel.sessions > 0 ? (wasFunnel.purchases / wasFunnel.sessions) * 100 : 0
 
@@ -135,11 +135,11 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
             ].map(({ count, of, says }) => (
               <li key={says} className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                 <span className="font-display text-xl font-medium text-olive-950 tabular-nums dark:text-white">
-                  {count.toLocaleString('en-US')}
+                  {formatCount(count)}
                   {of !== null && (
                     <span className="text-base font-normal text-olive-600 dark:text-olive-400">
                       {' of '}
-                      {of.toLocaleString('en-US')}
+                      {formatCount(of)}
                     </span>
                   )}
                 </span>

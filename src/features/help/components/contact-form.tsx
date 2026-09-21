@@ -5,6 +5,8 @@ import { Button } from '@/components/elements/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { sendMessage, type MessageState } from '../actions'
+import { FormError } from '@/components/elements/form-error'
+import { Honeypot } from '@/components/elements/honeypot'
 
 export function ContactForm({
   name = '',
@@ -34,11 +36,7 @@ export function ContactForm({
 
   return (
     <form action={action} className="flex flex-col gap-4">
-      {/* Off screen rather than hidden, because a script reads the styles too rarely to notice. */}
-      <div aria-hidden className="absolute -left-[9999px]">
-        <label htmlFor="website">Leave this empty</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
-      </div>
+      <Honeypot />
 
       <fieldset disabled={waiting} className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -75,11 +73,7 @@ export function ContactForm({
         </div>
       </fieldset>
 
-      {state.error && (
-        <p role="alert" className="text-sm text-destructive">
-          {state.error}
-        </p>
-      )}
+      {state.error && <FormError>{state.error}</FormError>}
 
       <Button type="submit" size="lg" disabled={pending} className="self-start">
         {pending ? 'Sending…' : 'Send'}

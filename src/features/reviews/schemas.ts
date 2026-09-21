@@ -1,4 +1,4 @@
-import type { ReviewSort } from '@/lib/db/queries/reviews'
+import { reviewSorts, type ReviewSort } from '@/lib/db/types'
 import { withoutNulls } from '@/lib/db/text'
 import { z } from 'zod'
 
@@ -13,9 +13,6 @@ export const reviewVote = z.object({
   reviewUserId: z.string().min(1).max(200),
   helpful: z.boolean().nullable(),
 })
-
-// Declared here rather than imported from the query module, which is server-only.
-export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const satisfies readonly ReviewSort[]
 
 export const reviewSortLabels: Record<ReviewSort, string> = {
   helpful: 'Most helpful',

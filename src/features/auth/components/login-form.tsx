@@ -2,7 +2,8 @@
 
 import { useActionState } from 'react'
 import { signIn, type AuthState } from '../actions'
-import { Field, FormError } from './field'
+import { Field } from '@/components/elements/field'
+import { FormError } from '@/components/elements/form-error'
 import { SubmitButton } from './submit-button'
 
 export function LoginForm({ next }: { next: string }) {

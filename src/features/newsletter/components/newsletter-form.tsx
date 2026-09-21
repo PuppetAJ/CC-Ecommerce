@@ -5,6 +5,8 @@ import { useActionState, useId, type ReactNode } from 'react'
 import { Button } from '@/components/elements/button'
 import { Input } from '@/components/ui/input'
 import { joinNewsletter, type SignupState } from '../actions'
+import { FormError } from '@/components/elements/form-error'
+import { Honeypot } from '@/components/elements/honeypot'
 
 export function NewsletterForm({ source, fineprint }: { source: 'footer' | 'landing'; fineprint?: ReactNode }) {
   const [state, action, pending] = useActionState<SignupState, FormData>(joinNewsletter, {})
@@ -23,10 +25,7 @@ export function NewsletterForm({ source, fineprint }: { source: 'footer' | 'land
   return (
     <form action={action} className="flex w-full max-w-md flex-col gap-3">
       <input type="hidden" name="source" value={source} />
-      <div aria-hidden className="absolute -left-[9999px]">
-        <label htmlFor={`${id}-website`}>Leave this empty</label>
-        <input id={`${id}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
-      </div>
+      <Honeypot />
       <div className="flex flex-col gap-2 sm:flex-row">
         {/* The placeholder is the label, read out rather than drawn: this is a one field form. */}
         <div className="relative flex-1">
@@ -52,11 +51,7 @@ export function NewsletterForm({ source, fineprint }: { source: 'footer' | 'land
           {pending ? 'One moment…' : 'Subscribe'}
         </Button>
       </div>
-      {state.error && (
-        <p role="alert" className="text-sm text-destructive">
-          {state.error}
-        </p>
-      )}
+      {state.error && <FormError>{state.error}</FormError>}
       {fineprint && <div className="text-xs/5 text-olive-600 dark:text-olive-400">{fineprint}</div>}
     </form>
   )

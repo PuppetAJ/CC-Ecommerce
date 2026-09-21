@@ -34,3 +34,12 @@ export async function removeFromCart(productId: number): Promise<CartState> {
 
   await removeCartItem(await resolveCartId(), parsed.data.productId)
 }
+
+/** One of a thing, from the grid. The product page keeps the stepper. */
+export async function quickAdd(productId: number): Promise<CartState> {
+  const parsed = cartTarget.safeParse({ productId })
+  if (!parsed.success) return { error: 'That product could not be added.' }
+
+  await addCartItem(await resolveCartId(), parsed.data.productId, 1)
+  return { addedAt: Date.now() }
+}

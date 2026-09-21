@@ -6,7 +6,7 @@ import { pageHref, pageNumber } from '@/features/admin/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { listCustomers, perPage } from '@/lib/db/queries/admin'
 import { countSubscribers } from '@/lib/db/queries/subscribers'
-import { formatPrice } from '@/lib/format'
+import { formatDate, formatPrice } from '@/lib/format'
 import { z } from 'zod'
 
 export const metadata = { title: 'Customers · Admin' }
@@ -53,13 +53,11 @@ async function Rows({ q, page }: { q?: string; page: number }) {
               <span className="font-medium text-olive-950 dark:text-white">{customer.name}</span>
             </Cell>
             <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
-              {customer.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+              {formatDate(customer.created_at)}
             </Cell>
             <Cell className="text-olive-600 tabular-nums dark:text-olive-400">{customer.orders}</Cell>
             <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
-              {customer.last_order
-                ? customer.last_order.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
-                : 'Never'}
+              {customer.last_order ? formatDate(customer.last_order) : 'Never'}
             </Cell>
             <Cell align="right" className="font-medium text-olive-950 tabular-nums dark:text-white">
               {formatPrice(customer.spent_cents)}

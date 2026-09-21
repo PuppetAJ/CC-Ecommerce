@@ -1,11 +1,11 @@
 import { Suspense } from 'react'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
-import { ButtonLink } from '@/components/elements/button'
 import { QuickActions } from '@/app/_components/quick-actions'
 import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
 import { requireUser } from '@/lib/auth/session'
 import { listFavorites } from '@/lib/db/queries/favorites'
+import { EmptyState } from '@/components/elements/empty-state'
 
 export const metadata = { title: 'Favorites' }
 
@@ -32,16 +32,7 @@ async function Saved() {
   const products = await listFavorites(user.id)
 
   if (products.length === 0) {
-    return (
-      <div className="flex flex-col items-start gap-6">
-        <Text size="lg" className="max-w-xl">
-          <p>Nothing saved yet. The heart on any product tile puts it here.</p>
-        </Text>
-        <ButtonLink href="/shop" size="lg">
-          Browse the collection
-        </ButtonLink>
-      </div>
-    )
+    return <EmptyState>Nothing saved yet. The heart on any product tile puts it here.</EmptyState>
   }
 
   return (

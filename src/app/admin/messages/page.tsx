@@ -7,6 +7,7 @@ import { requireAdmin } from '@/lib/auth/session'
 import { perPage } from '@/lib/db/queries/admin'
 import { listMessages } from '@/lib/db/queries/messages'
 import { z } from 'zod'
+import { formatDate } from '@/lib/format'
 
 export const metadata = { title: 'Messages · Admin' }
 
@@ -51,9 +52,7 @@ async function Rows({ page }: { page: number }) {
             <Cell className="max-w-md">
               <span className="line-clamp-3 text-olive-700 dark:text-olive-300">{sent.body}</span>
             </Cell>
-            <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
-              {sent.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </Cell>
+            <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">{formatDate(sent.created_at)}</Cell>
             <Cell align="right">
               <MessageAnswered id={sent.id} answered={sent.answered} from={sent.name} />
             </Cell>

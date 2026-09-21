@@ -1,8 +1,6 @@
 import 'server-only'
 import { pool } from '../pool.ts'
-
-export const eventNames = ['view', 'product_view', 'add_to_cart', 'checkout_started', 'purchase'] as const
-export type EventName = (typeof eventNames)[number]
+import type { EventName } from '../types.ts'
 
 export async function recordEvent(event: {
   name: EventName

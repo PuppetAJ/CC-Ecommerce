@@ -3,13 +3,13 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { Heading } from '@/components/elements/heading'
 import { Text } from '@/components/elements/text'
-import { ButtonLink } from '@/components/elements/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { requireUser } from '@/lib/auth/session'
 import { listOrdersForUser } from '@/lib/db/queries/orders'
 import { OrderStatus } from '@/components/elements/order-status'
 import { ResumePayment } from '@/features/checkout/components/resume-payment'
-import { formatPrice } from '@/lib/format'
+import { formatDate, formatPrice } from '@/lib/format'
+import { EmptyState } from '@/components/elements/empty-state'
 
 export const metadata = { title: 'Your orders' }
 
@@ -38,14 +38,9 @@ async function Orders() {
 
   if (orders.length === 0) {
     return (
-      <div className="flex flex-col items-start gap-6">
-        <Text size="lg" className="max-w-xl">
-          <p>Nothing ordered yet. When you buy something it will live here, with everything that was in it.</p>
-        </Text>
-        <ButtonLink href="/shop" size="lg">
-          Browse the collection
-        </ButtonLink>
-      </div>
+      <EmptyState>
+        Nothing ordered yet. When you buy something it will live here, with everything that was in it.
+      </EmptyState>
     )
   }
 
@@ -67,9 +62,7 @@ async function Orders() {
               <dl className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-olive-600 dark:text-olive-400">
                 <div className="flex gap-2">
                   <dt>Placed</dt>
-                  <dd className="text-olive-950 dark:text-white">
-                    {order.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </dd>
+                  <dd className="text-olive-950 dark:text-white">{formatDate(order.created_at)}</dd>
                 </div>
                 <div className="flex gap-2">
                   <dt>Total</dt>

@@ -1,5 +1,6 @@
 import 'server-only'
 import { pool } from '../pool.ts'
+import type { ReviewSort } from '../types.ts'
 
 export type Review = {
   user_id: string
@@ -14,9 +15,6 @@ export type Review = {
 }
 
 type ReviewSummary = { count: number; average: number }
-
-export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
-export type ReviewSort = (typeof reviewSorts)[number]
 
 const net = 'count(*) FILTER (WHERE v.helpful) - count(*) FILTER (WHERE NOT v.helpful)'
 

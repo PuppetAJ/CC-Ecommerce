@@ -9,6 +9,7 @@ import { Stars } from '@/features/reviews/components/stars'
 import { requireAdmin } from '@/lib/auth/session'
 import { listAllReviews, perPage } from '@/lib/db/queries/admin'
 import { z } from 'zod'
+import { formatDate } from '@/lib/format'
 
 export const metadata = { title: 'Reviews · Admin' }
 
@@ -61,7 +62,7 @@ async function Rows({ q, page }: { q?: string; page: number }) {
               <Stars rating={review.rating} />
             </Cell>
             <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
-              {review.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+              {formatDate(review.created_at)}
             </Cell>
             <Cell align="right">
               <ReviewRemover userId={review.user_id} productId={review.product_id} author={review.author} />

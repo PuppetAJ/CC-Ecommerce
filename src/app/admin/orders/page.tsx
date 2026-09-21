@@ -8,7 +8,7 @@ import { pageHref, pageNumber } from '@/features/admin/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { listAdminOrders, perPage } from '@/lib/db/queries/admin'
 import { orderStatuses } from '@/lib/db/types'
-import { formatPrice } from '@/lib/format'
+import { formatDate, formatPrice } from '@/lib/format'
 import { z } from 'zod'
 
 export const metadata = { title: 'Orders · Admin' }
@@ -66,9 +66,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
                 Order #{order.id}
               </Link>
             </Cell>
-            <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
-              {order.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </Cell>
+            <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">{formatDate(order.created_at)}</Cell>
             <Cell>
               <OrderStatus status={order.status} />
             </Cell>

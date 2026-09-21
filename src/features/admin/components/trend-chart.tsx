@@ -2,6 +2,7 @@
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { formatCount, formatDayShort } from '@/lib/format'
 
 /**
  * One measure, one axis. Revenue and sessions are different scales, so they are two charts
@@ -22,9 +23,8 @@ export function TrendChart({
   money?: boolean
 }) {
   const config = { [dataKey]: { label, color: 'var(--chart-1)' } } satisfies ChartConfig
-  const short = (day: string) =>
-    new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })
-  const money0 = (value: number) => `$${Math.round(value / 100).toLocaleString('en-US')}`
+  const short = (day: string) => formatDayShort(new Date(`${day}T00:00:00Z`))
+  const money0 = (value: number) => `$${formatCount(Math.round(value / 100))}`
 
   return (
     <ChartContainer config={config} className="aspect-auto h-56 w-full">

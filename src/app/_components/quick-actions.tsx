@@ -1,12 +1,12 @@
 'use client'
 
 import { HeartIcon, ShoppingBagIcon } from 'lucide-react'
-import { Pop } from '@/components/motion'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { toast } from 'sonner'
-import { quickAdd } from '@/features/cart/quick-add'
-import { toggle } from '@/features/favorites/actions'
+import { Pop } from '@/components/motion'
+import { quickAdd } from '@/features/cart/actions'
+import { useFavorite } from '@/features/favorites/use-favorite'
 
 // Revealed on hover only where there is a mouse. Touch has no hover and coarse pointers
 // need the 44px target, so there the buttons simply stay visible; focus-within covers the
@@ -34,14 +34,15 @@ export function QuickActions({
   soldOut: boolean
   favorited: boolean
 }) {
-  const [isFavorite, setIsFavorite] = useState(favorited)
-  const [pending, start] = useTransition()
+  const { isFavorite, pending: saving, save, label } = useFavorite(productId, name, favorited)
+  const [adding, start] = useTransition()
   const router = useRouter()
+  const pending = saving || adding
 
   function add() {
     start(async () => {
       const result = await quickAdd(productId)
-      if (result.error) {
+      if (result?.error) {
         toast.error(result.error)
         return
       }
@@ -50,30 +51,14 @@ export function QuickActions({
     })
   }
 
-  function favorite() {
-    start(async () => {
-      const previous = isFavorite
-      setIsFavorite(!previous)
-      const result = await toggle(productId)
-      if (result.needsLogin || result.error) {
-        setIsFavorite(previous)
-        toast.error(result.needsLogin ? 'Log in to save favorites' : result.error!)
-        return
-      }
-      setIsFavorite(Boolean(result.favorited))
-      // The favorites page is a list of exactly these, so removing one has to drop the tile.
-      router.refresh()
-    })
-  }
-
   return (
     <div className={shell}>
       <button
         type="button"
-        onClick={favorite}
+        onClick={save}
         disabled={pending}
         aria-pressed={isFavorite}
-        aria-label={isFavorite ? `Remove ${name} from your favorites` : `Save ${name} to your favorites`}
+        aria-label={label}
         className={button}
       >
         <Pop on={isFavorite} className="inline-flex">
