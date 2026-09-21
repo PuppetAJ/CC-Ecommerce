@@ -489,14 +489,32 @@ section('Nothing scrolls sideways on a phone')
 section('Products arrive one after another')
 {
   const { context, page: shop } = await freshPage(browser)
+  // Each tile's first visible frame, recorded as it happens: sampling opacities at one instant
+  // cannot tell a tile that has finished from one that never started.
+  await shop.addInitScript(() => {
+    window.__began = new Map()
+    const from = performance.now()
+    const tick = () => {
+      document.querySelectorAll('[data-stagger]').forEach((node, index) => {
+        if (!window.__began.has(index) && Number(getComputedStyle(node).opacity) > 0.02)
+          window.__began.set(index, Math.round(performance.now() - from))
+      })
+      requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  })
   await shop.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
-  await shop.waitForTimeout(420)
+  await shop.waitForTimeout(2500)
 
-  // Caught mid-animation the tiles should be at different opacities, which is what a stagger is.
-  const during = await shop.evaluate(() =>
-    [...document.querySelectorAll('[data-stagger]')].slice(0, 8).map((n) => Number(getComputedStyle(n).opacity)),
+  const began = await shop.evaluate(() => [...window.__began.entries()].slice(0, 8).map(([, at]) => at))
+  check('they do not all appear at once', began.length > 4 && began.at(-1) - began[0] > 200, began.join(' '))
+  // One after another, not a column at a time: the fifth tile starts behind the fourth rather
+  // than alongside the first, which is what a delay counted by column would do.
+  check(
+    'and each one waits for the one before it',
+    began.every((at, index) => index === 0 || at >= began[index - 1]),
+    began.join(' '),
   )
-  check('they do not all appear at once', new Set(during).size > 1, during.map((o) => o.toFixed(2)).join(' '))
 
   await shop.waitForTimeout(3000)
   // Fully on screen: a tile hanging off the bottom edge is below the threshold that starts it.

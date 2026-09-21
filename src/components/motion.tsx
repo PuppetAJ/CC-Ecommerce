@@ -1,19 +1,25 @@
 'use client'
 
 import { domAnimation, LazyMotion, m, useReducedMotion, type Variants } from 'motion/react'
-import { Children, useCallback, useState, type ReactNode } from 'react'
+import { Children, useCallback, useRef, type ReactNode } from 'react'
 
-const step = 0.07
+const step = 0.06
+// Past this the delay stops growing, or the last tile of a tall screenful arrives a second late.
+const most = 9
+// A pause longer than this is a new arrival rather than the same one, so the count starts over.
+const apart = 120
 
 const rise: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
-  shown: (column: number) => ({
+  // `take` is called here rather than read as a number, which is the point: the place in the
+  // queue is claimed when the tile actually starts, not when it was rendered.
+  shown: (take: () => number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
     // A spring rather than an ease: the small overshoot at the end is what makes the movement
     // read as arriving rather than fading.
-    transition: { delay: column * step, type: 'spring', stiffness: 260, damping: 22 },
+    transition: { delay: take() * step, type: 'spring', stiffness: 260, damping: 22 },
   }),
 }
 
@@ -24,37 +30,37 @@ const rise: Variants = {
  * forty-seven product tiles stays server-rendered and this wrapper is the only thing shipped.
  * Motion's features load through `LazyMotion`, which is a fraction of the whole library.
  *
- * The delay follows the column a tile sits in rather than its index, so a row cascades left to
- * right and the row below it waits until it is scrolled to instead of playing off screen.
+ * The delay counts arrivals rather than positions: everything that comes into view together goes
+ * one after another in reading order, and a tile scrolled to on its own starts straight away.
  */
 export function Stagger({ children, className }: { children: ReactNode; className?: string }) {
   const still = useReducedMotion()
-  const [columns, setColumns] = useState(1)
+  const queue = useRef({ at: 0, next: 0, given: new Map<number, number>() })
 
-  // A ref callback rather than an effect: it runs before paint, so the first row already knows
-  // how wide it is by the time its animation starts.
-  const watch = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return
-    const measure = () => {
-      const template = getComputedStyle(node).gridTemplateColumns
-      setColumns(template.includes(' ') ? template.split(' ').length : 1)
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(node)
-    return () => observer.disconnect()
+  // Remembered per tile, because Motion resolves a variant more than once and a tile that claimed
+  // a fresh slot each time would count double and reach the cap four tiles in.
+  const take = useCallback((index: number) => {
+    const had = queue.current.given.get(index)
+    if (had !== undefined) return had
+
+    const now = performance.now()
+    if (now - queue.current.at > apart) queue.current.next = 0
+    queue.current.at = now
+    const slot = Math.min(queue.current.next++, most)
+    queue.current.given.set(index, slot)
+    return slot
   }, [])
 
   if (still) return <div className={className}>{children}</div>
 
   return (
     <LazyMotion features={domAnimation} strict>
-      <div ref={watch} className={className}>
+      <div className={className}>
         {Children.toArray(children).map((child, index) => (
           <m.div
             key={index}
             data-stagger
-            custom={index % columns}
+            custom={() => take(index)}
             variants={rise}
             initial="hidden"
             whileInView="shown"
