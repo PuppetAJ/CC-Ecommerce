@@ -177,15 +177,15 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             <AccordionItem value="care">
               <AccordionTrigger>Care and repair</AccordionTrigger>
               <AccordionContent>
-                Dishwasher safe, though handwashing keeps the glaze brighter for longer. Wood is oiled rather than
-                lacquered, so a scratch can be sanded back and re-oiled. We keep spares for everything we have sold.
+                Dishwasher safe, though hand washing keeps the glaze brighter longer. Wood is oiled, not lacquered, so a
+                scratch can be sanded out and re-oiled. We keep spares for everything we make.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="shipping">
               <AccordionTrigger>Shipping and returns</AccordionTrigger>
               <AccordionContent>
-                Shipped in 3–5 business days, packed in molded paper rather than plastic. Return anything unused within
-                30 days and we will collect it.
+                Ships in 3–5 business days, packed in molded paper instead of plastic. Return anything unused within 30
+                days and we'll arrange the pickup.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

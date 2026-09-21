@@ -31,7 +31,7 @@ export function OrderBreakdown({ subtotal }: { subtotal: number }) {
         <span className="tabular-nums">{formatPrice(subtotal)}</span>
       </div>
       <p className="text-xs text-olive-600 dark:text-olive-400">
-        Arrives {arrivalWindow()}, packed in molded paper rather than plastic.
+        Arrives {arrivalWindow()}, packed in molded paper instead of plastic.
       </p>
     </div>
   )

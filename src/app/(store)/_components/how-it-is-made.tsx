@@ -28,22 +28,22 @@ export function HowItIsMade() {
           </div>
           <Text className="text-pretty">
             <p>
-              The clay and the wood are ours. The lighting, the glass and the linen come from four workshops we have
-              bought from for years and can still call.
+              The clay and the wood are ours. The lighting, glass and linen come from four workshops we've worked with
+              for years.
             </p>
           </Text>
           <div className="flex flex-col gap-6">
             <Feature
               headline="Thrown and turned here"
-              subheadline="Clay and wood, in batches small enough that somebody has held every piece before it ships."
+              subheadline="Clay and wood, in batches small enough that we've handled every piece before it ships."
             />
             <Feature
               headline="The rest from four workshops"
-              subheadline="Lighting, glass and linen from makers we buy from by name rather than by catalog number."
+              subheadline="Lighting, glass and linen from makers we know by name and can call."
             />
             <Feature
-              headline="Built to be mended"
-              subheadline="Joinery you can take apart, and spares for everything we make."
+              headline="Built to be repaired"
+              subheadline="Joinery that comes apart, and spares kept for everything we make."
             />
           </div>
         </Rise>

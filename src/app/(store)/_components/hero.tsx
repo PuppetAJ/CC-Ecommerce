@@ -29,8 +29,8 @@ export function LandingHero() {
       subheadline={
         <Enter delay={0.2}>
           <p>
-            Wicken is a small studio working in clay and wood, and a short list of makers we buy the rest from. Nothing
-            here is made in a quantity we cannot check by hand.
+            Wicken is a small studio working in clay and wood. What we don't make ourselves comes from a short list of
+            makers we've bought from for years. Nothing here is made in a quantity we can't check by hand.
           </p>
         </Enter>
       }

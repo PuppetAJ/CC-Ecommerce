@@ -31,8 +31,8 @@ export default function HomePage() {
         headline="Come and visit."
         subheadline={
           <p>
-            The workshop is open on the first Saturday of the month. Everything else we answer by email, usually the
-            same day.
+            The workshop is open the first Saturday of every month. Everything else we handle by email, usually the same
+            day.
           </p>
         }
         cta={

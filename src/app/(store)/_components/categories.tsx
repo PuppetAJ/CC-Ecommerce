@@ -21,7 +21,7 @@ export async function Categories() {
     <section className="py-10 sm:py-14">
       <Container className="flex flex-col gap-4">
         <Rise className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-medium text-olive-950 dark:text-white">Browse by what it is</h2>
+          <h2 className="text-sm font-medium text-olive-950 dark:text-white">Browse by type</h2>
           <Link
             href="/shop"
             className="text-sm text-olive-600 underline underline-offset-4 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white"

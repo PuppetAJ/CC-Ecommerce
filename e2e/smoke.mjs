@@ -69,7 +69,7 @@ section('About earns its page')
   check('the editorial photographs are finally used', photographs >= 4, `${photographs} photographs`)
 
   const text = await visibleText(page)
-  check('the making is explained rather than asserted', /Clay, while the light is flat/.test(text))
+  check('the making is explained rather than asserted', /Handling clay while the light is good/.test(text))
   check('and the landing page promise is kept', /Maren/.test(text))
 }
 
@@ -579,7 +579,13 @@ section('Products arrive one after another')
   await shop.waitForTimeout(2500)
 
   const began = await shop.evaluate(() => [...window.__began.entries()].slice(0, 8).map(([, at]) => at))
-  check('they do not all appear at once', began.length > 4 && began.at(-1) - began[0] > 200, began.join(' '))
+  // At least a row, at least forty milliseconds apart on average: the step is sixty, and a CI
+  // runner with fewer tiles in view is still expected to space the ones it has.
+  check(
+    'they do not all appear at once',
+    began.length >= 4 && began.at(-1) - began[0] >= (began.length - 1) * 40,
+    began.join(' '),
+  )
   // One after another, not a column at a time: the fifth tile starts behind the fourth rather
   // than alongside the first, which is what a delay counted by column would do.
   check(

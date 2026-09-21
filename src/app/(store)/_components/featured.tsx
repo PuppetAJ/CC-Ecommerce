@@ -18,7 +18,7 @@ export async function Featured() {
       tight
       reveal
       headline="Start with one good thing"
-      subheadline={<p>A mug you reach for every morning is a better beginning than a whole dinner service.</p>}
+      subheadline={<p>If you're new here, start with something you'll use every day.</p>}
       cta={
         <Link
           href="/shop"

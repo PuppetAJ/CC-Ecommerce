@@ -23,8 +23,7 @@ const products: Seed[] = [
   {
     slug: 'ridge-breakfast-mug',
     name: 'Ridge Breakfast Mug',
-    description:
-      'Thrown with a deliberate ridge under the rim so it sits against the lip. Holds a generous ten ounces, which is to say a real cup rather than a polite one.',
+    description: 'Thrown with a ridge under the rim so it sits against your lip. Holds a full ten ounces.',
     category: 'tableware',
     price_cents: 2800,
     stock_quantity: 40,
@@ -36,7 +35,7 @@ const products: Seed[] = [
     slug: 'ash-glaze-dinner-plate',
     name: 'Ash Glaze Dinner Plate',
     description:
-      'The glaze is mixed from wood ash out of our own kiln, which is why no two plates break the same way across the rim. Ten inches across.',
+      'The glaze is mixed from wood ash out of our own kiln, so no two plates break the same way across the rim. Ten inches across.',
     category: 'tableware',
     price_cents: 3400,
     stock_quantity: 32,
@@ -47,7 +46,7 @@ const products: Seed[] = [
     slug: 'deep-serving-bowl',
     name: 'Deep Serving Bowl',
     description:
-      'Wide enough for a salad for six, deep enough that dressing stays in it. The foot is left unglazed so it grips a wooden table.',
+      'Wide enough for a salad for six and deep enough that the dressing stays in it. The foot is left unglazed so it grips a wooden table.',
     category: 'tableware',
     price_cents: 5600,
     stock_quantity: 18,
@@ -58,7 +57,7 @@ const products: Seed[] = [
     slug: 'everyday-side-plate',
     name: 'Everyday Side Plate',
     description:
-      'The plate we use most. Eight inches, stacks four deep in a standard cabinet, and survives being carried by the edge.',
+      'The plate we use most. Eight inches, stacks four deep in a standard cabinet, and holds up to being carried by the edge.',
     category: 'tableware',
     price_cents: 2200,
     stock_quantity: 60,
@@ -69,7 +68,7 @@ const products: Seed[] = [
     slug: 'stacking-bowl-pair',
     name: 'Stacking Bowl Pair',
     description:
-      'Two bowls thrown to nest inside one another, so they take one shelf rather than two. The smaller holds a breakfast portion, the larger a full one.',
+      'Two bowls thrown to nest inside each other, so they take one shelf instead of two. The smaller holds a breakfast portion, the larger a full one.',
     category: 'tableware',
     price_cents: 4800,
     stock_quantity: 24,
@@ -80,7 +79,7 @@ const products: Seed[] = [
     slug: 'salt-cellar',
     name: 'Salt Cellar',
     description:
-      'Open-topped, wide enough for a pinch between two fingers. Unglazed inside, which keeps flaked salt dry for longer than a lidded pot does.',
+      'Open-topped and wide enough for a pinch between two fingers. Unglazed inside, which keeps flaked salt dry longer than a lidded pot does.',
     category: 'tableware',
     price_cents: 1800,
     stock_quantity: 0,
@@ -91,7 +90,7 @@ const products: Seed[] = [
     slug: 'tall-stem-vase',
     name: 'Tall Stem Vase',
     description:
-      'Narrow at the neck so a single branch stands where you put it. Sixteen inches, and heavy enough in the base not to go over.',
+      'Narrow at the neck, so a single branch stays where you put it. Sixteen inches, and heavy enough in the base not to tip.',
     category: 'vases',
     price_cents: 6800,
     stock_quantity: 14,
@@ -102,8 +101,7 @@ const products: Seed[] = [
   {
     slug: 'wide-mouth-vessel',
     name: 'Wide Mouth Vessel',
-    description:
-      'Built for armfuls rather than arrangements. Works as a vase in summer and as a place for kindling the rest of the year.',
+    description: 'Made for armfuls, not arrangements. A vase in summer and a place for kindling the rest of the year.',
     category: 'vases',
     price_cents: 8900,
     stock_quantity: 9,
@@ -114,7 +112,7 @@ const products: Seed[] = [
     slug: 'kiln-table-lamp',
     name: 'Kiln Table Lamp',
     description:
-      'A thrown stoneware base with a linen shade, wired for a standard socket. The base is weighted so the cord can be tugged without consequence.',
+      "A thrown stoneware base with a linen shade, wired for a standard socket. The base is weighted, so a tug on the cord won't pull it over.",
     category: 'lighting',
     price_cents: 18500,
     stock_quantity: 8,
@@ -126,7 +124,7 @@ const products: Seed[] = [
     slug: 'hanging-pendant-shade',
     name: 'Hanging Pendant Shade',
     description:
-      'Glazed outside, left white inside so the light stays warm rather than tinted. Fits a standard pendant cord, which is not included.',
+      'Glazed outside and left white inside, so the light stays warm instead of tinted. Fits a standard pendant cord, not included.',
     category: 'lighting',
     price_cents: 11200,
     stock_quantity: 15,
@@ -137,7 +135,7 @@ const products: Seed[] = [
     slug: 'spouted-pendant',
     name: 'Spouted Pendant',
     description:
-      'A thrown pendant with two cut spouts that throw light sideways as well as down. Hung on a braided cord, drop adjustable to about three feet.',
+      'A thrown pendant with two cut spouts that throw light sideways as well as down. Hangs on a braided cord, adjustable to about three feet.',
     category: 'lighting',
     price_cents: 5400,
     stock_quantity: 22,
@@ -159,7 +157,7 @@ const products: Seed[] = [
     slug: 'oak-dining-chair',
     name: 'Oak Dining Chair',
     description:
-      'Solid oak, mortise and tenon, no screws in the frame. Oil-finished so a scratch can be rubbed out rather than sent away.',
+      'Solid oak, mortise and tenon, no screws in the frame. Oil finished, so a scratch can be rubbed out at home instead of sent away.',
     category: 'furniture',
     price_cents: 42000,
     stock_quantity: 10,
@@ -170,7 +168,7 @@ const products: Seed[] = [
     slug: 'ash-dining-table',
     name: 'Ash Dining Table',
     description:
-      'Six feet long, seats six without anyone apologizing. The top is a single glued panel, and the legs come off for a doorway.',
+      'Six feet long and seats six comfortably. The top is a single glued panel, and the legs come off to get it through a doorway.',
     category: 'furniture',
     price_cents: 128000,
     stock_quantity: 3,
@@ -182,7 +180,7 @@ const products: Seed[] = [
     slug: 'low-workshop-stool',
     name: 'Low Workshop Stool',
     description:
-      'The stool we sit on at the wheel, made to last. Eighteen inches, three legs, so it never rocks on an uneven floor.',
+      'The stool we sit on at the wheel, built to last. Eighteen inches tall with three legs, so it never rocks on an uneven floor.',
     category: 'furniture',
     price_cents: 19500,
     stock_quantity: 16,
@@ -193,7 +191,7 @@ const products: Seed[] = [
     slug: 'elm-side-table',
     name: 'Elm Side Table',
     description:
-      'Small enough to move with one hand and heavy enough to take a lamp. Elm, so the grain does the decoration.',
+      'Light enough to move with one hand and heavy enough to hold a lamp. Elm, so the grain does the decorating.',
     category: 'furniture',
     price_cents: 36000,
     stock_quantity: 7,
@@ -204,7 +202,7 @@ const products: Seed[] = [
     slug: 'harvest-vase',
     name: 'Harvest Vase',
     description:
-      'A wide-bellied vase in a warm unglazed clay, made for dried grasses rather than cut flowers. The surface is burnished rather than glazed, so it darkens slightly where it is handled.',
+      "A wide-bellied vase in warm unglazed clay, made for dried grasses rather than cut flowers. The surface is burnished, not glazed, so it darkens a little where it's handled.",
     category: 'vases',
     price_cents: 7800,
     stock_quantity: 14,
@@ -226,7 +224,7 @@ const products: Seed[] = [
     slug: 'cobalt-column-vase',
     name: 'Cobalt Column Vase',
     description:
-      'A straight-sided column in a speckled cobalt glaze, heavy enough in the base to hold branches without a stone. The speckle is iron in the clay coming through the glaze.',
+      'A straight-sided column in a speckled cobalt glaze, heavy enough in the base to hold branches without a stone. The speckle is iron in the clay showing through.',
     category: 'vases',
     price_cents: 11000,
     stock_quantity: 8,
@@ -237,7 +235,7 @@ const products: Seed[] = [
     slug: 'smoke-glaze-vase',
     name: 'Smoke Glaze Vase',
     description:
-      'Fired in a reduction kiln so the glaze pulls toward black at the rim and gray at the belly. Holds a handful of grasses, or nothing at all.',
+      'Fired in a reduction kiln, so the glaze pulls toward black at the rim and gray at the belly. Holds a handful of grasses, or nothing at all.',
     category: 'vases',
     price_cents: 8400,
     stock_quantity: 11,
@@ -248,7 +246,7 @@ const products: Seed[] = [
     slug: 'stoneware-teapot',
     name: 'Stoneware Teapot',
     description:
-      'A one-quart teapot with a cane handle and a spout that has been tested against a table for drips. The lid sits in a recessed gallery so it stays put when you pour.',
+      "A one-quart teapot with a cane handle and a spout we've tested for drips. The lid sits in a recessed gallery so it stays put when you pour.",
     category: 'tableware',
     price_cents: 8800,
     stock_quantity: 12,
@@ -259,7 +257,7 @@ const products: Seed[] = [
     slug: 'butter-dish',
     name: 'Butter Dish',
     description:
-      'Sized for a standard block with room to cut from it. The lid is unglazed inside so it does not sweat in a warm kitchen.',
+      "Sized for a standard block with room to cut from it. The lid is unglazed inside, so it doesn't sweat in a warm kitchen.",
     category: 'tableware',
     price_cents: 3200,
     stock_quantity: 26,
@@ -270,7 +268,7 @@ const products: Seed[] = [
     slug: 'teapot-trio',
     name: 'Teapot Trio',
     description:
-      'Three small teapots in a pale, a sand and a red clay, each holding roughly two cups. Sold together because the three glazes were mixed from one batch and will not recur.',
+      "Three small teapots in pale, sand and red clay, each holding about two cups. Sold as a set because the three glazes were mixed from one batch and won't be repeated.",
     category: 'tableware',
     price_cents: 14500,
     stock_quantity: 4,
@@ -281,7 +279,7 @@ const products: Seed[] = [
     slug: 'tall-pitcher',
     name: 'Tall Pitcher',
     description:
-      'A quart and a half, with a pulled handle and a lip drawn out far enough to pour water cleanly. Doubles as a vase, which is mostly what ours end up doing.',
+      'A quart and a half, with a pulled handle and a lip drawn out far enough to pour cleanly. Doubles as a vase, which is what most of ours end up doing.',
     category: 'tableware',
     price_cents: 6400,
     stock_quantity: 18,
@@ -292,7 +290,7 @@ const products: Seed[] = [
     slug: 'gilt-rim-plate',
     name: 'Gilt Rim Plate',
     description:
-      'A side plate finished with a thin band of gold luster at the rim, fired a third time to set it. Hand wash only, which is the price of the gold.',
+      "A side plate with a thin band of gold luster at the rim, fired a third time to set it. Hand wash only. That's the price of the gold.",
     category: 'tableware',
     price_cents: 3800,
     stock_quantity: 20,
@@ -303,7 +301,7 @@ const products: Seed[] = [
     slug: 'studio-mug-set',
     name: 'Studio Mug Set',
     description:
-      'Four mugs from a single firing, so the speckle runs consistently across the set. Eight ounces each, stackable two high.',
+      'Four mugs from a single firing, so the speckle matches across the set. Eight ounces each, and they stack two high.',
     category: 'tableware',
     price_cents: 7200,
     stock_quantity: 15,
@@ -314,7 +312,7 @@ const products: Seed[] = [
     slug: 'butter-glaze-plate',
     name: 'Butter Glaze Plate',
     description:
-      'A soft yellow glaze that reads as cream under warm light and lemon under daylight. Nine inches, with a rim shallow enough to stack.',
+      'A soft yellow glaze that reads as cream in warm light and lemon in daylight. Nine inches, with a rim shallow enough to stack.',
     category: 'tableware',
     price_cents: 3000,
     stock_quantity: 30,
@@ -325,7 +323,7 @@ const products: Seed[] = [
     slug: 'tumbler-set',
     name: 'Tumbler Set',
     description:
-      'Six straight-sided tumblers, no handles, for water or wine depending on the evening. The unglazed foot gives them grip on a wet counter.',
+      'Six straight-sided tumblers with no handles, for water or wine. The unglazed foot keeps them from sliding on a wet counter.',
     category: 'tableware',
     price_cents: 6800,
     stock_quantity: 16,
@@ -336,7 +334,7 @@ const products: Seed[] = [
     slug: 'ridged-tumblers',
     name: 'Ridged Tumblers',
     description:
-      'Thrown with three deep ridges so they sit in the hand without a handle. Glazed in a run of soft pastels mixed for one kiln only.',
+      'Thrown with three deep ridges, so they sit in the hand without a handle. Glazed in a run of soft pastels mixed for one kiln only.',
     category: 'tableware',
     price_cents: 5600,
     stock_quantity: 13,
@@ -347,7 +345,7 @@ const products: Seed[] = [
     slug: 'taper-candle-holders',
     name: 'Taper Candle Holders',
     description:
-      'Three low holders for standard tapers, weighted so a tall candle does not tip. The dish catches wax, which saves the tablecloth.',
+      "Three low holders for standard tapers, weighted so a tall candle won't tip. The dish catches the wax and saves the tablecloth.",
     category: 'lighting',
     price_cents: 4600,
     stock_quantity: 22,
@@ -358,7 +356,7 @@ const products: Seed[] = [
     slug: 'stone-candle-set',
     name: 'Stone Candle Set',
     description:
-      'Candles poured into cast stone vessels that keep their use once the wax is gone. Unscented, because a dining table already smells of dinner.',
+      'Candles poured into cast stone vessels that stay useful after the wax is gone. Unscented, because a dinner table already smells like dinner.',
     category: 'lighting',
     price_cents: 5800,
     stock_quantity: 17,
@@ -369,7 +367,7 @@ const products: Seed[] = [
     slug: 'bedside-lamp',
     name: 'Bedside Lamp',
     description:
-      'A thrown ceramic base under a linen shade, wired for a standard bulb with an inline switch on the cord. Warm enough to read by, dim enough to leave on.',
+      'A thrown ceramic base under a linen shade, wired for a standard bulb with an inline switch on the cord. Warm enough to read by and dim enough to leave on.',
     category: 'lighting',
     price_cents: 16500,
     stock_quantity: 7,
@@ -380,7 +378,7 @@ const products: Seed[] = [
     slug: 'globe-wall-light',
     name: 'Globe Wall Light',
     description:
-      'An opal glass globe on a solid brass arm that will patinate rather than lacquer off. Hard wired, so it wants an electrician and a wall.',
+      'An opal glass globe on a solid brass arm that will patina instead of flake. Hard wired, so it needs an electrician and a wall.',
     category: 'lighting',
     price_cents: 19800,
     stock_quantity: 5,
@@ -391,7 +389,7 @@ const products: Seed[] = [
     slug: 'fluted-pendant',
     name: 'Fluted Pendant',
     description:
-      'A fluted porcelain shade that throws light down and glows at the edge. Hung from a braided cord, drop adjustable up to five feet.',
+      'A fluted porcelain shade that throws light down and glows at the edge. Hangs from a braided cord, adjustable up to five feet.',
     category: 'lighting',
     price_cents: 17500,
     stock_quantity: 6,
@@ -402,7 +400,7 @@ const products: Seed[] = [
     slug: 'oak-book-table',
     name: 'Oak Book Table',
     description:
-      'A side table with an open bay beneath it, sized for the books you are partway through. Solid oak, oiled, joined without visible fixings.',
+      "A side table with an open bay underneath, sized for the books you're partway through. Solid oak, oiled, joined without visible fasteners.",
     category: 'furniture',
     price_cents: 34000,
     stock_quantity: 4,
@@ -413,7 +411,7 @@ const products: Seed[] = [
     slug: 'oak-wall-shelf',
     name: 'Oak Wall Shelf',
     description:
-      'A three-foot shelf on bracket supports cut from the same board, so the grain runs through. Rated for a row of books or a row of pots, not both.',
+      'A three-foot shelf on brackets cut from the same board, so the grain runs through. Rated for a row of books or a row of pots, not both.',
     category: 'furniture',
     price_cents: 14500,
     stock_quantity: 9,
@@ -424,7 +422,7 @@ const products: Seed[] = [
     slug: 'weathered-stool',
     name: 'Weathered Stool',
     description:
-      'A low stool in reclaimed wood left to gray, for a hallway or a greenhouse. The legs are wedged through the seat rather than glued, so it can be knocked apart and re-wedged.',
+      'A low stool in reclaimed wood left to go gray, for a hallway or a porch. The legs are wedged through the seat instead of glued, so it can be knocked apart and re-wedged.',
     category: 'furniture',
     price_cents: 12000,
     stock_quantity: 8,
@@ -435,7 +433,7 @@ const products: Seed[] = [
     slug: 'washed-linen-napkins',
     name: 'Washed Linen Napkins',
     description:
-      'Four napkins in heavy washed linen, hemmed by hand and softened before they leave. They crease, which is the point; ironing them flat rather defeats the object.',
+      "Four napkins in heavy washed linen, hemmed by hand and softened before they leave. They crease, and that's the point.",
     category: 'textiles',
     price_cents: 4800,
     stock_quantity: 14,
@@ -446,7 +444,7 @@ const products: Seed[] = [
     slug: 'linen-bread-cloth',
     name: 'Linen Bread Cloth',
     description:
-      'A loose-weave cloth for proofing under or carrying a loaf in. Open enough to breathe, heavy enough to hold its folds, and it takes a flour dusting without complaint.',
+      "A loose-weave cloth for proofing dough under or carrying a loaf in. Open enough to breathe, heavy enough to hold its folds, and it doesn't mind a dusting of flour.",
     category: 'textiles',
     price_cents: 2600,
     stock_quantity: 22,
@@ -457,7 +455,7 @@ const products: Seed[] = [
     slug: 'studio-apron',
     name: 'Studio Apron',
     description:
-      'The apron we wear at the wheel, cut long with a cross-back strap so nothing pulls on the neck. It stiffens with clay and softens again in the wash, which is how you can tell a worn one.',
+      'The apron we wear at the wheel, cut long with a cross-back strap so nothing pulls on your neck. It stiffens with clay and softens again in the wash.',
     category: 'textiles',
     price_cents: 7200,
     stock_quantity: 11,
@@ -468,7 +466,7 @@ const products: Seed[] = [
     slug: 'heavy-linen-throw',
     name: 'Heavy Linen Throw',
     description:
-      'A throw with a hemstitched border, in the weight that sits still rather than sliding off a chair. Warmer than it looks and much cooler than wool in a hot room.',
+      'A throw with a hemstitched border, in a weight that stays put instead of sliding off the chair. Warmer than it looks and cooler than wool in a hot room.',
     category: 'textiles',
     price_cents: 14500,
     stock_quantity: 6,
@@ -479,7 +477,7 @@ const products: Seed[] = [
     slug: 'linen-table-runner',
     name: 'Linen Table Runner',
     description:
-      'Long enough to overhang a six-seat table at both ends, in the same washed linen as the napkins. It is the quickest way to make a plain table look as though somebody meant it.',
+      'Long enough to overhang a six-seat table at both ends, in the same washed linen as the napkins. The quickest way to make a plain table look intentional.',
     category: 'textiles',
     price_cents: 5400,
     stock_quantity: 9,
@@ -490,7 +488,7 @@ const products: Seed[] = [
     slug: 'lidded-keepsake-box',
     name: 'Lidded Keepsake Box',
     description:
-      'Walnut with a lift-off lid, mitered at the corners so the grain runs unbroken around all four sides. Oiled inside as well as out, which most boxes are not.',
+      "Walnut with a lift-off lid, mitered at the corners so the grain runs unbroken around all four sides. Oiled inside as well as out, which most boxes aren't.",
     category: 'storage',
     price_cents: 9800,
     stock_quantity: 7,
@@ -501,7 +499,7 @@ const products: Seed[] = [
     slug: 'turned-serving-trays',
     name: 'Turned Serving Trays',
     description:
-      'A long tray and a short one, cut from the same oak board so they read as a pair. The lipped ends give you somewhere to get a thumb under when both hands are full.',
+      'A long tray and a short one, cut from the same oak board so they read as a pair. The lipped ends give you somewhere to get a thumb under when your hands are full.',
     category: 'storage',
     price_cents: 8600,
     stock_quantity: 10,
@@ -512,7 +510,7 @@ const products: Seed[] = [
     slug: 'stoneware-storage-jars',
     name: 'Stoneware Storage Jars',
     description:
-      'Two lidded jars for salt, coffee or whatever else wants keeping dry. The lids are ground to their own jar, so they are not interchangeable and each is marked underneath.',
+      'Two lidded jars for salt, coffee, or anything else that needs to stay dry. Each lid is ground to fit its own jar and marked underneath.',
     category: 'storage',
     price_cents: 7400,
     stock_quantity: 12,
@@ -523,7 +521,7 @@ const products: Seed[] = [
     slug: 'turned-walnut-bowl',
     name: 'Turned Walnut Bowl',
     description:
-      'Turned from a single block and finished with oil rather than lacquer, so the grain stays legible. Dry fruit, keys, whatever collects by a door.',
+      'Turned from a single block and finished with oil instead of lacquer, so the grain stays visible. Fruit, keys, whatever collects by the door.',
     category: 'storage',
     price_cents: 11200,
     stock_quantity: 5,
@@ -534,7 +532,7 @@ const products: Seed[] = [
     slug: 'carved-catch-all',
     name: 'Carved Catch-All',
     description:
-      'A shallow bowl with the tool marks left in, cut in rows across the outside. Made to be picked up, which is why the underside is worked as carefully as the rim.',
+      'A shallow bowl with the tool marks left in, cut in rows across the outside. Made to be picked up, so the underside is finished as carefully as the rim.',
     category: 'storage',
     price_cents: 13800,
     stock_quantity: 4,

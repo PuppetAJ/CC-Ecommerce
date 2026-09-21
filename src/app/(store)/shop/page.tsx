@@ -17,7 +17,7 @@ import { Suspense } from 'react'
 
 export const metadata = {
   title: 'Shop',
-  description: 'Stoneware and wood from our workshop, and a few things from four others, in small batches.',
+  description: 'Stoneware and wood from our workshop, plus a few things from four others, in small batches.',
 }
 
 export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
@@ -26,7 +26,7 @@ export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
       <div className="flex flex-col gap-4">
         <Heading>The collection</Heading>
         <Text size="lg" className="max-w-2xl">
-          <p>Everything we make, and the few things we buy in, in the batch that is here right now.</p>
+          <p>Everything we make, plus the few things we buy in, in the batch that's here right now.</p>
         </Text>
       </div>
       {/* searchParams is request data, so it is read below a boundary and the heading above prerenders. */}

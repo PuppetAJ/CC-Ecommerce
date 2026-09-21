@@ -22,7 +22,7 @@ export function ContactForm({
   if (state.sentAt) {
     return (
       <p role="status" className="rounded-xl bg-olive-950/2.5 p-6 text-sm/7 dark:bg-white/5">
-        Thank you for reaching out. Somebody reads these every morning, and you would normally hear back within a day or
+        Thank you for reaching out. Somebody reads these every morning, and you'd normally hear back within a day or
         two.
         <br />
         <span className="text-olive-600 dark:text-olive-400">

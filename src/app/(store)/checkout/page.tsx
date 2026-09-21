@@ -65,7 +65,7 @@ export default async function Page() {
 
         <ol className="flex flex-col gap-4 border-t border-olive-950/10 pt-8 dark:border-white/10">
           {[
-            ['Pay with Stripe', 'You will be handed to Stripe to enter a card. We never see it.'],
+            ['Pay with Stripe', "You'll be handed to Stripe to enter a card. We never see it."],
             ['We pack it', 'Molded paper and cardboard, no plastic, usually the next business day.'],
             ['It arrives', 'Three to five business days. Anything unused can come back within thirty.'],
           ].map(([title, detail], step) => (
