@@ -1,0 +1,32 @@
+import Link from 'next/link'
+import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
+import { Section } from '@/components/elements/section'
+import { ProductGrid } from '@/features/products/components/product-grid'
+import { getFeatured } from '@/features/products/data'
+
+/**
+ * Four pieces, one per category, on a page that otherwise sells nothing you can click.
+ *
+ * It carries its own link onward, which is why the page no longer ends on a bare button.
+ */
+export async function Featured() {
+  const products = await getFeatured(4)
+  if (products.length === 0) return null
+
+  return (
+    <Section
+      headline="Start with one good thing"
+      subheadline={<p>A mug you reach for every morning is a better beginning than a whole dinner service.</p>}
+      cta={
+        <Link
+          href="/shop"
+          className="inline-flex items-center gap-1 text-sm/7 font-medium text-olive-950 underline underline-offset-4 dark:text-white"
+        >
+          See the whole collection <ArrowNarrowRightIcon />
+        </Link>
+      }
+    >
+      <ProductGrid products={products} />
+    </Section>
+  )
+}

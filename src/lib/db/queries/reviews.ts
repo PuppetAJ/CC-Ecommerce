@@ -18,7 +18,7 @@ export type ReviewSummary = { count: number; average: number }
 export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
 export type ReviewSort = (typeof reviewSorts)[number]
 
-const net = "count(*) FILTER (WHERE v.helpful) - count(*) FILTER (WHERE NOT v.helpful)"
+const net = 'count(*) FILTER (WHERE v.helpful) - count(*) FILTER (WHERE NOT v.helpful)'
 
 const reviewOrder: Record<ReviewSort, string> = {
   // Net score, so a review nobody found helpful does not outrank one people disagreed about.
@@ -114,4 +114,34 @@ export async function summariseMany(productIds: number[]): Promise<Map<number, R
     [productIds],
   )
   return new Map(rows.map((row) => [row.product_id, { count: Number(row.count), average: Number(row.average) }]))
+}
+
+export type Testimonial = {
+  author: string
+  body: string
+  rating: number
+  product_name: string
+  product_slug: string
+  image_url: string | null
+}
+
+export async function listTestimonials(limit = 3): Promise<Testimonial[]> {
+  // Seeded reviews rather than invented quotes, so what the landing page shows is the same
+  // writing a shopper finds on the product itself. Distinct on the body, because the demo
+  // reviewers share a pool of sentences and the band would otherwise print one of them twice.
+  const { rows } = await pool.query<Testimonial>(
+    `SELECT * FROM (
+       SELECT DISTINCT ON (r.body) u.name AS author, r.body, r.rating,
+              p.name AS product_name, p.slug AS product_slug, p.image_url
+         FROM reviews r
+         JOIN users u ON u.id = r.user_id
+         JOIN products p ON p.id = r.product_id
+        WHERE r.rating = 5 AND length(r.body) BETWEEN 70 AND 220
+        ORDER BY r.body, r.product_id
+     ) best
+     ORDER BY length(best.body) DESC
+     LIMIT $1`,
+    [limit],
+  )
+  return rows
 }

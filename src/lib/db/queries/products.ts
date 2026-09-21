@@ -60,9 +60,7 @@ export async function listProducts({
  * scans for a word; colors stay commonest-first, because a swatch has no word to scan for. */
 export async function listFacets(): Promise<{ materials: string[]; colors: string[] }> {
   const [materials, colors] = await Promise.all([
-    pool.query<{ value: string }>(
-      'SELECT unnest(material_tags) AS value FROM products GROUP BY value ORDER BY value',
-    ),
+    pool.query<{ value: string }>('SELECT unnest(material_tags) AS value FROM products GROUP BY value ORDER BY value'),
     pool.query<{ value: string }>(
       'SELECT color AS value FROM products WHERE color IS NOT NULL GROUP BY color ORDER BY count(*) DESC, value',
     ),
@@ -89,4 +87,18 @@ export async function listRelatedProducts(product: Product, limit = 4): Promise<
     [product.category, product.id, limit],
   )
   return rows
+}
+
+export type CategoryCover = { category: Category; slug: string; count: number; image_url: string | null }
+
+export async function listCategoryCovers(): Promise<CategoryCover[]> {
+  // DISTINCT ON takes the first row of each group, which the ORDER BY makes the dearest piece
+  // in stock: a category is best introduced by something it is actually known for.
+  const { rows } = await pool.query<CategoryCover & { count: string }>(
+    `SELECT DISTINCT ON (category) category, slug, image_url,
+            count(*) OVER (PARTITION BY category) AS count
+       FROM products
+      ORDER BY category, (stock_quantity > 0) DESC, price_cents DESC, id`,
+  )
+  return rows.map((row) => ({ ...row, count: Number(row.count) }))
 }

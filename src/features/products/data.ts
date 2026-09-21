@@ -2,6 +2,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import {
   getProductBySlug,
+  listCategoryCovers,
   listFacets,
   listFeaturedProducts,
   listProducts,
@@ -50,6 +51,13 @@ export async function getRelated(product: Product, limit = 4): Promise<Product[]
   cacheTag('products')
   // The query orders at random; caching freezes one roll per product, which is what we want.
   return listRelatedProducts(product, limit)
+}
+
+export async function getCategoryCovers() {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('products')
+  return listCategoryCovers()
 }
 
 export async function getFacets() {

@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/session'
 import { saveReview, voteOnReview } from '@/lib/db/queries/reviews'
 import { review, reviewVote } from './schemas'
@@ -22,6 +22,9 @@ export async function submitReview(_previous: ReviewState, formData: FormData): 
   await saveReview(session.user.id, parsed.data.productId, parsed.data.rating, parsed.data.body)
   // The product page is cached, and its reviews are not part of that cache key.
   revalidatePath(`/products/${formData.get('slug')}`)
+  // The landing page quotes reviews and is cached by tag. "max" rather than an immediate
+  // expiry: a quote arriving on the next visit instead of this one costs nobody anything.
+  revalidateTag('reviews', 'max')
   return { savedAt: Date.now() }
 }
 
