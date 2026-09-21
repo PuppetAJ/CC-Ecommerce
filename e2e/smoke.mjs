@@ -751,6 +751,58 @@ section('A phone at its narrowest')
   await wide.close()
 }
 
+section('The menu knows when its button has gone')
+{
+  // An iPad turning to landscape crosses lg, and used to be left with the sheet open over the desktop layout.
+  const context = await browser.newContext({ viewport: { width: 800, height: 900 } })
+  const tablet = await context.newPage()
+  await tablet.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  await tablet.getByRole('button', { name: 'Open menu' }).click()
+  await tablet.waitForTimeout(500)
+  const sheet = tablet.locator('[data-slot="sheet-content"]')
+  check('the menu opens on a tablet', await sheet.isVisible())
+
+  await tablet.setViewportSize({ width: 1200, height: 900 })
+  await tablet.waitForTimeout(600)
+  check('and closes itself when the width leaves it no button', await sheet.isHidden())
+
+  await tablet.setViewportSize({ width: 800, height: 900 })
+  await tablet.waitForTimeout(600)
+  check('without reopening when the width comes back', await sheet.isHidden())
+  await context.close()
+}
+
+section('The newsletter keeps what it is given')
+{
+  const { context, page: visitor } = await freshPage(browser)
+  await visitor.goto(`${BASE}/about`, { waitUntil: 'networkidle' })
+  const footer = visitor.getByRole('contentinfo')
+  const email = `reader${Date.now()}@wicken.test`
+  await footer.getByLabel('Email').fill(email)
+  await footer.getByRole('button', { name: 'Subscribe' }).click()
+  await visitor.waitForTimeout(1500)
+  check('signing up says thanks', /write when the next batch/i.test(await footer.innerText()))
+
+  await visitor.goto(`${BASE}/help`, { waitUntil: 'networkidle' })
+  const again = visitor.getByRole('contentinfo')
+  await again.getByLabel('Email').fill(email.toUpperCase())
+  await again.getByRole('button', { name: 'Subscribe' }).click()
+  await visitor.waitForTimeout(1500)
+  check('and the same address, however it is typed, is one row', /already on the list/i.test(await again.innerText()))
+  await context.close()
+
+  const { context: theirs, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  await admin.goto(`${BASE}/admin/customers`, { waitUntil: 'networkidle' })
+  const counted = (await visibleText(admin)).match(/(\d+) on the newsletter list/)
+  check(
+    'and the admin can see how many signed up',
+    Boolean(counted) && Number(counted[1]) >= 7,
+    counted?.[0] ?? 'no count',
+  )
+  await theirs.close()
+}
+
 section('Where login sends you afterwards')
 {
   const { context, page: fresh } = await freshPage(browser)

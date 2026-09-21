@@ -2,6 +2,7 @@ import { pool } from '../src/lib/db/pool.ts'
 import { seedDemoOrders } from './demo-orders.ts'
 import { seedDemoMessages } from './demo-messages.ts'
 import { seedDemoReviews } from './demo-reviews.ts'
+import { seedDemoSubscribers } from './demo-subscribers.ts'
 import { seedDemoUsers } from './demo-users.ts'
 import type { Category } from '../src/lib/db/types.ts'
 import { productFacets } from './product-facets.ts'
@@ -591,6 +592,7 @@ try {
   console.log(`Seeded ${await seedDemoReviews()} reviews`)
   console.log(`Seeded ${await seedDemoOrders()} orders across the last 90 days`)
   console.log(`Seeded ${await seedDemoMessages()} messages to the studio`)
+  console.log(`Seeded ${await seedDemoSubscribers()} newsletter subscribers`)
 } finally {
   await pool.end()
 }

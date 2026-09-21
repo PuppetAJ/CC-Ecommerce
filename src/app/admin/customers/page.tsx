@@ -5,6 +5,7 @@ import { SearchFilters } from '@/features/admin/components/search-filters'
 import { pageHref, pageNumber } from '@/features/admin/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { listCustomers, perPage } from '@/lib/db/queries/admin'
+import { countSubscribers } from '@/lib/db/queries/subscribers'
 import { formatPrice } from '@/lib/format'
 import { z } from 'zod'
 
@@ -20,6 +21,7 @@ const search = z.object({
 export default async function Page({ searchParams }: PageProps<'/admin/customers'>) {
   await requireAdmin()
   const filters = search.parse(await searchParams)
+  const subscribers = await countSubscribers()
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,7 +29,7 @@ export default async function Page({ searchParams }: PageProps<'/admin/customers
         <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Customers</h1>
         {/* Read-only on purpose: an account is somebody's, and a demo should not delete one. */}
         <p className="text-sm text-olive-600 dark:text-olive-400">
-          Read-only. Accounts cannot be edited or removed from here.
+          Read-only. Accounts cannot be edited or removed from here. {subscribers} on the newsletter list.
         </p>
       </div>
       <SearchFilters action="/admin/customers" placeholder="Name or email" defaults={{ q: filters.q }} />

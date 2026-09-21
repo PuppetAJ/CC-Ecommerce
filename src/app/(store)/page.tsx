@@ -1,8 +1,6 @@
 import { Suspense } from 'react'
-import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
-import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
-import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
 import { Categories, CategoriesSkeleton } from '@/app/(store)/_components/categories'
+import { Closing } from '@/app/(store)/_components/closing'
 import { Featured, FeaturedSkeleton } from '@/app/(store)/_components/featured'
 import { HowItIsMade } from '@/app/(store)/_components/how-it-is-made'
 import { LandingHero } from '@/app/(store)/_components/hero'
@@ -24,28 +22,7 @@ export default function HomePage() {
       <Suspense fallback={<VoicesSkeleton />}>
         <Voices />
       </Suspense>
-
-      <CallToActionSimple
-        tight
-        reveal
-        headline="Come and visit."
-        subheadline={
-          <p>
-            The workshop is open the first Saturday of every month. Everything else we handle by email, usually the same
-            day.
-          </p>
-        }
-        cta={
-          <div className="flex flex-wrap items-center gap-2">
-            <ButtonLink href="/shop" size="lg">
-              Shop the collection
-            </ButtonLink>
-            <PlainButtonLink href="/help" size="lg">
-              Visit or ask <ArrowNarrowRightIcon />
-            </PlainButtonLink>
-          </div>
-        }
-      />
+      <Closing />
     </>
   )
 }

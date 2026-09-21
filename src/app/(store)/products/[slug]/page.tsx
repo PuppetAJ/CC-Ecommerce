@@ -7,7 +7,7 @@ import { Suspense } from 'react'
 import { FavoriteButton } from '@/app/_components/favorite-button'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
 import { TrackProduct } from '@/components/analytics'
-import { Rise } from '@/components/motion'
+import { Enter, Rise } from '@/components/motion'
 import { ReviewForm } from '@/features/reviews/components/review-form'
 import { ReviewList } from '@/features/reviews/components/review-list'
 import { Stars } from '@/features/reviews/components/stars'
@@ -62,14 +62,19 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
     <Container className="flex flex-col gap-16 py-10">
       <TrackProduct productId={product.id} />
       <div className="flex flex-col gap-6">
-        <Breadcrumbs search={search} category={product.category} name={product.name} />
+        <Enter delay={0.05}>
+          <Breadcrumbs search={search} category={product.category} name={product.name} />
+        </Enter>
+        {/* The photograph leads and the words follow it down, the way the landing hero arrives. */}
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
           {product.image_url && (
-            <ProductImage src={product.image_url} alt={product.name} objectPosition={focalPosition(product.slug)} />
+            <Enter className="min-w-0 flex-1 self-start">
+              <ProductImage src={product.image_url} alt={product.name} objectPosition={focalPosition(product.slug)} />
+            </Enter>
           )}
 
           <div className="flex flex-1 flex-col items-start gap-6 lg:py-8">
-            <div className="flex flex-col gap-3">
+            <Enter delay={0.12} className="flex flex-col gap-3">
               <Link
                 href={`/shop?category=${product.category}`}
                 className="text-sm text-olive-600 underline underline-offset-4 dark:text-olive-400"
@@ -77,53 +82,59 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
                 {categoryLabels[product.category]}
               </Link>
               <Heading className="text-4xl/10 sm:text-5xl/12">{product.name}</Heading>
-            </div>
+            </Enter>
 
-            <Price product={product} size="lg" />
+            <Enter delay={0.2} className="flex flex-col items-start gap-6">
+              <Price product={product} size="lg" />
 
-            <Suspense fallback={null}>
-              <RatingSummary productId={product.id} />
-            </Suspense>
+              <Suspense fallback={null}>
+                <RatingSummary productId={product.id} />
+              </Suspense>
 
-            <p className="text-sm text-olive-600 dark:text-olive-400">
-              {soldOut
-                ? 'Back when the next batch comes out of the kiln.'
-                : low
-                  ? `Only ${product.stock_quantity} left`
-                  : 'In stock, ships in 3–5 days'}
-            </p>
+              <p className="text-sm text-olive-600 dark:text-olive-400">
+                {soldOut
+                  ? 'Back when the next batch comes out of the kiln.'
+                  : low
+                    ? `Only ${product.stock_quantity} left`
+                    : 'In stock, ships in 3–5 days'}
+              </p>
+            </Enter>
 
-            <Text>
-              <p>{product.description}</p>
-            </Text>
+            <Enter delay={0.28} className="flex flex-col items-start gap-6">
+              <Text>
+                <p>{product.description}</p>
+              </Text>
 
-            {(product.dimensions || product.materials) && (
-              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
-                {product.dimensions && (
-                  <>
-                    <dt className="text-olive-600 dark:text-olive-400">Dimensions</dt>
-                    <dd className="text-olive-950 dark:text-white">{product.dimensions}</dd>
-                  </>
-                )}
-                {product.materials && (
-                  <>
-                    <dt className="text-olive-600 dark:text-olive-400">Materials</dt>
-                    <dd className="text-olive-950 dark:text-white">{product.materials}</dd>
-                  </>
-                )}
-              </dl>
-            )}
+              {(product.dimensions || product.materials) && (
+                <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+                  {product.dimensions && (
+                    <>
+                      <dt className="text-olive-600 dark:text-olive-400">Dimensions</dt>
+                      <dd className="text-olive-950 dark:text-white">{product.dimensions}</dd>
+                    </>
+                  )}
+                  {product.materials && (
+                    <>
+                      <dt className="text-olive-600 dark:text-olive-400">Materials</dt>
+                      <dd className="text-olive-950 dark:text-white">{product.materials}</dd>
+                    </>
+                  )}
+                </dl>
+              )}
+            </Enter>
 
-            <AddToCart
-              productId={product.id}
-              name={product.name}
-              stock={product.stock_quantity}
-              save={
-                <Suspense fallback={null}>
-                  <SaveControl productId={product.id} name={product.name} />
-                </Suspense>
-              }
-            />
+            <Enter delay={0.36} className="w-full">
+              <AddToCart
+                productId={product.id}
+                name={product.name}
+                stock={product.stock_quantity}
+                save={
+                  <Suspense fallback={null}>
+                    <SaveControl productId={product.id} name={product.name} />
+                  </Suspense>
+                }
+              />
+            </Enter>
           </div>
         </div>
       </div>
