@@ -479,6 +479,43 @@ section('Nothing scrolls sideways on a phone')
   await adminContext.close()
 }
 
+section('Products arrive one after another')
+{
+  const { context, page: shop } = await freshPage(browser)
+  await shop.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
+  await shop.waitForTimeout(420)
+
+  // Caught mid-animation the tiles should be at different opacities, which is what a stagger is.
+  const during = await shop.evaluate(() =>
+    [...document.querySelectorAll('[data-stagger]')].slice(0, 8).map((n) => Number(getComputedStyle(n).opacity)),
+  )
+  check('they do not all appear at once', new Set(during).size > 1, during.map((o) => o.toFixed(2)).join(' '))
+
+  await shop.waitForTimeout(3000)
+  const settled = await shop.evaluate(() =>
+    [...document.querySelectorAll('[data-stagger]')].map((n) => Number(getComputedStyle(n).opacity)),
+  )
+  check('and every one of them finishes', settled.length > 0 && settled.every((o) => o === 1), `${settled.length} tiles`)
+  await context.close()
+
+  // The animation is a flourish: the markup has to be complete without it.
+  const html = await (await fetch(`${BASE}/shop`)).text()
+  const articles = (html.match(/<article/g) ?? []).length
+  check('the tiles are server-rendered, not animated into being', articles > 40, `${articles} in the html`)
+  check('and JavaScript off shows them anyway', html.includes('opacity:1!important'))
+
+  const still = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' })
+  const quiet = await still.newPage()
+  await quiet.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
+  await quiet.waitForTimeout(500)
+  check('reduced motion skips the animation entirely', (await quiet.locator('[data-stagger]').count()) === 0)
+  check(
+    'and shows the products at once',
+    (await quiet.evaluate(() => Number(getComputedStyle(document.querySelector('article')).opacity))) === 1,
+  )
+  await still.close()
+}
+
 section('Where login sends you afterwards')
 {
   const { context, page: fresh } = await freshPage(browser)

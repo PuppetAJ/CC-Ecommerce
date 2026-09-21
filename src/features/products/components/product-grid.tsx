@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Stagger } from '@/components/motion'
 import type { Product } from '@/lib/db/types'
 import { ProductCard, ProductCardSkeleton } from './product-card'
 
@@ -18,7 +19,9 @@ export function ProductGrid({
   rating?: (product: Product) => ReactNode
 }) {
   return (
-    <div className={grid}>
+    // Server-rendered tiles handed to a client wrapper: the cards stay on the server and only
+    // the wrapper ships.
+    <Stagger className={grid}>
       {products.map((product, i) => (
         // The first row is above the fold on every breakpoint we support.
         <ProductCard
@@ -30,7 +33,7 @@ export function ProductGrid({
           rating={rating?.(product)}
         />
       ))}
-    </div>
+    </Stagger>
   )
 }
 
