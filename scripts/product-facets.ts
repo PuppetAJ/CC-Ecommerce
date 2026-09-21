@@ -5,7 +5,7 @@
  * from ash, and no pattern tells those apart. Thirty-seven rows are quicker to read than a
  * parser is to trust.
  */
-export type Facets = { materials: string[]; color: string | null }
+type Facets = { materials: string[]; color: string | null }
 
 export const productFacets: Record<string, Facets> = {
   // Furniture: the wood is the material and the finish leaves it its own color.

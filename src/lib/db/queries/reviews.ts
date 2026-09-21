@@ -13,7 +13,7 @@ export type Review = {
   own_vote: boolean | null
 }
 
-export type ReviewSummary = { count: number; average: number }
+type ReviewSummary = { count: number; average: number }
 
 export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
 export type ReviewSort = (typeof reviewSorts)[number]
@@ -116,7 +116,7 @@ export async function summarizeMany(productIds: number[]): Promise<Map<number, R
   return new Map(rows.map((row) => [row.product_id, { count: Number(row.count), average: Number(row.average) }]))
 }
 
-export type Testimonial = {
+type Testimonial = {
   author: string
   body: string
   rating: number

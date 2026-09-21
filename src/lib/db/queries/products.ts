@@ -89,7 +89,7 @@ export async function listRelatedProducts(product: Product, limit = 4): Promise<
   return rows
 }
 
-export type CategoryCover = { category: Category; slug: string; count: number; image_url: string | null }
+type CategoryCover = { category: Category; slug: string; count: number; image_url: string | null }
 
 export async function listCategoryCovers(): Promise<CategoryCover[]> {
   // DISTINCT ON takes the first row of each group, which the ORDER BY makes the dearest piece

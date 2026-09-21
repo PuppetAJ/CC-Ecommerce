@@ -25,7 +25,7 @@ export async function submitReview(_previous: ReviewState, formData: FormData): 
   return { savedAt: Date.now() }
 }
 
-export type VoteState = { error?: string; needsLogin?: boolean }
+type VoteState = { error?: string; needsLogin?: boolean }
 
 export async function voteOnHelpfulness(
   productId: number,

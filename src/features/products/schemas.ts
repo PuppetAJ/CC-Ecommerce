@@ -163,11 +163,3 @@ export function fromShop(search: Partial<ShopSearch>): string {
   const href = shopHref(search)
   return href === '/shop' ? '' : `?${href.split('?')[1]}`
 }
-
-/** Adds or removes one value from a multi-select facet, for a link that toggles it. */
-export function toggleFacet<T extends string>(current: T[] | undefined, value: T): T[] | undefined {
-  const next = (current ?? []).includes(value)
-    ? (current ?? []).filter((item) => item !== value)
-    : [...(current ?? []), value]
-  return next.length > 0 ? next : undefined
-}

@@ -34,7 +34,7 @@ export type CartItem = {
   quantity: number
 }
 
-export type OrderItem = {
+type OrderItem = {
   product_id: number | null
   product_name: string
   product_slug: string

@@ -44,7 +44,6 @@ const assignments: { file: string; id: string }[] = [
   { file: 'ash-glaze-dinner-plate', id: '7HuTGlUfQSo' },
   { file: 'tall-stem-vase', id: 'r0u8YuXfaho' },
   { file: 'wide-mouth-vessel', id: 'jKg4C87JB3U' },
-  { file: 'hero-vases', id: 'yCdCM36X4mc' },
   // The shipped hero-teaware.jpg is sharpened by hand afterwards; re-running this overwrites that.
   { file: 'hero-teaware', id: 'Xow_RU8rcv4' },
   { file: 'hanging-pendant-shade', id: 'aRcwkYv7870' },

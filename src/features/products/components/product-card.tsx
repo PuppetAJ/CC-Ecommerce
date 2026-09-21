@@ -12,7 +12,7 @@ const tile = 'relative aspect-square overflow-hidden rounded-xl bg-tile'
 
 // Two columns start at 400px and the container stops growing at 1280, so neither 100vw nor a
 // plain 25vw describes a tile; both ask for an image about twice the width actually drawn.
-export const gridSizes =
+const gridSizes =
   '(min-width: 1280px) 240px, (min-width: 1024px) 18vw, (min-width: 640px) 350px, (min-width: 400px) 45vw, 92vw'
 
 export const railSizes = '(min-width: 1280px) 290px, (min-width: 1024px) 22vw, (min-width: 640px) 330px, 48vw'

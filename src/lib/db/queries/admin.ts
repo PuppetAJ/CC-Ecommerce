@@ -3,11 +3,18 @@ import { pool } from '../pool.ts'
 import type { Category, Order, OrderStatus, Product } from '../types.ts'
 import { searchTerm } from '../text.ts'
 
-export type Totals = { revenue_cents: number; orders: number; average_cents: number; returning_rate: number }
+type Totals = { revenue_cents: number; orders: number; average_cents: number; returning_rate: number }
 
-export type DashboardPoint = { day: string; revenue_cents: number; orders: number }
+type DashboardPoint = { day: string; revenue_cents: number; orders: number }
 
-export type TopSeller = { id: number; name: string; slug: string; image_url: string | null; sold: number; revenue_cents: number }
+type TopSeller = {
+  id: number
+  name: string
+  slug: string
+  image_url: string | null
+  sold: number
+  revenue_cents: number
+}
 
 /** Paid orders only: an order nobody paid for is not revenue, whatever the dashboard would rather say. */
 // Every column is qualified: products carries a created_at too, and an unqualified one is ambiguous.
@@ -66,7 +73,7 @@ export async function topSellers(from: Date, to: Date, limit = 5): Promise<TopSe
   return rows.map((row) => ({ ...row, sold: Number(row.sold), revenue_cents: Number(row.revenue_cents) }))
 }
 
-export type CategorySplit = { category: Category; units: number; revenue_cents: number }
+type CategorySplit = { category: Category; units: number; revenue_cents: number }
 
 /** What the shop actually sells, by the category a product sits in. Paid orders only. */
 export async function salesByCategory(from: Date, to: Date): Promise<CategorySplit[]> {
@@ -94,7 +101,7 @@ export async function lowStock(threshold = 3, limit = 6): Promise<Product[]> {
 /** How many rows a list page shows. One number, so every list behaves the same way. */
 export const perPage = 20
 
-export type Page<T> = { rows: T[]; total: number }
+type Page<T> = { rows: T[]; total: number }
 
 // count(*) OVER () rides along with the rows, so a page and its total are one round trip.
 const withTotal = 'count(*) OVER () AS total_rows'
@@ -104,7 +111,7 @@ function paged<T>(rows: (T & { total_rows?: string })[]): Page<T> {
   return { rows: rows.map(({ total_rows: _ignored, ...rest }) => rest as unknown as T), total }
 }
 
-export type ProductFilters = { q?: string; category?: Category; stock?: 'low' | 'out'; page?: number }
+type ProductFilters = { q?: string; category?: Category; stock?: 'low' | 'out'; page?: number }
 
 export async function listAdminProducts({ q, category, stock, page = 1 }: ProductFilters = {}): Promise<Page<Product>> {
   const { rows } = await pool.query<Product & { total_rows: string }>(
@@ -126,7 +133,7 @@ export async function getAdminProduct(id: number): Promise<Product | null> {
   return rows[0] ?? null
 }
 
-export type ProductEdit = {
+type ProductEdit = {
   price_cents: number
   sale_price_cents: number | null
   stock_quantity: number
@@ -161,7 +168,7 @@ const orderWithItems = (extra = '') => `
   LEFT JOIN order_items oi ON oi.order_id = o.id
 `
 
-export type AdminOrder = Order & { customer_name: string; customer_email: string }
+type AdminOrder = Order & { customer_name: string; customer_email: string }
 
 export async function listAdminOrders({
   status,
@@ -181,10 +188,9 @@ export async function listAdminOrders({
 }
 
 export async function getAdminOrder(id: number): Promise<AdminOrder | null> {
-  const { rows } = await pool.query<AdminOrder>(
-    `${orderWithItems()} WHERE o.id = $1 GROUP BY o.id, u.name, u.email`,
-    [id],
-  )
+  const { rows } = await pool.query<AdminOrder>(`${orderWithItems()} WHERE o.id = $1 GROUP BY o.id, u.name, u.email`, [
+    id,
+  ])
   return rows[0] ?? null
 }
 
@@ -198,7 +204,7 @@ export async function setOrderStatus(id: number, status: OrderStatus): Promise<A
   return getAdminOrder(id)
 }
 
-export type Customer = {
+type Customer = {
   id: string
   name: string
   email: string
@@ -227,7 +233,7 @@ export async function listCustomers(q?: string, page = 1): Promise<Page<Customer
   )
 }
 
-export type AdminReview = {
+type AdminReview = {
   user_id: string
   author: string
   product_id: number

@@ -81,53 +81,6 @@ export function SoftButton({
   )
 }
 
-export function SoftButtonLink({
-  size = 'md',
-  href,
-  className,
-  ...props
-}: {
-  href: string
-  size?: keyof typeof sizes
-} & Omit<ComponentProps<'a'>, 'href'>) {
-  return (
-    <NextLink
-      href={href}
-      className={clsx(
-        'inline-flex shrink-0 items-center justify-center gap-1 rounded-full bg-olive-950/10 text-sm/7 font-medium text-olive-950 hover:bg-olive-950/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/20',
-        sizes[size],
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
-export function PlainButton({
-  size = 'md',
-  color = 'dark/light',
-  type = 'button',
-  className,
-  ...props
-}: {
-  size?: keyof typeof sizes
-  color?: 'dark/light' | 'light'
-} & ComponentProps<'button'>) {
-  return (
-    <button
-      type={type}
-      className={clsx(
-        'inline-flex shrink-0 items-center justify-center gap-2 rounded-full text-sm/7 font-medium',
-        color === 'dark/light' && 'text-olive-950 hover:bg-olive-950/10 dark:text-white dark:hover:bg-white/10',
-        color === 'light' && 'text-white hover:bg-white/15 dark:hover:bg-white/10',
-        sizes[size],
-        className,
-      )}
-      {...props}
-    />
-  )
-}
-
 export function PlainButtonLink({
   size = 'md',
   color = 'dark/light',

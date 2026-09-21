@@ -3,7 +3,7 @@ import type { BetterAuthOptions } from 'better-auth'
 import { pool } from '../db/pool.ts'
 import { env, googleEnabled } from '../env.ts'
 
-export const roles = ['customer', 'admin'] as const
+const roles = ['customer', 'admin'] as const
 export type Role = (typeof roles)[number]
 
 // Better Auth infers an additional field as plain `string`, so comparing through

@@ -4,7 +4,7 @@ import { Eyebrow } from '@/components/elements/eyebrow'
 import { Subheading } from '@/components/elements/subheading'
 import { Text } from '@/components/elements/text'
 import { Rise } from '@/components/motion'
-import { Feature } from '@/components/sections/features-three-column'
+import { Feature } from '@/components/elements/feature'
 
 /** The three claims the shop makes about itself, next to somebody actually making something. */
 export function HowItIsMade() {

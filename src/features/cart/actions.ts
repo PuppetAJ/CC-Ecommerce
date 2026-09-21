@@ -1,6 +1,6 @@
 'use server'
 
-import { addCartItem, clearCart, removeCartItem, setCartItemQuantity } from '@/lib/db/queries/cart'
+import { addCartItem, removeCartItem, setCartItemQuantity } from '@/lib/db/queries/cart'
 import { resolveCartId } from './cart'
 import { cartLine, cartTarget } from './schemas'
 
@@ -33,8 +33,4 @@ export async function removeFromCart(productId: number): Promise<CartState> {
   if (!parsed.success) return { error: 'That item could not be removed.' }
 
   await removeCartItem(await resolveCartId(), parsed.data.productId)
-}
-
-export async function emptyCart(): Promise<void> {
-  await clearCart(await resolveCartId())
 }

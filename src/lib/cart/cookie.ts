@@ -2,7 +2,7 @@ import 'server-only'
 import { cookies } from 'next/headers'
 import { env } from '@/lib/env'
 
-export const CART_COOKIE = 'wicken_cart'
+const CART_COOKIE = 'wicken_cart'
 
 export async function readCartCookie(): Promise<string | undefined> {
   return (await cookies()).get(CART_COOKIE)?.value

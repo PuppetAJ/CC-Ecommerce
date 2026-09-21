@@ -14,5 +14,3 @@ export const auth = betterAuth({
     session: { create: { after: async (session) => adoptGuestCart(session.userId) } },
   },
 })
-
-export type Session = typeof auth.$Infer.Session

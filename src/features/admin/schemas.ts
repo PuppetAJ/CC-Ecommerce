@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const ranges = ['7', '30', '90'] as const
-export type Range = (typeof ranges)[number]
+type Range = (typeof ranges)[number]
 
 export const rangeLabels: Record<Range, string> = {
   '7': 'Last 7 days',

@@ -2,7 +2,7 @@ import 'server-only'
 import { pool } from '../pool.ts'
 import { withoutNulls } from '../text.ts'
 
-export type Message = {
+type Message = {
   id: number
   name: string
   email: string
@@ -41,9 +41,4 @@ export async function listMessages(limit: number, offset: number): Promise<{ row
 
 export async function markAnswered(id: number, answered: boolean): Promise<void> {
   await pool.query('UPDATE messages SET answered = $2 WHERE id = $1', [id, answered])
-}
-
-export async function countUnanswered(): Promise<number> {
-  const { rows } = await pool.query<{ count: string }>('SELECT count(*) AS count FROM messages WHERE NOT answered')
-  return Number(rows[0].count)
 }
