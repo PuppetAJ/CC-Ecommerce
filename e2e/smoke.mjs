@@ -59,6 +59,13 @@ section('The landing page sells something')
   check('the quotes name the piece they are about', Boolean(onward?.startsWith('/products/')), String(onward))
   const product = await (await fetch(`${BASE}${onward}`)).text()
   check('and are real reviews, still there on the product', product.includes(quote.slice(0, 40)), quote.slice(0, 40))
+
+  const asks = await home.getByRole('button', { name: 'Subscribe' }).count()
+  check('the page asks for an email once, not twice', asks === 1, `${asks} signup forms`)
+  await home.setViewportSize({ width: 320, height: 900 })
+  await home.waitForTimeout(200)
+  const flush = await home.locator('footer').evaluate((f) => getComputedStyle(f).paddingTop)
+  check('and on a phone the closing card meets the footer', flush === '0px', flush)
   await context.close()
 }
 

@@ -174,3 +174,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* The landing page's closing card is the same band as the footer, so on phones the two meet flush. */
+@media (width < 40rem) {
+  body:has([data-closing]) footer {
+    padding-top: 0;
+  }
+}
+
+/* That card already asks for an email, so the footer does not ask a second time on the same page. */
+body:has([data-closing]) [data-footer-notice] {
+  display: none;
+}

@@ -8,10 +8,10 @@ import { Text } from '@/components/elements/text'
 import { Rise } from '@/components/motion'
 import { NewsletterForm } from '@/features/newsletter/components/newsletter-form'
 
-// The landing page's last word: a visit and the newsletter in one card, full bleed below sm.
+// The landing page's last word, and on phones the full-bleed top of the footer's own band.
 export function Closing() {
   return (
-    <section className="py-10 sm:py-14">
+    <section data-closing className="py-10 max-sm:pb-0 sm:py-14">
       <Container>
         <Rise className="grid overflow-hidden bg-olive-950/2.5 max-sm:-mx-6 sm:rounded-2xl lg:grid-cols-2 dark:bg-white/5">
           <div className="relative aspect-video lg:order-2 lg:aspect-auto lg:min-h-full">
