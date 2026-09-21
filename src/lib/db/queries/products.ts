@@ -1,6 +1,7 @@
 import 'server-only'
 import { pool } from '../pool.ts'
 import type { Category, Product } from '../types.ts'
+import { searchTerm } from '../text.ts'
 
 export type ProductSort = 'newest' | 'price-asc' | 'price-desc' | 'name'
 
@@ -44,7 +45,7 @@ export async function listProducts({
      ORDER BY ${orderBy[sort]}`,
     [
       category ?? null,
-      search ?? null,
+      search ? searchTerm(search) : null,
       materials?.length ? materials : null,
       colors?.length ? colors : null,
       priceRanges?.length ? priceRanges.map(([lo]) => lo) : null,
@@ -54,12 +55,13 @@ export async function listProducts({
   return rows
 }
 
-/** What to offer in the filters. Read from the catalogue rather than the vocabulary, so a
- * facet nothing carries is never shown. Ordered by how many carry it, commonest first. */
+/** What to offer in the filters. Read from the catalogue rather than the vocabulary, so a facet
+ * nothing carries is never shown. Materials read alphabetically, because that is a list somebody
+ * scans for a word; colors stay commonest-first, because a swatch has no word to scan for. */
 export async function listFacets(): Promise<{ materials: string[]; colors: string[] }> {
   const [materials, colors] = await Promise.all([
     pool.query<{ value: string }>(
-      'SELECT unnest(material_tags) AS value FROM products GROUP BY value ORDER BY count(*) DESC, value',
+      'SELECT unnest(material_tags) AS value FROM products GROUP BY value ORDER BY value',
     ),
     pool.query<{ value: string }>(
       'SELECT color AS value FROM products WHERE color IS NOT NULL GROUP BY color ORDER BY count(*) DESC, value',

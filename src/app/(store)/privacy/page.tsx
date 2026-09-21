@@ -15,6 +15,12 @@ export default function PrivacyPage() {
         pages, in test mode, where no real card is ever charged.
       </p>
       <p>
+        It also counts how pages are used, in its own database, so the admin dashboard has real numbers rather than
+        invented ones. That amounts to a page path, an event such as adding something to a cart, and a random id your
+        browser tab invents for itself and forgets when you close it. No cookie is set for this, no address or device
+        is recorded, and nothing is sent to anybody else. It measures visits, not people.
+      </p>
+      <p>
         The demo database is reset periodically. Do not put anything here you would mind losing, and do not reuse a
         password you use elsewhere.
       </p>

@@ -21,7 +21,7 @@ function isDemo(email: string) {
 export async function updateName(_previous: AccountState, formData: FormData): Promise<AccountState> {
   const session = await getSession()
   if (!session) return { error: 'You are not signed in.' }
-  if (isDemo(session.user.email)) return { error: 'The demo accounts cannot be edited — they are shared.' }
+  if (isDemo(session.user.email)) return { error: 'The demo accounts are shared, so they cannot be edited.' }
 
   const parsed = displayName.safeParse({ name: formData.get('name') })
   if (!parsed.success) return { error: 'Enter a name between 1 and 80 characters.' }
@@ -34,7 +34,7 @@ export async function updateName(_previous: AccountState, formData: FormData): P
 export async function deleteAccount(_previous: AccountState, formData: FormData): Promise<AccountState> {
   const session = await getSession()
   if (!session) return { error: 'You are not signed in.' }
-  if (isDemo(session.user.email)) return { error: 'The demo accounts cannot be deleted — they are shared.' }
+  if (isDemo(session.user.email)) return { error: 'The demo accounts are shared, so they cannot be deleted.' }
 
   // Typing the address is the confirmation; a dialog alone is too easy to click through.
   if (formData.get('confirm') !== session.user.email) {

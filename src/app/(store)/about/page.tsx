@@ -14,7 +14,7 @@ export default function AboutPage() {
         headline="Named after a tree."
         subheadline={
           <p>
-            The wicken tree — rowan, to most people — was the one planted by the door to keep harm out of the house. It
+            The wicken tree, rowan to most people, was the one planted by the door to keep harm out of the house. It
             seemed a reasonable thing to name a workshop after.
           </p>
         }

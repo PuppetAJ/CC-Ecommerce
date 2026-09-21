@@ -10,6 +10,8 @@ export function SiteFooter() {
             <FooterLink href="/shop?category=vases">Vases</FooterLink>
             <FooterLink href="/shop?category=lighting">Lighting</FooterLink>
             <FooterLink href="/shop?category=furniture">Furniture</FooterLink>
+            <FooterLink href="/shop?category=textiles">Textiles</FooterLink>
+            <FooterLink href="/shop?category=storage">Storage</FooterLink>
           </FooterCategory>
           <FooterCategory title="Studio">
             <FooterLink href="/about">About</FooterLink>
@@ -33,7 +35,7 @@ export function SiteFooter() {
           </FooterCategory>
         </>
       }
-      fineprint="© 2026 Wicken · A portfolio demo — no real orders are fulfilled."
+      fineprint="© 2026 Wicken · A portfolio demo. No real orders are fulfilled."
     />
   )
 }

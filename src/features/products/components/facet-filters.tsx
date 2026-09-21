@@ -156,7 +156,7 @@ export function FacetFilters({
                 <span
                   aria-hidden
                   style={swatch.startsWith('conic') ? { backgroundImage: swatch } : { backgroundColor: swatch }}
-                  className={`block size-7 rounded-full border transition-[box-shadow,border-color] peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 ${
+                  className={`block size-7 rounded-full border bg-origin-border transition-[box-shadow,border-color] peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 ${
                     on
                       ? 'border-olive-950 ring-2 ring-olive-950 ring-offset-2 dark:border-white dark:ring-white'
                       : 'border-olive-950/20 dark:border-white/25'

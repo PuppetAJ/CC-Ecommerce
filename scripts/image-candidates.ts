@@ -29,6 +29,16 @@ const groups: { name: string; want: number; queries: string[] }[] = [
     queries: ['wooden dining chair', 'oak dining table', 'wooden stool minimal', 'wooden bench interior'],
   },
   {
+    name: 'Textiles',
+    want: 6,
+    queries: ['linen napkin table', 'linen tea towel kitchen', 'folded linen fabric neutral', 'linen apron'],
+  },
+  {
+    name: 'Storage',
+    want: 6,
+    queries: ['wooden box lid handmade', 'wooden tray serving', 'ceramic canister kitchen', 'wooden bowl turned'],
+  },
+  {
     name: 'Editorial',
     want: 5,
     queries: ['pottery workshop hands', 'ceramic studio shelves', 'potters wheel', 'woodworking workshop'],
@@ -103,7 +113,7 @@ const html = `<!doctype html>
   <p>Click to select. Aim for ${sections.map((s) => `${s.want} ${s.name.toLowerCase()}`).join(', ')}. Copy the box below back to me.</p>
   <textarea id="picked" readonly placeholder="Selected ids appear here"></textarea>
 </header>
-${sections.map((s) => `  <h2>${s.name} — pick ${s.want}</h2>\n  <div class="grid">${s.candidates.map((c) => tile(c, s.name)).join('')}\n  </div>`).join('\n')}
+${sections.map((s) => `  <h2>${s.name}: pick ${s.want}</h2>\n  <div class="grid">${s.candidates.map((c) => tile(c, s.name)).join('')}\n  </div>`).join('\n')}
 <script>
   const out = document.getElementById('picked')
   document.addEventListener('change', () => {

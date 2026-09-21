@@ -8,7 +8,7 @@
 export type Facets = { materials: string[]; color: string | null }
 
 export const productFacets: Record<string, Facets> = {
-  // Furniture — the timber is the material and the finish leaves it its own colour.
+  // Furniture: the timber is the material and the finish leaves it its own color.
   'ash-dining-table': { materials: ['ash', 'steel'], color: 'natural' },
   'elm-side-table': { materials: ['elm'], color: 'natural' },
   'low-workshop-stool': { materials: ['pine', 'reclaimed-timber'], color: 'natural' },
@@ -52,4 +52,14 @@ export const productFacets: Record<string, Facets> = {
   'smoke-glaze-vase': { materials: ['stoneware'], color: 'grey' },
   'tall-stem-vase': { materials: ['stoneware'], color: 'white' },
   'wide-mouth-vessel': { materials: ['porcelain'], color: 'white' },
+  'washed-linen-napkins': { materials: ['linen'], color: 'grey' },
+  'linen-bread-cloth': { materials: ['linen'], color: 'natural' },
+  'studio-apron': { materials: ['linen', 'brass'], color: 'natural' },
+  'heavy-linen-throw': { materials: ['linen'], color: 'natural' },
+  'linen-table-runner': { materials: ['linen'], color: 'natural' },
+  'lidded-keepsake-box': { materials: ['walnut'], color: 'natural' },
+  'turned-serving-trays': { materials: ['oak'], color: 'natural' },
+  'stoneware-storage-jars': { materials: ['stoneware'], color: 'grey' },
+  'turned-walnut-bowl': { materials: ['walnut'], color: 'natural' },
+  'carved-catch-all': { materials: ['walnut'], color: 'natural' },
 }

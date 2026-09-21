@@ -1,10 +1,11 @@
 import type { ReviewSort } from '@/lib/db/queries/reviews'
+import { withoutNulls } from '@/lib/db/text'
 import { z } from 'zod'
 
 export const review = z.object({
   productId: z.coerce.number().int().positive(),
   rating: z.coerce.number().int().min(1).max(5),
-  body: z.string().trim().min(1).max(2000),
+  body: z.string().transform(withoutNulls).pipe(z.string().trim().min(1).max(2000)),
 })
 
 export const reviewVote = z.object({

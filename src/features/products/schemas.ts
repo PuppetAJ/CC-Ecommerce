@@ -6,6 +6,8 @@ export const categoryLabels: Record<(typeof categories)[number], string> = {
   vases: 'Vases',
   lighting: 'Lighting',
   furniture: 'Furniture',
+  textiles: 'Textiles',
+  storage: 'Storage',
 }
 
 export const materials = [
@@ -17,6 +19,7 @@ export const materials = [
   'ash',
   'elm',
   'pine',
+  'walnut',
   'reclaimed-timber',
   'steel',
   'brass',
@@ -48,6 +51,7 @@ export const materialLabels: Record<(typeof materials)[number], string> = {
   ash: 'Ash',
   elm: 'Elm',
   pine: 'Pine',
+  walnut: 'Walnut',
   'reclaimed-timber': 'Reclaimed timber',
   steel: 'Steel',
   brass: 'Brass',

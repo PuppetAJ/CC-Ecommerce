@@ -26,7 +26,13 @@ const browser = await chromium.launch()
 let failures = 0
 
 async function audit(page, label, path) {
-  await page.goto(BASE + path, { waitUntil: 'networkidle' })
+  if (path.startsWith('/admin')) {
+    await page.goto(BASE + path, { waitUntil: 'domcontentloaded' })
+    await page.locator('h1').first().waitFor()
+    await page.waitForTimeout(2000)
+  } else {
+    await page.goto(BASE + path, { waitUntil: 'networkidle' })
+  }
   await page.addScriptTag({ path: AXE_PATH })
   const violations = await page.evaluate(async (tags) => {
     const results = await window.axe.run(document, { runOnly: { type: 'tag', values: tags } })
@@ -66,7 +72,28 @@ for (const colorScheme of ['light', 'dark']) {
   await audit(page, 'your orders', '/account/orders')
   await audit(page, 'favorites', '/account/favorites')
   await audit(page, 'settings', '/account/settings')
+
   await context.close()
+
+  // The admin is a different shell again, and it is where the tables live. Its own context,
+  // because the signed-in shopper above is redirected away from the login page.
+  const adminContext = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme })
+  const adminPage = await adminContext.newPage()
+  adminPage.setDefaultTimeout(20_000)
+  await adminPage.goto(`${BASE}/login`, { waitUntil: 'networkidle' })
+  await adminPage.getByRole('button', { name: 'Demo admin' }).click()
+  await adminPage.waitForURL(`${BASE}/admin`)
+  for (const [label, path] of [
+    ['admin overview', '/admin'],
+    ['admin orders', '/admin/orders'],
+    ['admin products', '/admin/products'],
+    ['admin customers', '/admin/customers'],
+    ['admin reviews', '/admin/reviews'],
+    ['admin product edit', '/admin/products/1'],
+  ]) {
+    await audit(adminPage, label, path)
+  }
+  await adminContext.close()
 }
 
 await browser.close()

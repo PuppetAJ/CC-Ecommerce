@@ -1,7 +1,8 @@
-export const categories = ['tableware', 'vases', 'lighting', 'furniture'] as const
+export const categories = ['tableware', 'vases', 'lighting', 'furniture', 'textiles', 'storage'] as const
 export type Category = (typeof categories)[number]
 
-export type OrderStatus = 'pending' | 'paid' | 'cancelled'
+export const orderStatuses = ['pending', 'paid', 'cancelled'] as const
+export type OrderStatus = (typeof orderStatuses)[number]
 
 export type Product = {
   id: number

@@ -1,30 +1,20 @@
 import { pool } from '../src/lib/db/pool.ts'
+import { ensurePeople, reviewerCount } from './demo-people.ts'
 
 // Enough voices that a product page looks lived-in, written to sound like people rather
-// than marketing. Names are invented; these are not real customers.
-const reviewers = [
-  ['Marta Ellison', 'marta.ellison@wicken.test'],
-  ['Joseph Ndiaye', 'joseph.ndiaye@wicken.test'],
-  ['Priya Raman', 'priya.raman@wicken.test'],
-  ['Tom Whitlock', 'tom.whitlock@wicken.test'],
-  ['Ana Beltrán', 'ana.beltran@wicken.test'],
-  ['Ruth Kowalski', 'ruth.kowalski@wicken.test'],
-  ['Desmond Achebe', 'desmond.achebe@wicken.test'],
-  ['Hannah Vogel', 'hannah.vogel@wicken.test'],
-] as const
-
+// than marketing.
 const lines: [number, string][] = [
   [
     5,
     'Better in person than in the photographs. The glaze pools slightly at the foot, which I did not expect and now like a lot.',
   ],
-  [5, 'Third piece I have bought from here. The weight is the thing — it feels like it will outlast me.'],
+  [5, 'Third piece I have bought from here. The weight is the thing. It feels like it will outlast me.'],
   [4, 'Lovely object, slightly smaller than I pictured. That is on me for not reading the dimensions properly.'],
   [4, 'Arrived well packed in straw board, no plastic anywhere. Took a fortnight rather than the week I expected.'],
   [5, 'Bought as a gift and then could not part with it. Ordering a second.'],
   [
     3,
-    'The making is genuinely good. The colour is a touch greyer than it looks on screen, so be warned if you are matching something.',
+    'The making is genuinely good. The color is a touch grayer than it looks on screen, so be warned if you are matching something.',
   ],
   [5, 'Has lived on the table for six months and still looks new. No crazing, no staining from tea.'],
   [4, 'Handsome and solid. The oil finish needs redoing sooner than I would like, but that is oil for you.'],
@@ -36,18 +26,7 @@ export async function seedDemoReviews(): Promise<number> {
   try {
     await client.query('BEGIN')
 
-    const ids: string[] = []
-    for (const [name, email] of reviewers) {
-      // Reviewers exist only to have a name against a review; they never sign in.
-      const { rows } = await client.query<{ id: string }>(
-        `INSERT INTO users (id, name, email, email_verified)
-         VALUES (encode(sha256($1::bytea), 'hex'), $2, $1, true)
-         ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
-         RETURNING id`,
-        [email, name],
-      )
-      ids.push(rows[0].id)
-    }
+    const ids = (await ensurePeople(client)).slice(0, reviewerCount)
 
     const { rows: products } = await client.query<{ id: number }>('SELECT id FROM products ORDER BY id')
     await client.query('DELETE FROM reviews WHERE user_id = ANY($1)', [ids])

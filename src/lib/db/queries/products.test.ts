@@ -114,10 +114,16 @@ describe('filtering by material and color', () => {
     assert.ok(!colors.includes('black'))
   })
 
-  it('offers the commonest facet first', async () => {
+  it('lists materials alphabetically, because that is a list you scan for a word', async () => {
     await stock()
     const { materials } = await listFacets()
-    assert.equal(materials[0], 'stoneware', 'two carry it, the rest one each')
+    assert.deepEqual(materials, [...materials].sort())
+  })
+
+  it('but lists colors commonest first, because a swatch has no word to scan for', async () => {
+    await stock()
+    const { colors } = await listFacets()
+    assert.equal(colors[0], 'natural', 'two carry it, the rest one each')
   })
 })
 

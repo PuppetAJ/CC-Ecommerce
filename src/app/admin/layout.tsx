@@ -1,4 +1,48 @@
+import Link from 'next/link'
+import { ArrowLeftIcon } from 'lucide-react'
+import { Container } from '@/components/elements/container'
+import { Logo } from '@/components/elements/logo'
+import { AdminNav } from '@/features/admin/components/admin-nav'
+
 // Chrome only: a layout serialises children into the payload, so each page checks the role itself.
 export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
-  return children
+  return (
+    <div className="flex min-h-dvh flex-col">
+      <header className="border-b border-olive-950/10 dark:border-white/10">
+        <Container className="flex h-14 items-center justify-between gap-6">
+          <div className="flex items-center gap-1.5">
+            <Logo className="size-5 shrink-0 text-olive-950 dark:text-white" />
+            {/* The two words share a baseline; the mark is centred against them. */}
+            <span className="flex items-baseline gap-2">
+              <span className="font-display text-lg font-medium text-olive-950 dark:text-white">Wicken</span>
+              <span className="text-sm text-olive-600 dark:text-olive-400">Admin</span>
+            </span>
+          </div>
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 text-sm text-olive-600 hover:text-olive-950 dark:text-olive-400 dark:hover:text-white"
+          >
+            <ArrowLeftIcon className="size-4" aria-hidden />
+            Back to the store
+          </Link>
+        </Container>
+      </header>
+
+      {/* Said once, at the top: the writes here are real, and the night takes them back. */}
+      <div className="border-b border-amber-500/25 bg-amber-500/10 dark:bg-amber-400/10">
+        <Container className="py-2.5">
+          <p className="text-xs/5 text-amber-900 dark:text-amber-200">
+            <span className="font-medium">This admin writes to the real database.</span> Prices, stock and order
+            statuses change for everybody. Everything is reseeded nightly, so nothing you do here lasts. Deleting
+            products and customers, and issuing refunds, are switched off.
+          </p>
+        </Container>
+      </div>
+
+      <Container className="grid flex-1 gap-8 py-8 lg:grid-cols-[13rem_1fr] lg:gap-12">
+        <AdminNav />
+        <div className="min-w-0">{children}</div>
+      </Container>
+    </div>
+  )
 }

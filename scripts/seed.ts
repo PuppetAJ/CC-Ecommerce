@@ -1,4 +1,5 @@
 import { pool } from '../src/lib/db/pool.ts'
+import { seedDemoOrders } from './demo-orders.ts'
 import { seedDemoReviews } from './demo-reviews.ts'
 import { seedDemoUsers } from './demo-users.ts'
 import type { Category } from '../src/lib/db/types.ts'
@@ -429,6 +430,116 @@ const products: Seed[] = [
     dimensions: '42 cm tall, 34 × 26 cm seat',
     materials: 'Reclaimed timber, wedged joints',
   },
+  {
+    slug: 'washed-linen-napkins',
+    name: 'Washed Linen Napkins',
+    description:
+      'Four napkins in heavy washed linen, hemmed by hand and softened before they leave. They crease, which is the point; ironing them flat rather defeats the object.',
+    category: 'textiles',
+    price_cents: 4800,
+    stock_quantity: 14,
+    dimensions: '45 × 45 cm each',
+    materials: 'Washed linen, hand-hemmed',
+  },
+  {
+    slug: 'linen-bread-cloth',
+    name: 'Linen Bread Cloth',
+    description:
+      'A loose-weave cloth for proving under or carrying a loaf in. Open enough to breathe, heavy enough to hold its folds, and it takes a flour dusting without complaint.',
+    category: 'textiles',
+    price_cents: 2600,
+    stock_quantity: 22,
+    dimensions: '60 × 60 cm',
+    materials: 'Loose-weave linen',
+  },
+  {
+    slug: 'studio-apron',
+    name: 'Studio Apron',
+    description:
+      'The apron we wear at the wheel, cut long with a cross-back strap so nothing pulls on the neck. It stiffens with clay and softens again in the wash, which is how you can tell a worn one.',
+    category: 'textiles',
+    price_cents: 7200,
+    stock_quantity: 11,
+    dimensions: 'One size, 86 cm long',
+    materials: 'Heavyweight linen, brass rivets',
+  },
+  {
+    slug: 'heavy-linen-throw',
+    name: 'Heavy Linen Throw',
+    description:
+      'A throw with a hemstitched border, in the weight that sits still rather than sliding off a chair. Warmer than it looks and much cooler than wool in a hot room.',
+    category: 'textiles',
+    price_cents: 14500,
+    stock_quantity: 6,
+    dimensions: '130 × 180 cm',
+    materials: 'Heavy linen, hemstitched border',
+  },
+  {
+    slug: 'linen-table-runner',
+    name: 'Linen Table Runner',
+    description:
+      'Long enough to overhang a six-seat table at both ends, in the same washed linen as the napkins. It is the quickest way to make a plain table look as though somebody meant it.',
+    category: 'textiles',
+    price_cents: 5400,
+    stock_quantity: 9,
+    dimensions: '45 × 200 cm',
+    materials: 'Washed linen, hand-hemmed',
+  },
+  {
+    slug: 'lidded-keepsake-box',
+    name: 'Lidded Keepsake Box',
+    description:
+      'Walnut with a lift-off lid, mitred at the corners so the grain runs unbroken around all four sides. Oiled inside as well as out, which most boxes are not.',
+    category: 'storage',
+    price_cents: 9800,
+    stock_quantity: 7,
+    dimensions: '24 × 14 cm, 9 cm deep',
+    materials: 'Solid walnut, hardwax oil',
+  },
+  {
+    slug: 'turned-serving-trays',
+    name: 'Turned Serving Trays',
+    description:
+      'A long tray and a short one, cut from the same oak board so they read as a pair. The lipped ends give you somewhere to get a thumb under when both hands are full.',
+    category: 'storage',
+    price_cents: 8600,
+    stock_quantity: 10,
+    dimensions: '46 × 14 cm and 30 × 12 cm',
+    materials: 'Solid oak, hardwax oil',
+  },
+  {
+    slug: 'stoneware-storage-jars',
+    name: 'Stoneware Storage Jars',
+    description:
+      'Two lidded jars for salt, coffee or whatever else wants keeping dry. The lids are ground to their own jar, so they are not interchangeable and each is marked underneath.',
+    category: 'storage',
+    price_cents: 7400,
+    stock_quantity: 12,
+    dimensions: '12 cm and 9 cm tall',
+    materials: 'Stoneware, unglazed rims',
+  },
+  {
+    slug: 'turned-walnut-bowl',
+    name: 'Turned Walnut Bowl',
+    description:
+      'Turned from a single block and finished with oil rather than lacquer, so the grain stays legible. Dry fruit, keys, whatever collects by a door.',
+    category: 'storage',
+    price_cents: 11200,
+    stock_quantity: 5,
+    dimensions: '26 cm across, 8 cm deep',
+    materials: 'Solid walnut, food-safe oil',
+  },
+  {
+    slug: 'carved-catch-all',
+    name: 'Carved Catch-All',
+    description:
+      'A shallow bowl with the tool marks left in, cut in rows across the outside. Made to be picked up, which is why the underside is worked as carefully as the rim.',
+    category: 'storage',
+    price_cents: 13800,
+    stock_quantity: 4,
+    dimensions: '22 cm across, 7 cm deep',
+    materials: 'Carved walnut, hardwax oil',
+  },
 ]
 
 const client = await pool.connect()
@@ -479,6 +590,7 @@ try {
   await seedDemoUsers()
   console.log('Seeded the demo shopper and demo admin')
   console.log(`Seeded ${await seedDemoReviews()} reviews`)
+  console.log(`Seeded ${await seedDemoOrders()} orders across the last 90 days`)
 } finally {
   await pool.end()
 }

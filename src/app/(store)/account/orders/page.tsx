@@ -7,7 +7,7 @@ import { ButtonLink } from '@/components/elements/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { requireUser } from '@/lib/auth/session'
 import { listOrdersForUser } from '@/lib/db/queries/orders'
-import { OrderStatus } from '@/features/checkout/components/order-status'
+import { OrderStatus } from '@/components/elements/order-status'
 import { ResumePayment } from '@/features/checkout/components/resume-payment'
 import { formatPrice } from '@/lib/format'
 

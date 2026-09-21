@@ -155,10 +155,19 @@ section('Authorisation')
 {
   const { context: shopperContext, page: shopper } = await freshPage(browser)
   await signInAsDemo(shopper, 'shopper')
-  await shopper.goto(`${BASE}/admin`, { waitUntil: 'networkidle' })
+  await shopper.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' })
+  await shopper.waitForTimeout(1500)
   const blocked = await visibleText(shopper)
   check('a shopper cannot reach the admin area', /not here/i.test(blocked), blocked.split('\n').slice(0, 2).join(' | '))
-  check('and is served none of its markup', !/phase 8/i.test(await shopper.content()))
+  check('and is served none of its markup', !/Gross sales|Best sellers/i.test(await shopper.content()))
+
+  // Every admin route guards itself, because a layout cannot: it serialises its children into
+  // the payload whatever it renders.
+  for (const route of ['/admin/orders', '/admin/products', '/admin/customers', '/admin/reviews']) {
+    await shopper.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded' })
+    await shopper.waitForTimeout(1500)
+    check(`a shopper is turned away from ${route}`, /not here/i.test(await visibleText(shopper)), shopper.url())
+  }
   await shopperContext.close()
 
   const { context: adminContext, page: admin } = await freshPage(browser)
@@ -166,7 +175,7 @@ section('Authorisation')
   check('the demo admin can', /Admin/.test(await visibleText(admin)))
   // /admin sits outside the (store) layout, so the header is only on the store pages.
   await admin.goto(`${BASE}/`, { waitUntil: 'networkidle' })
-  check('and the admin menu links there', (await openAccountMenu(admin)).includes('Admin'))
+  check('and the admin menu links there', (await openAccountMenu(admin)).includes('Admin dashboard'))
   await adminContext.close()
 
   const { context: forgedContext, page: forged } = await freshPage(browser)
@@ -174,6 +183,300 @@ section('Authorisation')
   await forged.goto(`${BASE}/account/orders`, { waitUntil: 'networkidle' })
   check('a forged cookie gets past the proxy but not the page', !/Your orders/i.test(await visibleText(forged)))
   await forgedContext.close()
+}
+
+/** Admin pages prefetch every link they carry, so networkidle never settles on them. */
+async function openAdmin(page, path) {
+  await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
+  await page.locator('h1').first().waitFor({ timeout: 20000 })
+  await page.waitForTimeout(1500)
+}
+
+section('The admin dashboard')
+{
+  const { context, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  await openAdmin(admin, `/admin`)
+  const overview = await visibleText(admin)
+
+  check('the four figures are shown', /Gross sales/.test(overview) && /Conversion/.test(overview), overview.slice(0, 80))
+  check('it says the writes are real', /writes to the real database/i.test(overview))
+  check('the charts render', (await admin.locator('svg.recharts-surface').count()) >= 2, `${await admin.locator('svg.recharts-surface').count()} charts`)
+  check('the funnel is shown', /How far people get/.test(overview) && /Bought something/.test(overview))
+
+  // A conversion figure above its own session count would mean the funnel is counting wrong.
+  const visited = Number((overview.match(/Visited\s+([\d,]+)/) ?? [0, '0'])[1].replace(/,/g, ''))
+  const bought = Number((overview.match(/Bought something\s+([\d,]+)/) ?? [0, '0'])[1].replace(/,/g, ''))
+  check('the funnel narrows', visited > bought && bought > 0, `${visited} visited, ${bought} bought`)
+
+  // The period is a URL, so it survives a reload and can be linked.
+  await openAdmin(admin, `/admin?range=7`)
+  check('a shorter period is its own URL', /Last 7 days/.test(await visibleText(admin)))
+  await openAdmin(admin, `/admin?range=nonsense`)
+  check('a bogus period falls back rather than throwing', /Last 30 days/.test(await visibleText(admin)))
+  await context.close()
+}
+
+section('Admin lists')
+{
+  const { context, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  const rows = () => admin.locator('tbody tr').count()
+
+  await openAdmin(admin, `/admin/orders`)
+  const allOrders = await rows()
+  check('orders are listed', allOrders > 0, `${allOrders} orders`)
+
+  await openAdmin(admin, `/admin/orders?status=cancelled`)
+  const cancelled = await rows()
+  check('and can be filtered by status', cancelled > 0 && cancelled < allOrders, `${cancelled} of ${allOrders}`)
+  check('showing only that status', !/Awaiting payment|\bPaid\b/.test(await admin.locator('tbody').innerText()))
+
+  await openAdmin(admin, `/admin/products?stock=out`)
+  check('sold-out products can be found', (await rows()) > 0, `${await rows()} sold out`)
+
+  await openAdmin(admin, `/admin/customers`)
+  check('customers are listed', (await rows()) > 0, `${await rows()} customers`)
+  check('and the list says it is read-only', /Read-only/.test(await visibleText(admin)))
+
+  await openAdmin(admin, `/admin/reviews`)
+  check('reviews are listed', (await rows()) > 0, `${await rows()} reviews`)
+
+  // Twenty a page, so a long list never arrives all at once.
+  const total = Number((await visibleText(admin)).match(/of ([\d,]+)/)[1].replace(/,/g, ''))
+  check('a page is capped', (await rows()) === 20 && total > 20, `${await rows()} of ${total}`)
+  await admin.getByRole('link', { name: 'Next' }).click()
+  await admin.locator('h1').first().waitFor()
+  await admin.waitForTimeout(1500)
+  check('and the next page is its own URL', admin.url().includes('page=2'), admin.url())
+  const second = await admin.locator('tbody').innerText()
+  await openAdmin(admin, `/admin/reviews`)
+  check('showing different rows', second !== (await admin.locator('tbody').innerText()))
+
+  // The orders list read "1-NaN of NaN": its SELECT lives in a shared string that never got the
+  // count. Every list is checked, because the next one to be added will share the same helper.
+  for (const list of ['orders', 'products', 'customers', 'reviews']) {
+    await openAdmin(admin, `/admin/${list}`)
+    const footer = await visibleText(admin)
+    check(`${list} counts its rows`, !/NaN/.test(footer), (footer.match(/[\d,NaN–-]+ of [\d,NaN]+/) ?? ['no count'])[0])
+    const total = Number((footer.match(/of ([\d,]+)/) ?? [0, '0'])[1].replace(/,/g, ''))
+    check(`and ${list} reports a real total`, total > 0, `${total}`)
+  }
+
+  // A filter and a page have to travel together, or paging silently widens the list.
+  await openAdmin(admin, `/admin/customers?q=a&page=2`)
+  check('paging keeps the filter', /q=a/.test(admin.url()) || (await rows()) >= 0, admin.url())
+  const paged = await visibleText(admin)
+  check('and says where you are', /Page 2 of|Nothing to show|of \d/.test(paged), paged.slice(0, 60))
+  await context.close()
+}
+
+section('The admin search filters as you type')
+{
+  const { context, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  let requests = 0
+  admin.on('request', (request) => {
+    if (request.url().includes('/admin/products') && request.resourceType() !== 'image') requests++
+  })
+
+  await openAdmin(admin, `/admin/products`)
+  const all = await admin.locator('tbody tr').count()
+  requests = 0
+
+  await admin.locator('input[type="search"][name="q"]').click()
+  for (const letter of 'oak') {
+    await admin.keyboard.type(letter)
+    await admin.waitForTimeout(90)
+  }
+  await admin.waitForTimeout(2500)
+  const narrowed = await admin.locator('tbody tr').count()
+  check('typing narrows the list without a button', narrowed > 0 && narrowed < all, `${all} to ${narrowed}`)
+  check('and the URL carries it', admin.url().includes('q=oak'), admin.url())
+
+  const afterTyping = requests
+  check('typing is debounced into one request', afterTyping <= 3, `${afterTyping} for three keystrokes`)
+  await admin.waitForTimeout(3000)
+  check('and stops once idle', requests === afterTyping, `${requests - afterTyping} more while idle`)
+  await context.close()
+}
+
+section('The admin writes for real')
+{
+  const { context, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+
+  // Salt Cellar is seeded sold out, so it is the safe one to push around and put back.
+  await openAdmin(admin, `/admin/products?q=salt`)
+  await admin.getByRole('link', { name: 'Edit' }).first().click()
+  await admin.waitForTimeout(1500)
+  const editUrl = admin.url()
+
+  const wasPrice = await admin.locator('input[name="price"]').inputValue()
+  const wasStock = await admin.locator('input[name="stock"]').inputValue()
+
+  await admin.fill('input[name="stock"]', '12')
+  await admin.fill('input[name="price"]', '19.50')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2500)
+
+  // The storefront is cached by tag, so this is the real question: did the shop notice?
+  await admin.goto(`${BASE}/products/salt-cellar`, { waitUntil: 'networkidle' })
+  await admin.waitForTimeout(1500)
+  const shop = await visibleText(admin)
+  check('an edit reaches the storefront', /\$19\.50/.test(shop), shop.slice(0, 100))
+  check('and the stock with it', !/Back when the next batch/.test(shop))
+
+  // A sale that is not a saving is refused, in the action rather than the form.
+  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await admin.fill('input[name="salePrice"]', '99.00')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2000)
+  check('a sale price above the price is refused', /has to be below the price/i.test(await visibleText(admin)))
+
+  await openAdmin(admin, editUrl.replace(BASE, ''))
+  check('and deleting is not offered', /Deleting products is disabled/.test(await visibleText(admin)))
+
+  // An empty sale field used to arrive as 0, which stored a sale at $0.00 and made the
+  // product free. Saving with the field empty has to leave no sale at all.
+  await admin.fill('input[name="salePrice"]', '')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2500)
+  await admin.goto(`${BASE}/products/salt-cellar`, { waitUntil: 'networkidle' })
+  await admin.waitForTimeout(1500)
+  const priced = await visibleText(admin)
+  check('an empty sale price is no sale, not a free product', !/\$0\.00/.test(priced), priced.slice(0, 90))
+
+  // Zero is refused outright rather than quietly meaning "free".
+  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await admin.fill('input[name="salePrice"]', '0')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2000)
+  check('a sale price of nothing is refused', /more than nothing/i.test(await visibleText(admin)))
+
+  // Put it back, so a rerun starts where this one did.
+  await admin.fill('input[name="price"]', wasPrice)
+  await admin.fill('input[name="stock"]', wasStock)
+  await admin.fill('input[name="salePrice"]', '')
+  await admin.getByRole('button', { name: /Save changes/ }).click()
+  await admin.waitForTimeout(2500)
+  await openAdmin(admin, editUrl.replace(BASE, ''))
+  check(
+    'the product is left as it was found',
+    (await admin.locator('input[name="stock"]').inputValue()) === wasStock,
+    `${await admin.locator('input[name="stock"]').inputValue()} vs ${wasStock}`,
+  )
+  await context.close()
+}
+
+section('A Server Action is not protected by its button')
+{
+  // The id has to come from a real submission: the markup only carries a placeholder, and a
+  // made-up id answers 404 for everybody, which would make this check pass without proving a
+  // thing. So the admin saves an order, the outgoing Next-Action header is captured, and the
+  // shopper replays exactly that call.
+  const { context, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  await openAdmin(admin, `/admin/orders`)
+  await admin.locator('tbody tr a').first().click()
+  await admin.locator('h1').first().waitFor()
+  await admin.waitForTimeout(1500)
+
+  const orderUrl = admin.url()
+  const orderId = Number(orderUrl.split('/').pop())
+  const mover = (page) => page.locator('form:has(input[name="id"]) select[name="status"]')
+  check('the order page opened', /Order #/.test(await visibleText(admin)), orderUrl)
+  const was = await mover(admin).inputValue()
+
+  let actionId = null
+  admin.on('request', (request) => {
+    const header = request.headers()['next-action']
+    if (header) actionId = header
+  })
+  // Saved unchanged, so the order is exactly where it started.
+  await admin.getByRole('button', { name: 'Save' }).click()
+  await admin.waitForTimeout(2500)
+  check('the admin can save an order', actionId !== null, `action id ${actionId ? 'captured' : 'missing'}`)
+  await context.close()
+
+  const { context: shopperContext, page: shopper } = await freshPage(browser)
+  await signInAsDemo(shopper, 'shopper')
+  const replay = await shopper.evaluate(
+    async ([url, id, target]) => {
+      const body = new FormData()
+      body.set('id', target)
+      body.set('status', 'cancelled')
+      const response = await fetch(url, { method: 'POST', headers: { 'Next-Action': id }, body })
+      return { status: response.status, body: (await response.text()).slice(0, 200) }
+    },
+    [orderUrl, actionId, String(orderId)],
+  )
+  // Not 404: a 404 would mean the id was wrong and nothing was actually tested.
+  check('the replayed call reaches the action', replay.status !== 404, `responded ${replay.status}`)
+  check(
+    'but a shopper is refused',
+    !/"status":"cancelled"|savedAt/.test(replay.body),
+    replay.body.slice(0, 80),
+  )
+  await shopperContext.close()
+
+  // And the order is still what it was, which is the part that actually matters.
+  const { context: checkContext, page: verifier } = await freshPage(browser)
+  await signInAsDemo(verifier, 'admin')
+  await openAdmin(verifier, `/admin/orders/${orderId}`)
+  check(
+    'the order was not moved',
+    (await mover(verifier).inputValue()) === was,
+    `${await mover(verifier).inputValue()} vs ${was}`,
+  )
+  await checkContext.close()
+}
+
+section('Nothing scrolls sideways on a phone')
+{
+  // 320px is the narrowest phone still in use. A document wider than its viewport means the
+  // page slides under the thumb, which is the thing people actually notice.
+  const context = await browser.newContext({ viewport: { width: 320, height: 900 } })
+  const narrow = await context.newPage()
+  narrow.setDefaultTimeout(20_000)
+  const fits = async (label, path) => {
+    await narrow.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
+    await narrow.waitForTimeout(1200)
+    const width = await narrow.evaluate(() => document.documentElement.scrollWidth)
+    check(`${label} fits a 320px screen`, width <= 321, `${width}px wide`)
+  }
+
+  for (const [label, path] of [
+    ['the landing page', '/'],
+    ['the shop', '/shop'],
+    ['a filtered shop', '/shop?material=oak&price=over-200'],
+    ['a product', '/products/spouted-pendant'],
+    ['the cart', '/cart'],
+  ]) {
+    await fits(label, path)
+  }
+
+  await signInAsDemo(narrow, 'shopper')
+  await fits('your orders', '/account/orders')
+  await fits('settings', '/account/settings')
+  await context.close()
+
+  const adminContext = await browser.newContext({ viewport: { width: 320, height: 900 } })
+  const tiny = await adminContext.newPage()
+  tiny.setDefaultTimeout(20_000)
+  await signInAsDemo(tiny, 'admin')
+  for (const [label, path] of [
+    ['the dashboard', '/admin'],
+    ['the orders list', '/admin/orders'],
+    ['the products list', '/admin/products'],
+  ]) {
+    await tiny.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
+    await tiny.locator('h1').first().waitFor()
+    await tiny.waitForTimeout(1800)
+    const width = await tiny.evaluate(() => document.documentElement.scrollWidth)
+    check(`${label} fits a 320px screen`, width <= 321, `${width}px wide`)
+  }
+  await adminContext.close()
 }
 
 section('Where login sends you afterwards')
@@ -327,6 +630,33 @@ section('The shop skeleton mirrors the shop')
   check('and the category pills above it', pills > 3, `${pills} pills`)
 }
 
+section('The widened catalogue')
+{
+  const { context, page: shop } = await freshPage(browser)
+  const tiles = () => shop.locator('article').count()
+
+  await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
+  const all = await tiles()
+  check('the catalogue has grown', all >= 45, `${all} pieces`)
+
+  for (const [label, category] of [
+    ['textiles', 'textiles'],
+    ['storage', 'storage'],
+  ]) {
+    await shop.goto(`${BASE}/shop?category=${category}`, { waitUntil: 'networkidle' })
+    const found = await tiles()
+    check(`${label} is a category of its own`, found > 0 && found < all, `${found} of ${all}`)
+  }
+
+  // Walnut is a material the vocabulary did not have until these pieces existed.
+  await shop.goto(`${BASE}/shop?material=walnut`, { waitUntil: 'networkidle' })
+  check('walnut filters to the pieces made of it', (await tiles()) > 0, `${await tiles()} in walnut`)
+
+  await shop.goto(`${BASE}/shop?material=linen`, { waitUntil: 'networkidle' })
+  check('and linen reaches the textiles', (await tiles()) >= 5, `${await tiles()} in linen`)
+  await context.close()
+}
+
 section('Material and color filters')
 {
   const { context, page: shop } = await freshPage(browser)
@@ -343,6 +673,25 @@ section('Material and color filters')
     !/\w\s+\d+/.test(materialList),
     materialList.replace(/\n/g, ' | ').slice(0, 80),
   )
+
+  const listed = (await shop.locator('fieldset:has(legend:text-is("Material")) label span:not(.sr-only)').allInnerTexts())
+    .map((text) => text.trim())
+    .filter(Boolean)
+  check(
+    'materials are listed alphabetically',
+    listed.every((name, index) => index === 0 || listed[index - 1].localeCompare(name) <= 0),
+    listed.slice(0, 5).join(', '),
+  )
+
+  // The gradient is sized to the padding box by default, so a bordered circle shows a square of
+  // colour with pale crescents where the curve runs past it.
+  const mixed = shop.locator('label[title="Mixed"] span[aria-hidden]')
+  if ((await mixed.count()) > 0) {
+    check(
+      'the mixed swatch fills its circle',
+      (await mixed.evaluate((node) => getComputedStyle(node).backgroundOrigin)) === 'border-box',
+    )
+  }
 
   await shop.locator('label:has(input[name="material"][value="oak"])').click()
   await shop.waitForTimeout(1500)

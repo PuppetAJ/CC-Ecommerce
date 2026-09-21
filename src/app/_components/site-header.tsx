@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { CartSheet } from '@/app/_components/cart-sheet'
 import { Container } from '@/components/elements/container'
+import { Logo } from '@/components/elements/logo'
 import { MobileNav } from '@/app/_components/mobile-nav'
 import { AccountMenu, AccountMenuFallback } from '@/features/auth/components/account-menu'
 import { CartBadge } from '@/features/cart/components/cart-badge'
@@ -13,7 +14,11 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-olive-950/10 bg-olive-100/80 backdrop-blur dark:border-white/10 dark:bg-olive-950/80">
       <Container className="flex h-16 items-center gap-8">
-        <Link href="/" className="font-display text-xl font-medium tracking-tight text-olive-950 dark:text-white">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 font-display text-lg font-medium tracking-tight text-olive-950 sm:text-xl dark:text-white"
+        >
+          <Logo className="size-5 shrink-0 sm:size-6" />
           Wicken
         </Link>
         <nav className="hidden gap-6 lg:flex">
@@ -27,7 +32,7 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
           <ThemeToggle />
           <CartSheet
             badge={
