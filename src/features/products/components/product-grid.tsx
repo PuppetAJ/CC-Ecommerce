@@ -3,7 +3,7 @@ import { Stagger } from '@/components/motion'
 import type { Product } from '@/lib/db/types'
 import { ProductCard, ProductCardSkeleton } from './product-card'
 
-const grid = 'grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4'
+const grid = 'grid grid-cols-1 gap-x-6 gap-y-10 min-[400px]:grid-cols-2 lg:grid-cols-4'
 
 export function ProductGrid({
   products,
@@ -23,11 +23,13 @@ export function ProductGrid({
     // the wrapper ships.
     <Stagger className={grid}>
       {products.map((product, i) => (
-        // The first row is above the fold on every breakpoint we support.
+        // The first row is above the fold on every breakpoint we support; the rows behind it are
+        // fetched early so a tile is never still loading when its reveal plays.
         <ProductCard
           key={product.id}
           product={product}
           priority={i < 4}
+          eager={i < 12}
           from={from}
           actions={actions?.(product)}
           rating={rating?.(product)}

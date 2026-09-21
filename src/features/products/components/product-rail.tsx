@@ -3,9 +3,17 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { Product } from '@/lib/db/types'
-import { ProductCard } from './product-card'
+import { ProductCard, railSizes } from './product-card'
 
-export function ProductRail({ products, from }: { products: Product[]; from?: string }) {
+export function ProductRail({
+  products,
+  from,
+  title,
+}: {
+  products: Product[]
+  from?: string
+  title?: React.ReactNode
+}) {
   const rail = useRef<HTMLUListElement>(null)
   const [atStart, setAtStart] = useState(true)
   const [atEnd, setAtEnd] = useState(true)
@@ -42,30 +50,35 @@ export function ProductRail({ products, from }: { products: Product[]; from?: st
 
   return (
     <div className="flex flex-col gap-4">
-      {hasOverflow && (
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => page(-1)}
-            disabled={atStart}
-            aria-label="Previous products"
-            className={arrow}
-          >
-            <ChevronLeftIcon className="size-4" />
-          </button>
-          <button type="button" onClick={() => page(1)} disabled={atEnd} aria-label="More products" className={arrow}>
-            <ChevronRightIcon className="size-4" />
-          </button>
-        </div>
-      )}
+      {/* Heading and arrows share a row, which they could not when the heading lived in the page
+          and the arrows lived in here. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        {title}
+        {hasOverflow && (
+          <div className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              onClick={() => page(-1)}
+              disabled={atStart}
+              aria-label="Previous products"
+              className={arrow}
+            >
+              <ChevronLeftIcon className="size-4" />
+            </button>
+            <button type="button" onClick={() => page(1)} disabled={atEnd} aria-label="More products" className={arrow}>
+              <ChevronRightIcon className="size-4" />
+            </button>
+          </div>
+        )}
+      </div>
       <ul
         ref={rail}
         onScroll={measure}
-        className="-mx-6 flex snap-x snap-mandatory [scrollbar-width:none] gap-6 overflow-x-auto scroll-smooth px-6 pb-2 lg:mx-0 lg:px-0 [&::-webkit-scrollbar]:hidden"
+        className="-mx-6 flex snap-x snap-mandatory scroll-px-6 scroll-hint gap-6 overflow-x-auto scroll-smooth px-6 pb-2 lg:mx-0 lg:scroll-px-0 lg:px-0"
       >
-        {products.map((product) => (
+        {products.map((product, index) => (
           <li key={product.id} className="w-[calc(50%-12px)] shrink-0 snap-start lg:w-[calc(25%-18px)]">
-            <ProductCard product={product} from={from} />
+            <ProductCard product={product} from={from} sizes={railSizes} eager={index < 4} />
           </li>
         ))}
       </ul>

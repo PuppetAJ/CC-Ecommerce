@@ -142,6 +142,19 @@
   --sidebar-ring: var(--color-olive-400);
 }
 
+@utility scroll-hint {
+  /* Fades whichever edge still has content past it. `--scroll-hint` is set by the element's own
+     scroll position, so the fade disappears once there is nothing more that way. */
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--hint-start, 0px),
+    #000 calc(100% - var(--hint-end, 0px)),
+    transparent 100%
+  );
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

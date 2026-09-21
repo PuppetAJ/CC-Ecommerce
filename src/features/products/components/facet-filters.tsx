@@ -1,8 +1,19 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useRef, useTransition, type FormEvent } from 'react'
-import { colorLabels, colorSwatches, materialLabels, priceBandLabels, priceBands, type ShopSearch } from '../schemas'
+import { useEffect, useRef, useTransition, type FormEvent, type ReactNode } from 'react'
+import { clsx } from 'clsx/lite'
+import { categories } from '@/lib/db/types'
+import {
+  categoryLabels,
+  colorLabels,
+  colorSwatches,
+  materialLabels,
+  priceBandLabels,
+  priceBands,
+  shopHref,
+  type ShopSearch,
+} from '../schemas'
 import type { colors, materials } from '../schemas'
 
 type Material = (typeof materials)[number]
@@ -40,7 +51,7 @@ function Check({
 }: {
   name: string
   value: string
-  children: React.ReactNode
+  children: ReactNode
   round?: boolean
   checked: boolean
   onToggle: () => void
@@ -63,6 +74,18 @@ function Check({
   )
 }
 
+function Group({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <h2 className="text-sm font-medium text-olive-950 dark:text-white">{label}</h2>
+      <fieldset className="flex flex-col gap-3">
+        <legend className="sr-only">{label}</legend>
+        {children}
+      </fieldset>
+    </div>
+  )
+}
+
 /**
  * Real checkboxes in a GET form, so the browser builds the query string and every
  * combination stays a URL that works with JavaScript off.
@@ -74,14 +97,27 @@ function Check({
 export function FacetFilters({
   search,
   facets,
+  // The rail sits beside the category chips; the sheet replaces them, so it carries them itself.
+  withCategories = false,
 }: {
   search: ShopSearch
   facets: { materials: string[]; colors: string[] }
+  withCategories?: boolean
 }) {
   const form = useRef<HTMLFormElement>(null)
   const [, start] = useTransition()
   const router = useRouter()
   const submit = () => form.current?.requestSubmit()
+
+  // A box the shopper has touched stops following its attribute, so "Clear all" would leave it
+  // ticked with nothing filtered. Copying the attribute back onto the box puts the two in step.
+  const applied = shopHref(search)
+  useEffect(() => {
+    for (const node of form.current?.querySelectorAll('input[type=checkbox],input[type=radio]') ?? []) {
+      const input = node as HTMLInputElement
+      input.checked = input.defaultChecked
+    }
+  }, [applied])
 
   function apply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -96,12 +132,28 @@ export function FacetFilters({
   return (
     <form ref={form} action="/shop" onSubmit={apply} className="flex flex-col gap-8">
       {/* Carried so filtering does not silently drop the category, sort or search. */}
-      {search.category && <input type="hidden" name="category" value={search.category} />}
+      {search.category && !withCategories && <input type="hidden" name="category" value={search.category} />}
       {search.sort !== 'newest' && <input type="hidden" name="sort" value={search.sort} />}
       {search.q && <input type="hidden" name="q" value={search.q} />}
 
-      <fieldset className="flex flex-col gap-3">
-        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Price</legend>
+      {withCategories && (
+        <Group label="Category">
+          <div className="flex flex-wrap gap-2">
+            <Chip name="" label="Everything" checked={!search.category} onPick={submit} />
+            {categories.map((category) => (
+              <Chip
+                key={category}
+                name={category}
+                label={categoryLabels[category]}
+                checked={search.category === category}
+                onPick={submit}
+              />
+            ))}
+          </div>
+        </Group>
+      )}
+
+      <Group label="Price">
         {priceBands.map((band) => (
           <Check
             key={band}
@@ -114,10 +166,9 @@ export function FacetFilters({
             {priceBandLabels[band]}
           </Check>
         ))}
-      </fieldset>
+      </Group>
 
-      <fieldset className="flex flex-col gap-3">
-        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Material</legend>
+      <Group label="Material">
         {facets.materials.map((value) => {
           const material = value as Material
           return (
@@ -132,10 +183,9 @@ export function FacetFilters({
             </Check>
           )
         })}
-      </fieldset>
+      </Group>
 
-      <fieldset>
-        <legend className="mb-3 text-sm font-medium text-olive-950 dark:text-white">Color</legend>
+      <Group label="Color">
         {/* Swatches alone: the name is the accessible label, not a column of text. */}
         <div className="flex flex-wrap gap-2">
           {facets.colors.map((value) => {
@@ -166,7 +216,7 @@ export function FacetFilters({
             )
           })}
         </div>
-      </fieldset>
+      </Group>
 
       <noscript>
         <button
@@ -177,5 +227,33 @@ export function FacetFilters({
         </button>
       </noscript>
     </form>
+  )
+}
+
+/** A radio wearing the same pill the wide toolbar uses for the category it links to. */
+function Chip({ name, label, checked, onPick }: { name: string; label: string; checked: boolean; onPick: () => void }) {
+  return (
+    <label className="cursor-pointer">
+      <input
+        type="radio"
+        name="category"
+        value={name}
+        defaultChecked={checked}
+        onChange={onPick}
+        className="peer sr-only"
+      />
+      <span
+        className={clsx(
+          'block rounded-full px-3.5 py-1.5 text-sm transition-colors',
+          'border border-olive-300 text-olive-700 dark:border-olive-800 dark:text-olive-300',
+          'peer-checked:border-olive-950 peer-checked:bg-olive-950 peer-checked:text-white',
+          'dark:peer-checked:border-white dark:peer-checked:bg-white dark:peer-checked:text-olive-950',
+          'peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2',
+          'peer-focus-visible:ring-offset-background',
+        )}
+      >
+        {label}
+      </span>
+    </label>
   )
 }

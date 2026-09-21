@@ -10,15 +10,27 @@ import { focalPosition } from '../focal'
 // frame is discarded and fewer products need a focal point. The grid never reflows either.
 const tile = 'relative aspect-square overflow-hidden rounded-xl bg-tile'
 
+// Two columns start at 400px and the container stops growing at 1280, so neither 100vw nor a
+// plain 25vw describes a tile; both ask for an image about twice the width actually drawn.
+export const gridSizes =
+  '(min-width: 1280px) 240px, (min-width: 1024px) 18vw, (min-width: 640px) 350px, (min-width: 400px) 45vw, 92vw'
+
+export const railSizes = '(min-width: 1280px) 290px, (min-width: 1024px) 22vw, (min-width: 640px) 330px, 48vw'
+
 export function ProductCard({
   product,
   priority = false,
+  eager = false,
+  sizes = gridSizes,
   from = '',
   actions,
   rating,
 }: {
   product: Product
   priority?: boolean
+  /** Fetched at once rather than on approach, for rows a lazy threshold reaches too late. */
+  eager?: boolean
+  sizes?: string
   from?: string
   actions?: ReactNode
   rating?: ReactNode
@@ -35,8 +47,9 @@ export function ProductCard({
             src={product.image_url}
             alt={product.name}
             fill
-            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            sizes={sizes}
             priority={priority}
+            loading={!priority && eager ? 'eager' : undefined}
             style={{ objectPosition: focalPosition(product.slug) }}
             className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />

@@ -2,6 +2,7 @@
 
 import { BoxIcon, ChartLineIcon, MessageSquareIcon, ReceiptIcon, UsersIcon } from 'lucide-react'
 import Link from 'next/link'
+import { Scroller } from '@/components/elements/scroller'
 import { usePathname } from 'next/navigation'
 
 const links = [
@@ -17,7 +18,7 @@ export function AdminNav() {
 
   // min-w-0, or a grid item's automatic minimum stops overflow-x-auto taking effect at all.
   return (
-    <nav aria-label="Admin" className="flex min-w-0 gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
+    <Scroller as="nav" label="Admin" className="flex min-w-0 gap-1 lg:flex-col lg:overflow-visible lg:[mask-image:none]">
       {links.map(({ href, label, icon: Icon }) => {
         // Overview would otherwise light up on every page beneath it.
         const active = href === '/admin' ? path === href : path.startsWith(href)
@@ -37,6 +38,6 @@ export function AdminNav() {
           </Link>
         )
       })}
-    </nav>
+    </Scroller>
   )
 }

@@ -1,8 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Cell, IndexTable } from '@/features/admin/components/index-table'
+import { Cell, IndexTable, IndexTableSkeleton } from '@/features/admin/components/index-table'
 import { Pagination } from '@/features/admin/components/pagination'
 import { SearchFilters } from '@/features/admin/components/search-filters'
 import { pageHref, pageNumber } from '@/features/admin/schemas'
@@ -53,7 +52,7 @@ export default async function Page({ searchParams }: PageProps<'/admin/products'
           },
         ]}
       />
-      <Suspense key={JSON.stringify(filters)} fallback={<Skeleton className="h-64 rounded-xl" />}>
+      <Suspense key={JSON.stringify(filters)} fallback={<IndexTableSkeleton />}>
         <Rows filters={filters} />
       </Suspense>
     </div>

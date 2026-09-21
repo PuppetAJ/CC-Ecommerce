@@ -39,14 +39,14 @@ export function CartLines({ items }: { items: CartItem[] }) {
     <div className="flex min-h-0 flex-1 flex-col">
       <ul className="flex-1 divide-y divide-olive-950/10 overflow-y-auto px-4 dark:divide-white/10">
         {optimistic.map((item) => (
-          <li key={item.product_id} className="flex gap-4 py-4">
-            <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-tile">
+          <li key={item.product_id} className="flex gap-3 py-4 sm:gap-4">
+            <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-tile sm:size-20">
               {item.image_url ? (
-                <Image src={item.image_url} alt={item.name} fill sizes="80px" className="object-cover" />
+                <Image src={item.image_url} alt={item.name} fill sizes="(min-width: 640px) 80px, 64px" className="object-cover" />
               ) : null}
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <div className="flex justify-between gap-3">
+              <div className="flex flex-wrap justify-between gap-x-3 gap-y-0.5">
                 <Link
                   href={`/products/${item.slug}`}
                   onClick={() => setOpen(false)}
@@ -71,7 +71,7 @@ export function CartLines({ items }: { items: CartItem[] }) {
                   type="button"
                   onClick={() => change(item.product_id, 0)}
                   disabled={pending}
-                  className="text-sm text-olive-600 underline underline-offset-4 hover:text-olive-950 disabled:opacity-40 dark:text-olive-400 dark:hover:text-white"
+                  className="hidden text-sm text-olive-600 underline underline-offset-4 hover:text-olive-950 disabled:opacity-40 min-[380px]:inline dark:text-olive-400 dark:hover:text-white"
                 >
                   Remove
                 </button>

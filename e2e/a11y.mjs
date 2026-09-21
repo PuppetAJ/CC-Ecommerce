@@ -37,7 +37,13 @@ async function audit(page, label, path) {
   // every color on it reads as failing, which says nothing about the design.
   await page
     .waitForFunction(
-      () => [...document.querySelectorAll('[data-stagger]')].every((n) => Number(getComputedStyle(n).opacity) === 1),
+      // Nothing part way: a tile is either revealed or still waiting to be scrolled to, and axe
+      // reads a fully transparent one as invisible. Which tiles those are is Motion's business.
+      () =>
+        [...document.querySelectorAll('[data-stagger]')].every((n) => {
+          const shown = Number(getComputedStyle(n).opacity)
+          return shown === 1 || shown === 0
+        }),
       null,
       { timeout: 10_000 },
     )

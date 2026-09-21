@@ -46,16 +46,31 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
   const favorites = new Set(session ? await listFavoriteIds(session.user.id) : [])
   const ratings = await summariseMany(products.map((product) => product.id))
 
+  const state = fromShop(search)
+
   return (
     <div className="flex flex-col gap-10">
-      <ShopToolbar search={search} count={products.length} />
+      <ShopToolbar search={search} count={products.length} facets={facets} />
+      {/* The sheet needs JavaScript to open, so without it the rail and the chips come back. */}
+      <noscript>
+        <style>
+          {'[data-inline-filters="rail"]{display:block!important}' +
+            '[data-inline-filters="chips"]{display:flex!important}' +
+            '[data-filter-trigger]{display:none!important}'}
+        </style>
+      </noscript>
       <div className="grid gap-10 lg:grid-cols-[12rem_1fr] lg:gap-12">
-        <FacetFilters search={search} facets={facets} />
+        <div data-inline-filters="rail" className="hidden lg:block">
+          <FacetFilters search={search} facets={facets} />
+        </div>
         <div className="min-w-0">
           {products.length > 0 ? (
             <ProductGrid
+              // Keyed on the filters, so a new set of products arrives rather than replacing the
+              // old one in place with its reveal already spent.
+              key={state || 'all'}
               products={products}
-              from={fromShop(search)}
+              from={state}
               rating={(product) => {
                 const summary = ratings.get(product.id)
                 if (!summary) return null
@@ -105,20 +120,23 @@ function ShopSkeleton() {
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap gap-2">
+        <div className="hidden flex-wrap gap-2 lg:flex">
           {/* Literal classes: Tailwind cannot see a width it has to compute. */}
           {['w-24', 'w-24', 'w-16', 'w-20', 'w-24'].map((width, index) => (
             <Skeleton key={index} className={`h-8 rounded-full ${width}`} />
           ))}
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Skeleton className="h-9 w-56 rounded-lg" />
-          <Skeleton className="h-9 w-44 rounded-lg" />
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+          <Skeleton className="h-9 w-full rounded-lg sm:w-56" />
+          <div className="flex items-center justify-between gap-4">
+            <Skeleton className="h-9 w-24 rounded-lg lg:hidden" />
+            <Skeleton className="h-9 w-44 rounded-lg" />
+          </div>
         </div>
         <Skeleton className="h-5 w-20" />
       </div>
       <div className="grid gap-10 lg:grid-cols-[12rem_1fr] lg:gap-12">
-        <div className="flex flex-col gap-8">
+        <div className="hidden flex-col gap-8 lg:flex">
           {[4, 7].map((rows, group) => (
             <div key={group} className="flex flex-col gap-3">
               <Skeleton className="h-5 w-20" />
