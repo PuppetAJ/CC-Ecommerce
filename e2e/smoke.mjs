@@ -674,6 +674,25 @@ section('Material and color filters')
     materialList.replace(/\n/g, ' | ').slice(0, 80),
   )
 
+  const listed = (await shop.locator('fieldset:has(legend:text-is("Material")) label span:not(.sr-only)').allInnerTexts())
+    .map((text) => text.trim())
+    .filter(Boolean)
+  check(
+    'materials are listed alphabetically',
+    listed.every((name, index) => index === 0 || listed[index - 1].localeCompare(name) <= 0),
+    listed.slice(0, 5).join(', '),
+  )
+
+  // The gradient is sized to the padding box by default, so a bordered circle shows a square of
+  // colour with pale crescents where the curve runs past it.
+  const mixed = shop.locator('label[title="Mixed"] span[aria-hidden]')
+  if ((await mixed.count()) > 0) {
+    check(
+      'the mixed swatch fills its circle',
+      (await mixed.evaluate((node) => getComputedStyle(node).backgroundOrigin)) === 'border-box',
+    )
+  }
+
   await shop.locator('label:has(input[name="material"][value="oak"])').click()
   await shop.waitForTimeout(1500)
   const oak = await tiles()
