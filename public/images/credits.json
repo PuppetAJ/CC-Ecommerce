@@ -158,7 +158,8 @@
     "file": "heavy-linen-throw",
     "id": "kwepwyvPWmM",
     "photographer": "Kier in Sight Archives",
-    "profile": "https://unsplash.com/@kierinsightarchives"
+    "profile": "https://unsplash.com/@kierinsightarchives",
+    "credited": true
   },
   {
     "file": "hero-teaware",
@@ -185,19 +186,22 @@
     "file": "lidded-keepsake-box",
     "id": "GKlMfgZ2fpw",
     "photographer": "Rumman Amin",
-    "profile": "https://unsplash.com/@rumanamin"
+    "profile": "https://unsplash.com/@rumanamin",
+    "credited": true
   },
   {
     "file": "linen-bread-cloth",
     "id": "bTJe8Wseia0",
     "photographer": "Debby Hudson",
-    "profile": "https://unsplash.com/@hudsoncrafted"
+    "profile": "https://unsplash.com/@hudsoncrafted",
+    "credited": true
   },
   {
     "file": "linen-table-runner",
     "id": "jM3gtQbSjnM",
     "photographer": "Kier in Sight Archives",
-    "profile": "https://unsplash.com/@kierinsightarchives"
+    "profile": "https://unsplash.com/@kierinsightarchives",
+    "credited": true
   },
   {
     "file": "low-workshop-stool",
@@ -287,7 +291,8 @@
     "file": "stoneware-storage-jars",
     "id": "oiZAQvxTcYQ",
     "photographer": "Tom Crew",
-    "profile": "https://unsplash.com/@tomcrewceramics"
+    "profile": "https://unsplash.com/@tomcrewceramics",
+    "credited": true
   },
   {
     "file": "stoneware-teapot",
@@ -300,7 +305,8 @@
     "file": "studio-apron",
     "id": "ymSFRIA1mBM",
     "photographer": "Valeriia Miller",
-    "profile": "https://unsplash.com/@valeriiamiller"
+    "profile": "https://unsplash.com/@valeriiamiller",
+    "credited": true
   },
   {
     "file": "studio-mug-set",
@@ -348,19 +354,22 @@
     "file": "turned-serving-trays",
     "id": "MzJ6pzgLtC0",
     "photographer": "Md Ishak Rahman",
-    "profile": "https://unsplash.com/@mdishakrahman"
+    "profile": "https://unsplash.com/@mdishakrahman",
+    "credited": true
   },
   {
     "file": "turned-walnut-bowl",
     "id": "Xig5z9fr0Kc",
     "photographer": "Bryan Natanael",
-    "profile": "https://unsplash.com/@bryannatanael"
+    "profile": "https://unsplash.com/@bryannatanael",
+    "credited": true
   },
   {
     "file": "washed-linen-napkins",
     "id": "tC-TOGGEODI",
     "photographer": "Joyce Romero",
-    "profile": "https://unsplash.com/@joyceromero"
+    "profile": "https://unsplash.com/@joyceromero",
+    "credited": true
   },
   {
     "file": "weathered-stool",
