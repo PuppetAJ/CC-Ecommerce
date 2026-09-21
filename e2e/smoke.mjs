@@ -38,6 +38,77 @@ section('Catalogue')
   check('nonsense search params fall back rather than throwing', bogus >= 30, `${bogus} tiles`)
 }
 
+section('The landing page sells something')
+{
+  const { context, page: home } = await freshPage(browser)
+  await home.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  const text = await visibleText(home)
+
+  const ways = await home.getByRole('main').locator('a[href^="/shop?category="]').count()
+  check('every category is a way in', ways === 6, `${ways} categories`)
+
+  const featured = await home.locator('main article').count()
+  check('and four pieces are offered by name', featured === 4, `${featured} tiles`)
+  check('with a way through to the rest', /See the whole collection/.test(text))
+  check('somebody is shown making something', (await home.locator('img[src*="editorial-throwing"]').count()) > 0)
+
+  // The band quotes the reviews table rather than invented copy, so the quote has to be
+  // findable on the product it came from.
+  const quote = (await home.locator('blockquote').first().innerText()).replaceAll(/[\u201c\u201d"]/g, '').trim()
+  const onward = await home.locator('figcaption a').first().getAttribute('href')
+  check('the quotes name the piece they are about', Boolean(onward?.startsWith('/products/')), String(onward))
+  const product = await (await fetch(`${BASE}${onward}`)).text()
+  check('and are real reviews, still there on the product', product.includes(quote.slice(0, 40)), quote.slice(0, 40))
+  await context.close()
+}
+
+section('About earns its page')
+{
+  await page.goto(`${BASE}/about`, { waitUntil: 'networkidle' })
+  const photographs = await page.locator('main img').count()
+  check('the editorial photographs are finally used', photographs >= 4, `${photographs} photographs`)
+
+  const text = await visibleText(page)
+  check('the making is explained rather than asserted', /Clay, while the light is flat/.test(text))
+  check('and the landing page promise is kept', /Maren/.test(text))
+}
+
+section('The help page')
+{
+  const { context, page: help } = await freshPage(browser)
+  await help.goto(`${BASE}/faq`, { waitUntil: 'networkidle' })
+  check('the old FAQ route redirects rather than 404s', help.url().endsWith('/help'), help.url())
+
+  const text = await visibleText(help)
+  check(
+    'it covers all three of the footer labels',
+    /Shipping/.test(text) && /Returns/.test(text) && /Care and repair/.test(text),
+  )
+  const questions = await help.locator('[data-slot="accordion-trigger"]').count()
+  check('with a page of questions rather than a stub', questions >= 12, `${questions} questions`)
+
+  for (const id of ['shipping', 'returns', 'care', 'contact']) {
+    check(`the footer's #${id} link lands somewhere`, (await help.locator(`#${id}`).count()) === 1)
+  }
+
+  // A form that discarded what people typed would be worse than printing an address, so the
+  // message has to survive as far as the admin.
+  const said = `A question from the browser suite at ${Date.now()}`
+  await help.fill('#name', 'Suite Sender')
+  await help.fill('#email', 'sender@wicken.test')
+  await help.fill('#body', said)
+  await help.getByRole('button', { name: 'Send it' }).click()
+  await help.waitForTimeout(2000)
+  check('the form says it arrived', /that is with us/i.test(await visibleText(help)))
+  await context.close()
+
+  const { context: theirs, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  await admin.goto(`${BASE}/admin/messages`, { waitUntil: 'networkidle' })
+  check('and it is waiting in the admin', (await visibleText(admin)).includes(said))
+  await theirs.close()
+}
+
 section('Product page')
 {
   await page.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
@@ -458,6 +529,7 @@ section('Nothing scrolls sideways on a phone')
     ['the shop', '/shop'],
     ['a filtered shop', '/shop?material=oak&price=over-200'],
     ['a product', '/products/spouted-pendant'],
+    ['the help page', '/help'],
     ['the cart', '/cart'],
   ]) {
     await fits(label, path)
@@ -1493,8 +1565,10 @@ section('Choosing a review sort does not jump')
 {
   const { context, page: reader } = await freshPage(browser)
   await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
-  await reader.locator('#reviews').scrollIntoViewIfNeeded()
-  await reader.evaluate(() => window.scrollBy(0, 90))
+  // Scrolled to the control itself, which is the only way a person reaches it. Leaving it above
+  // the fold and reaching for it anyway makes the browser scroll it into view on focus, and that
+  // movement is the test's own doing rather than the sort's.
+  await reader.getByLabel('Sort reviews').scrollIntoViewIfNeeded()
   await reader.waitForTimeout(400)
   const before = await reader.evaluate(() => window.scrollY)
 

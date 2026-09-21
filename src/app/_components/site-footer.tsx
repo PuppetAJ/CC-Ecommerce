@@ -15,14 +15,14 @@ export function SiteFooter() {
           </FooterCategory>
           <FooterCategory title="Studio">
             <FooterLink href="/about">About</FooterLink>
-            <FooterLink href="/about">How it is made</FooterLink>
+            <FooterLink href="/about#made">How it is made</FooterLink>
             <FooterLink href="/shop">The collection</FooterLink>
           </FooterCategory>
           <FooterCategory title="Help">
-            <FooterLink href="/faq">Shipping</FooterLink>
-            <FooterLink href="/faq">Returns</FooterLink>
-            <FooterLink href="/faq">Care and repair</FooterLink>
-            <FooterLink href="/faq">FAQ</FooterLink>
+            <FooterLink href="/help#shipping">Shipping</FooterLink>
+            <FooterLink href="/help#returns">Returns</FooterLink>
+            <FooterLink href="/help#care">Care and repair</FooterLink>
+            <FooterLink href="/help#contact">Contact us</FooterLink>
           </FooterCategory>
           <FooterCategory title="Account">
             <FooterLink href="/login">Log in</FooterLink>

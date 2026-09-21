@@ -69,3 +69,8 @@ export const reviewTarget = z.object({
   userId: z.string().min(1).max(200),
   productId: z.coerce.number().int().positive(),
 })
+
+export const messageAnswered = z.object({
+  id: z.coerce.number().int().positive(),
+  answered: z.boolean(),
+})

@@ -1,19 +1,28 @@
+import { Suspense } from 'react'
 import { ButtonLink, PlainButtonLink } from '@/components/elements/button'
 import { CallToActionSimple } from '@/components/sections/call-to-action-simple'
-import { Categories } from '@/app/(store)/_components/categories'
-import { Featured } from '@/app/(store)/_components/featured'
+import { Categories, CategoriesSkeleton } from '@/app/(store)/_components/categories'
+import { Featured, FeaturedSkeleton } from '@/app/(store)/_components/featured'
 import { HowItIsMade } from '@/app/(store)/_components/how-it-is-made'
 import { LandingHero } from '@/app/(store)/_components/hero'
-import { Voices } from '@/app/(store)/_components/voices'
+import { Voices, VoicesSkeleton } from '@/app/(store)/_components/voices'
 
 export default function HomePage() {
   return (
     <>
       <LandingHero />
-      <Categories />
-      <Featured />
+      {/* Each band reads the database, so each gets its own boundary and the hero is never
+          waiting on the catalogue to be counted. */}
+      <Suspense fallback={<CategoriesSkeleton />}>
+        <Categories />
+      </Suspense>
+      <Suspense fallback={<FeaturedSkeleton />}>
+        <Featured />
+      </Suspense>
       <HowItIsMade />
-      <Voices />
+      <Suspense fallback={<VoicesSkeleton />}>
+        <Voices />
+      </Suspense>
 
       <CallToActionSimple
         headline="Come and see."

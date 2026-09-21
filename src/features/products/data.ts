@@ -38,10 +38,10 @@ export async function getProduct(slug: string): Promise<Product | null> {
   return getProductBySlug(slug)
 }
 
+// Uncached, unlike its neighbours. A "use cache" result sitting in the landing page's
+// prerendered shell leaves the router's segment prefetch of "/" open for good; these are three
+// small indexed reads behind a Suspense boundary, so paying them per request costs nothing.
 export async function getFeatured(limit = 4): Promise<Product[]> {
-  'use cache'
-  cacheLife('hours')
-  cacheTag('products')
   return listFeaturedProducts(limit)
 }
 
@@ -54,9 +54,6 @@ export async function getRelated(product: Product, limit = 4): Promise<Product[]
 }
 
 export async function getCategoryCovers() {
-  'use cache'
-  cacheLife('hours')
-  cacheTag('products')
   return listCategoryCovers()
 }
 

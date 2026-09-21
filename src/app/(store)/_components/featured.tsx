@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowNarrowRightIcon } from '@/components/icons/arrow-narrow-right-icon'
 import { Section } from '@/components/elements/section'
-import { ProductGrid } from '@/features/products/components/product-grid'
+import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
 import { getFeatured } from '@/features/products/data'
 
 /**
@@ -27,6 +27,14 @@ export async function Featured() {
       }
     >
       <ProductGrid products={products} />
+    </Section>
+  )
+}
+
+export function FeaturedSkeleton() {
+  return (
+    <Section headline="Start with one good thing">
+      <ProductGridSkeleton count={4} />
     </Section>
   )
 }

@@ -1,10 +1,7 @@
 import 'server-only'
-import { cacheLife, cacheTag } from 'next/cache'
 import { listTestimonials } from '@/lib/db/queries/reviews'
 
+// Uncached deliberately; see the note on getFeatured in the products data module.
 export async function getTestimonials(limit = 3) {
-  'use cache'
-  cacheLife('hours')
-  cacheTag('reviews')
   return listTestimonials(limit)
 }

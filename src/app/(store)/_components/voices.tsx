@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Section } from '@/components/elements/section'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Stagger } from '@/components/motion'
 import { Stars } from '@/features/reviews/components/stars'
 import { getTestimonials } from '@/features/reviews/data'
@@ -45,6 +46,18 @@ export async function Voices() {
           </figure>
         ))}
       </Stagger>
+    </Section>
+  )
+}
+
+export function VoicesSkeleton() {
+  return (
+    <Section headline="What people say">
+      <div className="grid gap-6 md:grid-cols-3">
+        {Array.from({ length: 3 }, (_, index) => (
+          <Skeleton key={index} className="h-56 rounded-xl" />
+        ))}
+      </div>
     </Section>
   )
 }

@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { demoAccounts } from '@/lib/auth/demo'
-import { limitAttempts } from './rate-limit'
+import { limitAttempts } from '@/lib/rate-limit'
 import { credentials, registration, safeNext } from './schemas'
 
 export type AuthState = { error: string } | undefined

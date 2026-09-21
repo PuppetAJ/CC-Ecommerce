@@ -3,7 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/auth/session'
 import { deleteReview, setOrderStatus, updateProduct } from '@/lib/db/queries/admin'
-import { orderStatusEdit, productEdit, reviewTarget } from './schemas'
+import { markAnswered } from '@/lib/db/queries/messages'
+import { messageAnswered, orderStatusEdit, productEdit, reviewTarget } from './schemas'
 
 export type AdminState = { error?: string; savedAt?: number } | undefined
 
@@ -60,5 +61,19 @@ export async function removeReview(_previous: AdminState, formData: FormData): P
 
   await deleteReview(parsed.data.userId, parsed.data.productId)
   revalidatePath('/', 'layout')
+  return { savedAt: Date.now() }
+}
+
+export async function answerMessage(_previous: AdminState, formData: FormData): Promise<AdminState> {
+  await requireAdmin()
+
+  const parsed = messageAnswered.safeParse({
+    id: formData.get('id'),
+    answered: formData.get('answered') === 'true',
+  })
+  if (!parsed.success) return { error: 'That message could not be found.' }
+
+  await markAnswered(parsed.data.id, parsed.data.answered)
+  revalidatePath('/admin/messages')
   return { savedAt: Date.now() }
 }

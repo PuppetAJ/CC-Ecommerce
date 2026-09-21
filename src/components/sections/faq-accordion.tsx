@@ -9,13 +9,16 @@ export function FaqAccordion({
   headline,
   subheadline,
   items,
+  id,
 }: {
   headline: ReactNode
   subheadline?: ReactNode
   items: { question: string; answer: ReactNode }[]
+  /** Set where the footer links straight to one group, so the heading clears the header. */
+  id?: string
 }) {
   return (
-    <section className="py-16">
+    <section id={id} className="scroll-mt-24 py-16">
       <Container className="grid grid-cols-1 gap-x-2 gap-y-8 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <Subheading>{headline}</Subheading>
