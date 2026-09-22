@@ -98,7 +98,7 @@ section('The help page')
 
   const { context: theirs, page: admin } = await freshPage(browser)
   await signInAsDemo(admin, 'admin')
-  await admin.goto(`${BASE}/admin/messages`, { waitUntil: 'networkidle' })
+  await open(admin, `/admin/messages`)
   check('and it is waiting in the admin', (await visibleText(admin)).includes(said))
   await theirs.close()
 }

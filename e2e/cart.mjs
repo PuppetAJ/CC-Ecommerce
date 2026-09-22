@@ -8,6 +8,15 @@ section('Cart')
 {
   const { context, page: shop } = await freshPage(browser)
   const badge = () => shop.locator('button[aria-label="Open cart"] span').first()
+  // The badge is a server component that re-renders after the action, so it lands after the sheet opens.
+  const badgeReaches = (count) =>
+    shop
+      .waitForFunction(
+        (want) => document.querySelector('button[aria-label="Open cart"] span')?.textContent?.trim() === want,
+        String(count),
+        { timeout: 20_000 },
+      )
+      .catch(() => {})
 
   await shop.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
   check('a fresh visitor has no cart badge', (await badge().count()) === 0)
@@ -15,6 +24,7 @@ section('Cart')
   await shop.getByRole('button', { name: 'Add to cart' }).click()
   await shop.locator('[data-slot="sheet-content"]').waitFor()
   check('adding opens the cart sheet', await shop.locator('[role="dialog"]').isVisible())
+  await badgeReaches(1)
   check('and the badge appears', (await badge().innerText()) === '1')
 
   const sheet = shop.locator('[role="dialog"]')
@@ -22,7 +32,7 @@ section('Cart')
     .getByRole('button', { name: /^Add one / })
     .first()
     .click()
-  await shop.waitForTimeout(1800)
+  await badgeReaches(2)
   check('the stepper changes the quantity', (await badge().innerText()) === '2')
   check('and the subtotal follows it', /2,560/.test(await sheet.innerText()), await sheet.innerText())
 
@@ -30,6 +40,7 @@ section('Cart')
   await shop.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
   await shop.getByRole('button', { name: 'Add to cart' }).click()
   await shop.locator('[data-slot="sheet-content"]').waitFor()
+  await badgeReaches(3)
   check('a second product is a second line', (await badge().innerText()) === '3')
 
   await shop.keyboard.press('Escape')

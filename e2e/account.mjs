@@ -237,7 +237,7 @@ section('The newsletter keeps what it is given')
 
   const { context: theirs, page: admin } = await freshPage(browser)
   await signInAsDemo(admin, 'admin')
-  await admin.goto(`${BASE}/admin/customers`, { waitUntil: 'networkidle' })
+  await open(admin, `/admin/customers`)
   const counted = (await visibleText(admin)).match(/(\d+) on the newsletter list/)
   check(
     'and the admin can see how many signed up',

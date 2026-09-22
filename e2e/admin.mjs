@@ -47,18 +47,11 @@ section('Authorization')
   await forgedContext.close()
 }
 
-/** Admin pages prefetch every link they carry, so networkidle never settles on them. */
-async function openAdmin(page, path) {
-  await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
-  await page.locator('h1').first().waitFor({ timeout: 20000 })
-  await page.waitForTimeout(1500)
-}
-
 section('The admin dashboard')
 {
   const { context, page: admin } = await freshPage(browser)
   await signInAsDemo(admin, 'admin')
-  await openAdmin(admin, `/admin`)
+  await open(admin, `/admin`)
   const overview = await visibleText(admin)
 
   check(
@@ -80,9 +73,9 @@ section('The admin dashboard')
   check('the funnel narrows', visited > bought && bought > 0, `${visited} visited, ${bought} bought`)
 
   // The period is a URL, so it survives a reload and can be linked.
-  await openAdmin(admin, `/admin?range=7`)
+  await open(admin, `/admin?range=7`)
   check('a shorter period is its own URL', /Last 7 days/.test(await visibleText(admin)))
-  await openAdmin(admin, `/admin?range=nonsense`)
+  await open(admin, `/admin?range=nonsense`)
   check('a bogus period falls back rather than throwing', /Last 30 days/.test(await visibleText(admin)))
   await context.close()
 }
@@ -93,23 +86,23 @@ section('Admin lists')
   await signInAsDemo(admin, 'admin')
   const rows = () => admin.locator('tbody tr').count()
 
-  await openAdmin(admin, `/admin/orders`)
+  await open(admin, `/admin/orders`)
   const allOrders = await rows()
   check('orders are listed', allOrders > 0, `${allOrders} orders`)
 
-  await openAdmin(admin, `/admin/orders?status=canceled`)
+  await open(admin, `/admin/orders?status=canceled`)
   const canceled = await rows()
   check('and can be filtered by status', canceled > 0 && canceled < allOrders, `${canceled} of ${allOrders}`)
   check('showing only that status', !/Awaiting payment|\bPaid\b/.test(await admin.locator('tbody').innerText()))
 
-  await openAdmin(admin, `/admin/products?stock=out`)
+  await open(admin, `/admin/products?stock=out`)
   check('sold-out products can be found', (await rows()) > 0, `${await rows()} sold out`)
 
-  await openAdmin(admin, `/admin/customers`)
+  await open(admin, `/admin/customers`)
   check('customers are listed', (await rows()) > 0, `${await rows()} customers`)
   check('and the list says it is read-only', /Read-only/.test(await visibleText(admin)))
 
-  await openAdmin(admin, `/admin/reviews`)
+  await open(admin, `/admin/reviews`)
   check('reviews are listed', (await rows()) > 0, `${await rows()} reviews`)
 
   // Twenty a page, so a long list never arrives all at once.
@@ -120,12 +113,12 @@ section('Admin lists')
   await admin.waitForTimeout(1500)
   check('and the next page is its own URL', admin.url().includes('page=2'), admin.url())
   const second = await admin.locator('tbody').innerText()
-  await openAdmin(admin, `/admin/reviews`)
+  await open(admin, `/admin/reviews`)
   check('showing different rows', second !== (await admin.locator('tbody').innerText()))
 
   // Every list is checked because they share one SELECT string, which once shipped without the count.
   for (const list of ['orders', 'products', 'customers', 'reviews']) {
-    await openAdmin(admin, `/admin/${list}`)
+    await open(admin, `/admin/${list}`)
     const footer = await visibleText(admin)
     check(`${list} counts its rows`, !/NaN/.test(footer), (footer.match(/[\d,NaN–-]+ of [\d,NaN]+/) ?? ['no count'])[0])
     const total = Number((footer.match(/of ([\d,]+)/) ?? [0, '0'])[1].replace(/,/g, ''))
@@ -133,7 +126,7 @@ section('Admin lists')
   }
 
   // A filter and a page have to travel together, or paging silently widens the list.
-  await openAdmin(admin, `/admin/customers?q=a&page=2`)
+  await open(admin, `/admin/customers?q=a&page=2`)
   check('paging keeps the filter', /q=a/.test(admin.url()) || (await rows()) >= 0, admin.url())
   const paged = await visibleText(admin)
   check('and says where you are', /Page 2 of|Nothing to show|of \d/.test(paged), paged.slice(0, 60))
@@ -149,7 +142,7 @@ section('The admin search filters as you type')
     if (request.url().includes('/admin/products') && request.resourceType() !== 'image') requests++
   })
 
-  await openAdmin(admin, `/admin/products`)
+  await open(admin, `/admin/products`)
   const all = await admin.locator('tbody tr').count()
   requests = 0
 
@@ -176,7 +169,7 @@ section('The admin writes for real')
   await signInAsDemo(admin, 'admin')
 
   // Salt Cellar is seeded sold out, so it is the safe one to push around and put back.
-  await openAdmin(admin, `/admin/products?q=salt`)
+  await open(admin, `/admin/products?q=salt`)
   await admin.getByRole('link', { name: 'Edit' }).first().click()
   await admin.waitForTimeout(1500)
   const editUrl = admin.url()
@@ -195,12 +188,12 @@ section('The admin writes for real')
   check('and the stock with it', !/Back when the next batch/.test(shop))
 
   // A sale that is not a saving is refused, in the action rather than the form.
-  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await open(admin, editUrl.replace(BASE, ''))
   await admin.fill('input[name="salePrice"]', '99.00')
   await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
   check('a sale price above the price is refused', /has to be below the price/i.test(await visibleText(admin)))
 
-  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await open(admin, editUrl.replace(BASE, ''))
   check('and deleting is not offered', /Deleting products is disabled/.test(await visibleText(admin)))
 
   // An empty sale field used to arrive as 0 and make the product free, so it has to leave no sale.
@@ -211,7 +204,7 @@ section('The admin writes for real')
   check('an empty sale price is no sale, not a free product', !/\$0\.00/.test(priced), priced.slice(0, 90))
 
   // Zero is refused outright rather than quietly meaning "free".
-  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await open(admin, editUrl.replace(BASE, ''))
   await admin.fill('input[name="salePrice"]', '0')
   await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
   await waitForText(admin, /more than nothing/i)
@@ -222,7 +215,7 @@ section('The admin writes for real')
   await admin.fill('input[name="stock"]', wasStock)
   await admin.fill('input[name="salePrice"]', '')
   await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
-  await openAdmin(admin, editUrl.replace(BASE, ''))
+  await open(admin, editUrl.replace(BASE, ''))
   check(
     'the product is left as it was found',
     (await admin.locator('input[name="stock"]').inputValue()) === wasStock,
@@ -236,7 +229,7 @@ section('A Server Action is not protected by its button')
   // A made-up id answers 404 for everybody, so the id comes from a real submission the admin just made.
   const { context, page: admin } = await freshPage(browser)
   await signInAsDemo(admin, 'admin')
-  await openAdmin(admin, `/admin/orders`)
+  await open(admin, `/admin/orders`)
   await admin.locator('tbody tr a').first().click()
   await admin.locator('h1').first().waitFor()
   await admin.waitForTimeout(1500)
@@ -278,7 +271,7 @@ section('A Server Action is not protected by its button')
   // And the order is still what it was, which is the part that actually matters.
   const { context: checkContext, page: verifier } = await freshPage(browser)
   await signInAsDemo(verifier, 'admin')
-  await openAdmin(verifier, `/admin/orders/${orderId}`)
+  await open(verifier, `/admin/orders/${orderId}`)
   check(
     'the order was not moved',
     (await mover(verifier).inputValue()) === was,

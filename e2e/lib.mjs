@@ -65,6 +65,10 @@ export function reporter() {
 
 /** Waits for the layout to stop moving, which is what a fixed pause after a goto was standing in for. */
 export async function laidOut(page) {
+  // A skeleton on screen means a Suspense boundary is still streaming its real content in.
+  await page
+    .waitForFunction(() => document.querySelectorAll('[data-slot="skeleton"]').length === 0, null, { timeout: 20_000 })
+    .catch(() => {})
   await page.evaluate(() => document.fonts.ready)
   // Hydration can still move things, so this waits for the width to agree with itself twice over.
   await page.waitForFunction(
@@ -83,8 +87,10 @@ export async function laidOut(page) {
 
 /** Opens a page and waits for it to settle, rather than guessing how long that takes. */
 export async function open(page, path) {
-  // networkidle is this project's hydration signal: the client bundle has landed and run by then.
-  await page.goto(`${BASE}${path}`, { waitUntil: 'networkidle' })
+  // Admin pages prefetch every link they carry, so networkidle never settles on them.
+  const admin = path.startsWith('/admin')
+  await page.goto(`${BASE}${path}`, { waitUntil: admin ? 'domcontentloaded' : 'networkidle' })
+  if (admin) await page.locator('h1').first().waitFor()
   await laidOut(page)
 }
 
