@@ -7,6 +7,8 @@ database.
 
 It is a portfolio project. No order is fulfilled and no card is ever charged.
 
+**Live:** https://wicken-production.up.railway.app
+
 ## What it is built on
 
 Next.js 16 on the App Router, with Cache Components and partial prerendering: a page's shell is
@@ -92,3 +94,8 @@ pads the wide ones to squares.
 Railway, described in code in `.railway/railway.ts` and applied with `railway config apply`: a
 Postgres database, the app, and a nightly cron that migrates and reseeds, because the admin writes
 for real and somebody has to put the shop back.
+
+The app migrates on boot and seeds itself only if the catalog is empty, so a fresh environment comes
+up populated rather than waiting for the small hours. `railway config plan` is worth running first;
+the file is authoritative, so a variable it does not mention is a variable it will delete. The
+secrets live in the dashboard and appear here as `preserve()` for exactly that reason.

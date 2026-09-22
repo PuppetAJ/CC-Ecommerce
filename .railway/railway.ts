@@ -10,7 +10,9 @@ export default defineRailway(() => {
   const app = service('Wicken', {
     source: repository,
     build: 'pnpm build',
-    start: 'pnpm start',
+    // Migrations are idempotent and the seed only runs on an empty catalog, so a fresh
+    // environment comes up populated without anyone having to go and press anything.
+    start: 'pnpm db:migrate && pnpm db:seed:empty && pnpm start',
     deploy: {
       healthcheckPath: '/api/health',
       healthcheckTimeout: 100,
