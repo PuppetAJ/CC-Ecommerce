@@ -12,6 +12,12 @@ export const rangeLabels: Record<Range, string> = {
 // Search params are user-controlled, so the page number falls back rather than throwing.
 export const pageNumber = z.coerce.number().int().min(1).max(10000).default(1).catch(1)
 
+/** What every admin list takes; the ones with their own filters extend it. */
+export const adminListSearch = z.object({
+  q: z.string().trim().min(1).max(100).optional().catch(undefined),
+  page: pageNumber,
+})
+
 /** Keeps the filters and moves the page, so paging never silently widens the list. */
 export function pageHref(path: string, filters: Record<string, string | undefined>, page: number): string {
   const params = new URLSearchParams()
@@ -38,13 +44,6 @@ export function windows(range: Range): { from: Date; to: Date; wasFrom: Date; wa
   wasFrom.setUTCDate(wasFrom.getUTCDate() - days)
 
   return { from, to, wasFrom, wasTo: from }
-}
-
-export function adminHref(path: string, params: Record<string, string | undefined>): string {
-  const search = new URLSearchParams()
-  for (const [key, value] of Object.entries(params)) if (value) search.set(key, value)
-  const query = search.toString()
-  return query ? `${path}?${query}` : path
 }
 
 export const productEdit = z.object({

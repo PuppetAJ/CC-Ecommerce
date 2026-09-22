@@ -2,15 +2,18 @@ import 'server-only'
 import { pool, transaction } from '../pool.ts'
 import type { Order } from '../types.ts'
 
+/** The aggregation both the account's orders and the admin's read through. */
+export const orderItemsJson = `COALESCE(
+  json_agg(
+    json_build_object(
+      'product_id', oi.product_id, 'product_name', oi.product_name, 'product_slug', oi.product_slug,
+      'image_url', oi.image_url, 'quantity', oi.quantity, 'unit_price_cents', oi.unit_price_cents
+    ) ORDER BY oi.id
+  ) FILTER (WHERE oi.id IS NOT NULL), '[]'
+) AS items`
+
 const withItems = `
-  SELECT o.*, COALESCE(
-    json_agg(
-      json_build_object(
-        'product_id', oi.product_id, 'product_name', oi.product_name, 'product_slug', oi.product_slug,
-        'image_url', oi.image_url, 'quantity', oi.quantity, 'unit_price_cents', oi.unit_price_cents
-      ) ORDER BY oi.id
-    ) FILTER (WHERE oi.id IS NOT NULL), '[]'
-  ) AS items
+  SELECT o.*, ${orderItemsJson}
   FROM orders o
   LEFT JOIN order_items oi ON oi.order_id = o.id
 `

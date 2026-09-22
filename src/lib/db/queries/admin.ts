@@ -1,5 +1,6 @@
 import 'server-only'
 import { pool } from '../pool.ts'
+import { orderItemsJson } from './orders.ts'
 import type { Category, Order, OrderStatus, Product } from '../types.ts'
 import { searchTerm } from '../text.ts'
 
@@ -128,11 +129,6 @@ export async function listAdminProducts({ q, category, stock, page = 1 }: Produc
   return paged<Product>(rows)
 }
 
-export async function getAdminProduct(id: number): Promise<Product | null> {
-  const { rows } = await pool.query<Product>('SELECT * FROM products WHERE id = $1', [id])
-  return rows[0] ?? null
-}
-
 type ProductEdit = {
   price_cents: number
   sale_price_cents: number | null
@@ -155,14 +151,7 @@ export async function updateProduct(id: number, edit: ProductEdit): Promise<Prod
 // A function, not a constant: the list needs a row count in the same statement and the single
 // order does not. count(*) OVER () lands after GROUP BY, so it counts orders, not order items.
 const orderWithItems = (extra = '') => `
-  SELECT o.*, u.name AS customer_name, u.email AS customer_email${extra}, COALESCE(
-    json_agg(
-      json_build_object(
-        'product_id', oi.product_id, 'product_name', oi.product_name, 'product_slug', oi.product_slug,
-        'image_url', oi.image_url, 'quantity', oi.quantity, 'unit_price_cents', oi.unit_price_cents
-      ) ORDER BY oi.id
-    ) FILTER (WHERE oi.id IS NOT NULL), '[]'
-  ) AS items
+  SELECT o.*, u.name AS customer_name, u.email AS customer_email${extra}, ${orderItemsJson}
   FROM orders o
   JOIN users u ON u.id = o.user_id
   LEFT JOIN order_items oi ON oi.order_id = o.id

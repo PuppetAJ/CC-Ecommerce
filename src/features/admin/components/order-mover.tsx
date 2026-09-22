@@ -3,10 +3,10 @@
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/elements/button'
+import { control } from '@/components/elements/control'
+import { orderStatusLabels } from '@/components/elements/order-status'
 import type { OrderStatus } from '@/lib/db/types'
 import { moveOrder, type AdminState } from '../actions'
-
-const labels: Record<OrderStatus, string> = { pending: 'Awaiting payment', paid: 'Paid', canceled: 'Canceled' }
 
 export function OrderMover({ orderId, status }: { orderId: number; status: OrderStatus }) {
   const [state, action, pending] = useActionState<AdminState, FormData>(moveOrder, undefined)
@@ -21,12 +21,8 @@ export function OrderMover({ orderId, status }: { orderId: number; status: Order
       <input type="hidden" name="id" value={orderId} />
       <label className="flex flex-col gap-1.5">
         <span className="text-sm text-olive-600 dark:text-olive-400">Status</span>
-        <select
-          name="status"
-          defaultValue={status}
-          className="rounded-lg border border-olive-300 bg-transparent py-1.5 pr-8 pl-3 text-sm text-olive-950 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
-        >
-          {Object.entries(labels).map(([value, label]) => (
+        <select name="status" defaultValue={status} className={`${control} py-1.5 pr-8 pl-3`}>
+          {Object.entries(orderStatusLabels).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
             </option>

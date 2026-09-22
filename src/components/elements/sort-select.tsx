@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useId, useTransition } from 'react'
+import { control } from './control'
 
 // Options carry their own hrefs so this stays a leaf: no searchParams read, no Suspense needed.
 export function SortSelect({
@@ -37,7 +38,7 @@ export function SortSelect({
           // The hash comes off for the same reason: followed, it scrolls to the anchor.
           start(() => router.push(scroll ? next.href : next.href.split('#')[0], { scroll }))
         }}
-        className="min-w-0 rounded-lg border border-olive-300 bg-transparent py-1.5 pr-8 pl-3 text-sm text-olive-950 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
+        className={`${control} min-w-0 py-1.5 pr-8 pl-3`}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

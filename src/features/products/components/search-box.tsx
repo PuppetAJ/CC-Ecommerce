@@ -1,6 +1,7 @@
 'use client'
 
 import { SearchIcon } from 'lucide-react'
+import { control } from '@/components/elements/control'
 import { useDebouncedQuery } from '@/components/use-debounced-query'
 import { searchMaxLength, shopHref, type ShopSearch } from '../schemas'
 
@@ -31,7 +32,7 @@ export function SearchBox({ search }: { search: ShopSearch }) {
         maxLength={searchMaxLength}
         placeholder="Search the collection"
         aria-label="Search the collection"
-        className="w-full rounded-lg border border-olive-300 bg-transparent py-1.5 pr-9 pl-3 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none sm:w-56 dark:border-olive-800 dark:text-white"
+        className={`${control} w-full py-1.5 pr-9 pl-3 sm:w-56`}
       />
       <SearchIcon
         aria-hidden

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useRef, useTransition, type FormEvent } from 'react'
+import { control } from '@/components/elements/control'
 import { useDebouncedQuery } from '@/components/use-debounced-query'
 
 const LIMIT = 100
@@ -49,8 +50,7 @@ export function SearchFilters({
     start(() => router.replace(query ? `${action}?${query}` : action, { scroll: false }))
   }
 
-  const field =
-    'rounded-lg border border-olive-300 bg-transparent px-3 py-1.5 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white'
+  const field = `${control} px-3 py-1.5`
 
   return (
     <form ref={form} action={action} onSubmit={apply} className="flex flex-wrap items-center gap-3">

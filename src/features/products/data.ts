@@ -38,11 +38,14 @@ export async function getProduct(slug: string): Promise<Product | null> {
   return getProductBySlug(slug)
 }
 
-// Uncached, unlike its neighbors. A "use cache" result sitting in the landing page's
-// prerendered shell leaves the router's segment prefetch of "/" open for good; these are three
-// small indexed reads behind a Suspense boundary, so paying them per request costs nothing.
+// The landing page's two reads stay uncached, unlike every other read here: a "use cache" result
+// in that page's prerendered shell leaves the router's segment prefetch of "/" open for good.
 export async function getFeatured(limit = 4): Promise<Product[]> {
   return listFeaturedProducts(limit)
+}
+
+export async function getCategoryCovers() {
+  return listCategoryCovers()
 }
 
 export async function getRelated(product: Product, limit = 4): Promise<Product[]> {
@@ -51,10 +54,6 @@ export async function getRelated(product: Product, limit = 4): Promise<Product[]
   cacheTag('products')
   // The query orders at random; caching freezes one roll per product, which is what we want.
   return listRelatedProducts(product, limit)
-}
-
-export async function getCategoryCovers() {
-  return listCategoryCovers()
 }
 
 export async function getFacets() {

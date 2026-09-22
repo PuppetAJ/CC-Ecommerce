@@ -1,22 +1,19 @@
 import { Suspense } from 'react'
-import { Cell, IndexTable, IndexTableSkeleton } from '@/features/admin/components/index-table'
+import { Cell, IndexTable, IndexTableSkeleton, Row } from '@/features/admin/components/index-table'
 import { Pagination } from '@/features/admin/components/pagination'
 import { SearchFilters } from '@/features/admin/components/search-filters'
-import { pageHref, pageNumber } from '@/features/admin/schemas'
+import { adminListSearch, pageHref } from '@/features/admin/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { listCustomers, perPage } from '@/lib/db/queries/admin'
 import { countSubscribers } from '@/lib/db/queries/subscribers'
 import { formatDate, formatPrice } from '@/lib/format'
-import { z } from 'zod'
+import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Customers · Admin' }
 
 export const instant = false
 
-const search = z.object({
-  q: z.string().trim().min(1).max(100).optional().catch(undefined),
-  page: pageNumber,
-})
+const search = adminListSearch
 
 export default async function Page({ searchParams }: PageProps<'/admin/customers'>) {
   await requireAdmin()
@@ -26,7 +23,7 @@ export default async function Page({ searchParams }: PageProps<'/admin/customers
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Customers</h1>
+        <AdminHeading>Customers</AdminHeading>
         {/* Read-only on purpose: an account is somebody's, and a demo should not delete one. */}
         <p className="text-sm text-olive-600 dark:text-olive-400">
           Read-only. Accounts cannot be edited or removed from here. {subscribers} on the newsletter list.
@@ -47,7 +44,7 @@ async function Rows({ q, page }: { q?: string; page: number }) {
     <>
       <IndexTable columns={['Customer', 'Joined', 'Orders', 'Last order', 'Spent']} empty="Nobody matches that.">
         {customers.map((customer) => (
-          <tr key={customer.id} className="hover:bg-olive-950/[0.03] dark:hover:bg-white/[0.03]">
+          <Row key={customer.id}>
             <Cell>
               <span className="block text-xs text-olive-600 dark:text-olive-400">{customer.email}</span>
               <span className="font-medium text-olive-950 dark:text-white">{customer.name}</span>
@@ -62,7 +59,7 @@ async function Rows({ q, page }: { q?: string; page: number }) {
             <Cell align="right" className="font-medium text-olive-950 tabular-nums dark:text-white">
               {formatPrice(customer.spent_cents)}
             </Cell>
-          </tr>
+          </Row>
         ))}
       </IndexTable>
       <Pagination

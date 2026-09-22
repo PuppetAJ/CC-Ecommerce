@@ -50,6 +50,10 @@ export function IndexTable({
   )
 }
 
+export function Row({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <tr className={`hover:bg-olive-950/[0.03] dark:hover:bg-white/[0.03] ${className}`}>{children}</tr>
+}
+
 export function Cell({
   children,
   align = 'left',

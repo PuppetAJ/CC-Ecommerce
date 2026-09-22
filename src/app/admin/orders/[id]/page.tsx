@@ -6,6 +6,7 @@ import { requireAdmin } from '@/lib/auth/session'
 import { getAdminOrder } from '@/lib/db/queries/admin'
 import { formatDateLong } from '@/lib/format'
 import { linesOf, OrderLines } from '@/components/elements/order-lines'
+import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Order · Admin' }
 
@@ -27,7 +28,7 @@ export default async function Page({ params }: PageProps<'/admin/orders/[id]'>) 
           Back to orders
         </Link>
         <div className="flex flex-wrap items-center gap-4">
-          <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Order #{order.id}</h1>
+          <AdminHeading>Order #{order.id}</AdminHeading>
           <OrderStatus status={order.status} />
         </div>
       </div>

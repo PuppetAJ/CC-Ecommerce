@@ -7,12 +7,13 @@ import { CategorySplitChart } from '@/features/admin/components/category-split'
 import { Funnel } from '@/features/admin/components/funnel'
 import { MetricCard } from '@/features/admin/components/metric-card'
 import { TrendChart } from '@/features/admin/components/trend-chart'
-import { adminHref, adminSearchSchema, rangeLabels, ranges, windows } from '@/features/admin/schemas'
+import { adminSearchSchema, pageHref, rangeLabels, ranges, windows } from '@/features/admin/schemas'
 import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/admin'
 import { funnelBetween, sessionsByDay, visitorsBetween } from '@/lib/db/queries/events'
 import { formatCount, formatDay, formatPrice } from '@/lib/format'
+import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Admin' }
 
@@ -27,14 +28,14 @@ export default async function Page({ searchParams }: PageProps<'/admin'>) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Overview</h1>
+        <AdminHeading>Overview</AdminHeading>
         <SortSelect
           label="Period"
           value={range}
           options={ranges.map((value) => ({
             value,
             label: rangeLabels[value],
-            href: adminHref('/admin', { range: value === '30' ? undefined : value }),
+            href: pageHref('/admin', { range: value === '30' ? undefined : value }, 1),
           }))}
         />
       </div>

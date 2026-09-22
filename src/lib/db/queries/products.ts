@@ -68,6 +68,11 @@ export async function listFacets(): Promise<{ materials: string[]; colors: strin
   return { materials: materials.rows.map((row) => row.value), colors: colors.rows.map((row) => row.value) }
 }
 
+export async function getProductById(id: number): Promise<Product | null> {
+  const { rows } = await pool.query<Product>('SELECT * FROM products WHERE id = $1', [id])
+  return rows[0] ?? null
+}
+
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const { rows } = await pool.query<Product>('SELECT * FROM products WHERE slug = $1', [slug])
   return rows[0] ?? null
