@@ -27,6 +27,11 @@ export function pageHref(path: string, filters: Record<string, string | undefine
   return query ? `${path}?${query}` : path
 }
 
+/** Same as pageHref at page 1: filters only, nothing added for the default page. */
+export function adminHref(path: string, filters: Record<string, string | undefined>): string {
+  return pageHref(path, filters, 1)
+}
+
 export const adminSearchSchema = z.object({
   range: z.enum(ranges).default('30').catch('30'),
 })

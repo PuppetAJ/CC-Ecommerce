@@ -7,7 +7,7 @@ import { CategorySplitChart } from '@/features/admin/components/category-split'
 import { Funnel } from '@/features/admin/components/funnel'
 import { MetricCard } from '@/features/admin/components/metric-card'
 import { TrendChart } from '@/features/admin/components/trend-chart'
-import { adminSearchSchema, pageHref, rangeLabels, ranges, windows } from '@/features/admin/schemas'
+import { adminHref, adminSearchSchema, rangeLabels, ranges, windows } from '@/features/admin/schemas'
 import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
 import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/dashboard'
@@ -34,7 +34,7 @@ export default async function Page({ searchParams }: PageProps<'/admin'>) {
           options={ranges.map((value) => ({
             value,
             label: rangeLabels[value],
-            href: pageHref('/admin', { range: value === '30' ? undefined : value }, 1),
+            href: adminHref('/admin', { range: value === '30' ? undefined : value }),
           }))}
         />
       </div>

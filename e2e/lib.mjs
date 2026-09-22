@@ -3,6 +3,9 @@ import { chromium } from 'playwright'
 
 export const BASE = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
 
+// Printed because the default is the dev server, and a suite run against the wrong one fails oddly.
+console.log(`against ${BASE}`)
+
 // Matches scripts/demo-users.ts; the suite runs against a seeded database.
 export const demo = {
   shopper: { email: 'shopper@wicken.store', password: 'demo-password', name: 'Demo Shopper' },
