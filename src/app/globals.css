@@ -172,10 +172,16 @@
   }
 }
 
-/* The landing page's closing card is the same band as the footer, so on phones the two meet flush. */
+/* The landing page's card is the same band as the footer, so on phones a rule is the only join. */
 @media (width < 40rem) {
   body:has([data-closing]) footer {
     padding-top: 0;
+  }
+  body:has([data-closing]) [data-footer-band] {
+    border-top: 1px solid color-mix(in oklch, var(--color-olive-950) 10%, transparent);
+  }
+  .dark body:has([data-closing]) [data-footer-band] {
+    border-top-color: color-mix(in oklch, white 10%, transparent);
   }
 }
 

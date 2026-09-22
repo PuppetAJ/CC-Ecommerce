@@ -25,13 +25,14 @@ async function lookup(id: string): Promise<{ url: string; name: string; profile:
   return { url: photo.urls.small, name: photo.user.name, profile: photo.user.links.html }
 }
 
-const assignments: { file: string; id: string }[] = [
+// width is per photograph: the default is plenty, but one that gets cropped square needs more pixels.
+const assignments: { file: string; id: string; width?: number }[] = [
   { file: 'washed-linen-napkins', id: 'tC-TOGGEODI' },
   { file: 'linen-bread-cloth', id: 'bTJe8Wseia0' },
   { file: 'studio-apron', id: 'ymSFRIA1mBM' },
   { file: 'heavy-linen-throw', id: 'kwepwyvPWmM' },
   { file: 'linen-table-runner', id: 'jM3gtQbSjnM' },
-  { file: 'lidded-keepsake-box', id: 'GKlMfgZ2fpw' },
+  { file: 'lidded-keepsake-box', id: 'GKlMfgZ2fpw', width: 2400 },
   { file: 'turned-serving-trays', id: 'MzJ6pzgLtC0' },
   { file: 'stoneware-storage-jars', id: 'oiZAQvxTcYQ' },
   { file: 'turned-walnut-bowl', id: 'Xig5z9fr0Kc' },
@@ -74,14 +75,14 @@ const force = process.env.FORCE === '1'
 // ONLY=a,b narrows a forced run to a few files, so re-fetching three originals does not touch the rest.
 const only = new Set((process.env.ONLY ?? '').split(',').filter(Boolean))
 
-for (const { file, id } of assignments) {
+for (const { file, id, width = 1600 } of assignments) {
   if (only.size > 0 && !only.has(file)) continue
   if (!force && existsSync(`public/images/${file}.jpg`) && byFile.has(file)) {
     console.log(`${file}.jpg  kept`)
     continue
   }
   const photo = await lookup(id)
-  const url = `${photo.url.split('?')[0]}?fm=jpg&q=78&w=1600&fit=max&cs=tinysrgb`
+  const url = `${photo.url.split('?')[0]}?fm=jpg&q=78&w=${width}&fit=max&cs=tinysrgb`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`${res.status} downloading ${id}`)
   const bytes = Buffer.from(await res.arrayBuffer())
