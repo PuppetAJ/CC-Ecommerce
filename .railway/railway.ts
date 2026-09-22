@@ -10,7 +10,9 @@ export default defineRailway(() => {
   const app = service('Wicken', {
     source: repository,
     build: 'pnpm build',
-    start: 'pnpm start',
+    // Migrations are idempotent and the seed only runs on an empty catalog, so a fresh
+    // environment comes up populated without anyone having to go and press anything.
+    start: 'pnpm db:migrate && pnpm db:seed:empty && pnpm start',
     deploy: {
       healthcheckPath: '/api/health',
       healthcheckTimeout: 100,
@@ -21,7 +23,7 @@ export default defineRailway(() => {
     env: {
       NODE_ENV: 'production',
       PORT: '8080',
-      NEXT_PUBLIC_APP_URL: 'https://wicken-production.up.railway.app',
+      NEXT_PUBLIC_APP_URL: 'https://wicken.up.railway.app',
       // Railway resolves this reference to the database's own connection string.
       DATABASE_URL: '${{Postgres.DATABASE_URL}}',
       // Set in the dashboard and never in this file; listed so applying does not delete them.
