@@ -86,8 +86,7 @@ prerendered shell leaves the router's segment prefetch of `/` open indefinitely.
 `src/features/products/data.ts` says so at the point it matters.
 
 **Photographs come from Unsplash and Pexels** and every one is credited in
-`public/images/credits.json`. `pnpm images:fetch` downloads them and `pnpm images:square` crops or
-pads the wide ones to squares.
+`public/images/credits.json`.
 
 ## Deployment
 
