@@ -1,4 +1,4 @@
-import { defineRailway, github, postgres, project, service } from 'railway/iac'
+import { defineRailway, github, postgres, preserve, project, service } from 'railway/iac'
 
 /** Every service must be listed and named as the dashboard names it: an omission reads as a deletion. */
 export default defineRailway(() => {
@@ -24,6 +24,12 @@ export default defineRailway(() => {
       NEXT_PUBLIC_APP_URL: 'https://wicken-production.up.railway.app',
       // Railway resolves this reference to the database's own connection string.
       DATABASE_URL: '${{Postgres.DATABASE_URL}}',
+      // Set in the dashboard and never in this file; listed so applying does not delete them.
+      BETTER_AUTH_SECRET: preserve(),
+      STRIPE_SECRET_KEY: preserve(),
+      STRIPE_WEBHOOK_SECRET: preserve(),
+      GOOGLE_CLIENT_ID: preserve(),
+      GOOGLE_CLIENT_SECRET: preserve(),
     },
   })
 
@@ -40,6 +46,8 @@ export default defineRailway(() => {
     env: {
       NODE_ENV: 'production',
       DATABASE_URL: '${{Postgres.DATABASE_URL}}',
+      // The seed loads the app's environment module, which refuses to start without this.
+      BETTER_AUTH_SECRET: '${{Wicken.BETTER_AUTH_SECRET}}',
     },
   })
 
