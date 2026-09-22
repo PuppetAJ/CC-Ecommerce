@@ -23,7 +23,7 @@ export default defineRailway(() => {
     env: {
       NODE_ENV: 'production',
       PORT: '8080',
-      NEXT_PUBLIC_APP_URL: 'https://wicken-production.up.railway.app',
+      NEXT_PUBLIC_APP_URL: 'https://wicken.up.railway.app',
       // Railway resolves this reference to the database's own connection string.
       DATABASE_URL: '${{Postgres.DATABASE_URL}}',
       // Set in the dashboard and never in this file; listed so applying does not delete them.

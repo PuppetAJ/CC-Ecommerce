@@ -7,7 +7,7 @@ database.
 
 It is a portfolio project. No order is fulfilled and no card is ever charged.
 
-**Live:** https://wicken-production.up.railway.app
+**Live:** https://wicken.up.railway.app
 
 ## What it is built on
 
