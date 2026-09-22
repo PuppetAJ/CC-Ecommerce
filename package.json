@@ -33,11 +33,7 @@
     "db:migrate": "node-pg-migrate up --envPath .env -m migrations",
     "db:migrate:down": "node-pg-migrate down --envPath .env -m migrations",
     "db:seed": "node --conditions=react-server --env-file-if-exists=.env scripts/seed.ts",
-    "db:seed:empty": "node --conditions=react-server --env-file-if-exists=.env scripts/seed-if-empty.ts",
-    "images:candidates": "node --env-file-if-exists=.env scripts/image-candidates.ts",
-    "images:fetch": "node --env-file-if-exists=.env scripts/fetch-images.ts",
-    "images:square": "node --env-file-if-exists=.env scripts/square-images.ts",
-    "images:credit": "node --env-file-if-exists=.env scripts/credit-images.ts"
+    "db:seed:empty": "node --conditions=react-server --env-file-if-exists=.env scripts/seed-if-empty.ts"
   },
   "prettier": {
     "semi": false,
