@@ -65,4 +65,53 @@ describe('authentication', () => {
     assert.equal(session?.user.email, shopper.email)
     assert.equal(session?.user.role, 'customer')
   })
+
+  it('takes a user and account in the shape the Google callback writes', async () => {
+    // The social callback does not go through auth.api, so this repeats the two writes it makes.
+    const { internalAdapter } = await auth.$context
+    const user = await internalAdapter.createUser(
+      {
+        name: 'Google Shopper',
+        email: 'google@example.com',
+        emailVerified: true,
+        image: 'https://lh3.googleusercontent.com/a/photo',
+      },
+      { method: 'oauth', oauth: { providerId: 'google' } },
+    )
+    await internalAdapter.createAccount({
+      userId: user.id,
+      providerId: 'google',
+      accountId: '104857206349813592654',
+      accessToken: 'ya29.access',
+      refreshToken: '1//refresh',
+      idToken: 'eyJ.id.token',
+      accessTokenExpiresAt: new Date('2026-09-23T00:00:00Z'),
+      refreshTokenExpiresAt: undefined,
+      scope: 'openid email profile',
+    })
+
+    const { rows } = await pool.query<{
+      provider_id: string
+      account_id: string
+      scope: string
+      password: string | null
+      expires: Date
+      image: string
+      email_verified: boolean
+      role: string
+    }>(
+      `SELECT a.provider_id, a.account_id, a.scope, a.password, a.access_token_expires_at AS expires,
+              u.image, u.email_verified, u.role
+       FROM accounts a JOIN users u ON u.id = a.user_id`,
+    )
+    assert.equal(rows.length, 1)
+    assert.equal(rows[0].provider_id, 'google')
+    assert.equal(rows[0].account_id, '104857206349813592654')
+    assert.equal(rows[0].scope, 'openid email profile')
+    assert.equal(rows[0].password, null)
+    assert.equal(rows[0].expires.toISOString(), '2026-09-23T00:00:00.000Z')
+    assert.equal(rows[0].image, 'https://lh3.googleusercontent.com/a/photo')
+    assert.equal(rows[0].email_verified, true)
+    assert.equal(rows[0].role, 'customer')
+  })
 })
