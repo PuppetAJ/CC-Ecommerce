@@ -1,24 +1,24 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { OrderStatus } from '@/components/elements/order-status'
-import { Cell, IndexTable, IndexTableSkeleton } from '@/features/admin/components/index-table'
+import { Cell, IndexTable, IndexTableSkeleton, Row } from '@/features/admin/components/index-table'
 import { Pagination } from '@/features/admin/components/pagination'
 import { SearchFilters } from '@/features/admin/components/search-filters'
-import { pageHref, pageNumber } from '@/features/admin/schemas'
+import { adminListSearch, pageHref } from '@/features/admin/schemas'
 import { requireAdmin } from '@/lib/auth/session'
-import { listAdminOrders, perPage } from '@/lib/db/queries/admin'
+import { listAdminOrders } from '@/lib/db/queries/admin'
+import { perPage } from '@/lib/db/queries/paging'
 import { orderStatuses } from '@/lib/db/types'
-import { formatPrice } from '@/lib/format'
+import { formatDate, formatPrice } from '@/lib/format'
 import { z } from 'zod'
+import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Orders · Admin' }
 
 export const instant = false
 
-const search = z.object({
-  q: z.string().trim().min(1).max(100).optional().catch(undefined),
+const search = adminListSearch.extend({
   status: z.enum(orderStatuses).optional().catch(undefined),
-  page: pageNumber,
 })
 
 export default async function Page({ searchParams }: PageProps<'/admin/orders'>) {
@@ -27,7 +27,7 @@ export default async function Page({ searchParams }: PageProps<'/admin/orders'>)
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Orders</h1>
+      <AdminHeading>Orders</AdminHeading>
       <SearchFilters
         action="/admin/orders"
         placeholder="Customer name or email"
@@ -55,7 +55,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
     <>
       <IndexTable columns={['Order', 'Placed', 'Status', 'Items', 'Total']} empty="No orders match that.">
         {orders.map((order) => (
-          <tr key={order.id} className="hover:bg-olive-950/[0.03] dark:hover:bg-white/[0.03]">
+          <Row key={order.id}>
             <Cell>
               {/* Primary, with the customer as the kicker above it. */}
               <span className="block text-xs text-olive-600 dark:text-olive-400">{order.customer_name}</span>
@@ -66,9 +66,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
                 Order #{order.id}
               </Link>
             </Cell>
-            <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">
-              {order.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </Cell>
+            <Cell className="whitespace-nowrap text-olive-600 dark:text-olive-400">{formatDate(order.created_at)}</Cell>
             <Cell>
               <OrderStatus status={order.status} />
             </Cell>
@@ -78,7 +76,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
             <Cell align="right" className="font-medium text-olive-950 tabular-nums dark:text-white">
               {formatPrice(order.total_cents)}
             </Cell>
-          </tr>
+          </Row>
         ))}
       </IndexTable>
       <Pagination

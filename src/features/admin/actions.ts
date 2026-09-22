@@ -5,8 +5,9 @@ import { requireAdmin } from '@/lib/auth/session'
 import { deleteReview, setOrderStatus, updateProduct } from '@/lib/db/queries/admin'
 import { markAnswered } from '@/lib/db/queries/messages'
 import { messageAnswered, orderStatusEdit, productEdit, reviewTarget } from './schemas'
+import { succeeded, type ActionState } from '@/lib/action-state'
 
-export type AdminState = { error?: string; savedAt?: number } | undefined
+export type AdminState = ActionState
 
 export async function saveProduct(_previous: AdminState, formData: FormData): Promise<AdminState> {
   // A Server Action is a public endpoint; the button that called it proves nothing.
@@ -24,8 +25,7 @@ export async function saveProduct(_previous: AdminState, formData: FormData): Pr
   const sale = parsed.data.salePriceDollars
   const saleCents = sale === null ? null : Math.round(sale * 100)
   const priceCents = Math.round(parsed.data.priceDollars * 100)
-  // A sale that is not a saving is a mistake somebody is about to publish, and a sale of
-  // nothing makes the product free.
+  // A sale that is not a saving is about to be published, and a sale of nothing makes the product free.
   if (saleCents !== null && saleCents <= 0) return { error: 'A sale price has to be more than nothing.' }
   if (saleCents !== null && saleCents >= priceCents) return { error: 'A sale price has to be below the price.' }
 
@@ -39,7 +39,7 @@ export async function saveProduct(_previous: AdminState, formData: FormData): Pr
 
   // The catalog is cached by tag, so the storefront has to be told the price moved.
   revalidatePath('/', 'layout')
-  return { savedAt: Date.now() }
+  return succeeded()
 }
 
 export async function moveOrder(_previous: AdminState, formData: FormData): Promise<AdminState> {
@@ -50,7 +50,7 @@ export async function moveOrder(_previous: AdminState, formData: FormData): Prom
 
   const moved = await setOrderStatus(parsed.data.id, parsed.data.status)
   if (!moved) return { error: 'That order could not be found.' }
-  return { savedAt: Date.now() }
+  return succeeded()
 }
 
 export async function removeReview(_previous: AdminState, formData: FormData): Promise<AdminState> {
@@ -61,7 +61,7 @@ export async function removeReview(_previous: AdminState, formData: FormData): P
 
   await deleteReview(parsed.data.userId, parsed.data.productId)
   revalidatePath('/', 'layout')
-  return { savedAt: Date.now() }
+  return succeeded()
 }
 
 export async function answerMessage(_previous: AdminState, formData: FormData): Promise<AdminState> {
@@ -75,5 +75,5 @@ export async function answerMessage(_previous: AdminState, formData: FormData): 
 
   await markAnswered(parsed.data.id, parsed.data.answered)
   revalidatePath('/admin/messages')
-  return { savedAt: Date.now() }
+  return succeeded()
 }

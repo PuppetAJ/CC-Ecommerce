@@ -36,7 +36,7 @@ export function FooterWithLinkCategories({
 } & ComponentProps<'footer'>) {
   return (
     <footer className={clsx('pt-16', className)} {...props}>
-      <div className="bg-olive-950/2.5 py-16 text-olive-950 dark:bg-white/5 dark:text-white">
+      <div data-footer-band className="bg-olive-950/2.5 py-16 text-olive-950 dark:bg-white/5 dark:text-white">
         <Container className="flex flex-col gap-16">
           {notice && (
             <div data-footer-notice className="border-b border-olive-950/10 pb-12 dark:border-white/10">

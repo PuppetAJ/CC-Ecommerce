@@ -2,6 +2,7 @@ import type { Review } from '@/lib/db/queries/reviews'
 import { ShowMore } from './show-more'
 import { ReviewVotes } from './review-votes'
 import { Stars } from './stars'
+import { formatDateLong } from '@/lib/format'
 
 export function ReviewList({
   reviews,
@@ -23,9 +24,7 @@ export function ReviewList({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <Stars rating={item.rating} />
             <span className="text-sm font-medium text-olive-950 dark:text-white">{item.author}</span>
-            <span className="text-sm text-olive-600 dark:text-olive-400">
-              {item.created_at.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </span>
+            <span className="text-sm text-olive-600 dark:text-olive-400">{formatDateLong(item.created_at)}</span>
           </div>
           <p className="text-sm/6 text-olive-700 dark:text-olive-300">{item.body}</p>
           <div className="mt-1">

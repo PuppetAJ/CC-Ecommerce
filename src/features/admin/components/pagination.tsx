@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { formatCount } from '@/lib/format'
 
 /** Page links rather than a button: a page of a list is a place, so it should be a URL. */
 export function Pagination({
@@ -24,7 +25,7 @@ export function Pagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       <p className="text-sm text-olive-600 dark:text-olive-400">
-        {total === 0 ? 'Nothing to show' : `${first}–${last} of ${total.toLocaleString('en-US')}`}
+        {total === 0 ? 'Nothing to show' : `${first}–${last} of ${formatCount(total)}`}
       </p>
 
       {pages > 1 && (

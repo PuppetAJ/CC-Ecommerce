@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { ProductForm } from '@/features/admin/components/product-form'
 import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
-import { getAdminProduct } from '@/lib/db/queries/admin'
+import { getProductById } from '@/lib/db/queries/products'
 
 export const metadata = { title: 'Edit product · Admin' }
 
@@ -13,7 +13,7 @@ export const instant = false
 export default async function Page({ params }: PageProps<'/admin/products/[id]'>) {
   await requireAdmin()
   const id = Number((await params).id)
-  const product = Number.isInteger(id) ? await getAdminProduct(id) : null
+  const product = Number.isInteger(id) ? await getProductById(id) : null
   if (!product) notFound()
 
   return (

@@ -1,8 +1,7 @@
 import 'server-only'
 import { z } from 'zod'
 
-// Each phase adds its own keys. Anything required must also be provided by CI,
-// which runs `pnpm build` and `pnpm test` without a .env file.
+// Anything required must also be provided by CI, which builds and tests without a .env file.
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   APP_URL: z.url().default('http://localhost:3000'),
@@ -16,8 +15,7 @@ const schema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_').optional(),
 })
 
-// A key left blank in .env arrives as '', which is not the same as absent to zod's
-// .optional(); without this an unused optional key fails the whole parse.
+// A blank key in .env arrives as '', which zod's .optional() does not treat as absent.
 const blankIsAbsent = (value: string | undefined) => (value === '' ? undefined : value)
 
 const parsed = schema.safeParse({
@@ -39,8 +37,7 @@ if (!parsed.success) {
 
 export const env = parsed.data
 
-// Only the secret key is needed to open a checkout session; the webhook secret gates the
-// webhook route on its own, so a deployment without it can still take a test payment.
+// The webhook secret gates the webhook route alone, so a deployment without it can still take a payment.
 export const stripeEnabled = Boolean(env.STRIPE_SECRET_KEY)
 
 /** Google sign-in is only offered when both halves of the credential are present. */

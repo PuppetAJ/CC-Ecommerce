@@ -42,8 +42,8 @@ export function ReviewVotes({
     start(async () => {
       apply(next)
       const result = await voteOnHelpfulness(productId, reviewUserId, next)
-      if (result.needsLogin) toast.error('Log in to say whether a review helped.')
-      else if (result.error) toast.error(result.error)
+      if (result?.needsLogin) toast.error('Log in to say whether a review helped.')
+      else if (result?.error) toast.error(result.error)
       router.refresh()
     })
   }

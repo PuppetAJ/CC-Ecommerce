@@ -2,7 +2,7 @@ import 'server-only'
 import { pool } from '../pool.ts'
 import { withoutNulls } from '../text.ts'
 
-export type SubscriberSource = 'footer' | 'landing'
+type SubscriberSource = 'footer' | 'landing'
 
 /** True when the address was new; false when it was already on the list. */
 export async function subscribe(email: string, source: SubscriberSource): Promise<boolean> {

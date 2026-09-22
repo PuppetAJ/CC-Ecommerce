@@ -17,7 +17,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     // next-themes sets the class on <html> after hydration.
-    <html lang="en" className={`${inter.variable} ${monaSans.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${monaSans.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {/* Above every layout, because the root not-found renders the header too. */}

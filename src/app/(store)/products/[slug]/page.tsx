@@ -8,9 +8,6 @@ import { FavoriteButton } from '@/app/_components/favorite-button'
 import { AddToCart } from '@/features/cart/components/add-to-cart'
 import { TrackProduct } from '@/components/analytics'
 import { Enter, Rise } from '@/components/motion'
-import { ReviewForm } from '@/features/reviews/components/review-form'
-import { ReviewList } from '@/features/reviews/components/review-list'
-import { Stars } from '@/features/reviews/components/stars'
 import { Breadcrumbs } from '@/features/products/components/breadcrumbs'
 import { ProductRail } from '@/features/products/components/product-rail'
 import { ProductImage } from '@/features/products/components/product-image'
@@ -20,13 +17,14 @@ import { categoryLabels, fromShop, shopSearchSchema } from '@/features/products/
 import { Price } from '@/features/products/components/price'
 import { getSession } from '@/lib/auth/session'
 import { listFavoriteIds } from '@/lib/db/queries/favorites'
-import { getOwnReview, listReviews, summarizeReviews, type ReviewSort } from '@/lib/db/queries/reviews'
 import { SortSelect } from '@/components/elements/sort-select'
-import { reviewSortLabels, reviewSorts, reviewSortSchema, reviewsHref } from '@/features/reviews/schemas'
+import { reviewSortLabels, reviewSortSchema, reviewsHref } from '@/features/reviews/schemas'
+import { reviewSorts } from '@/lib/db/types'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Fragment } from 'react'
+import { ProductReviews, RatingSummary } from '@/features/reviews/components/product-reviews'
 
 export async function generateMetadata({ params }: PageProps<'/products/[slug]'>): Promise<Metadata> {
   const product = await getProduct((await params).slug)
@@ -155,7 +153,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             />
           </div>
           <Suspense fallback={<p className="text-sm text-olive-600 dark:text-olive-400">Loading reviews…</p>}>
-            <Reviews productId={product.id} slug={product.slug} sort={reviewSort} />
+            <ProductReviews productId={product.id} slug={product.slug} sort={reviewSort} />
           </Suspense>
         </section>
 
@@ -223,40 +221,6 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
         </Rise>
       )}
     </Container>
-  )
-}
-
-// Request-time, because it depends on who is reading; the cached product shell above is not.
-async function Reviews({ productId, slug, sort }: { productId: number; slug: string; sort: ReviewSort }) {
-  const session = await getSession()
-  const [reviews, own] = await Promise.all([
-    listReviews(productId, { sort, viewerId: session?.user.id }),
-    session ? getOwnReview(session.user.id, productId) : null,
-  ])
-
-  return (
-    <div className="flex flex-col gap-10">
-      <ReviewList reviews={reviews} productId={productId} viewerId={session?.user.id} />
-      <div className="flex flex-col gap-4 border-t border-olive-950/10 pt-8 dark:border-white/10">
-        <h3 className="font-medium text-olive-950 dark:text-white">{own ? 'Your review' : 'Write a review'}</h3>
-        <ReviewForm productId={productId} slug={slug} existing={own} signedIn={Boolean(session)} />
-      </div>
-    </div>
-  )
-}
-
-/** Sits by the price, where a rating is actually used, rather than only far below. */
-async function RatingSummary({ productId }: { productId: number }) {
-  const { count, average } = await summarizeReviews(productId)
-  if (count === 0) return null
-
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      <Stars rating={average} />
-      <a href="#reviews" className="text-olive-600 underline underline-offset-4 dark:text-olive-400">
-        {average.toFixed(1)} · {count} review{count === 1 ? '' : 's'}
-      </a>
-    </div>
   )
 }
 

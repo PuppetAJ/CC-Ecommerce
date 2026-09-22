@@ -2,12 +2,10 @@ import 'server-only'
 import { Pool } from 'pg'
 import { env } from '../env.ts'
 
-// Next re-evaluates modules on every edit in dev, so a plain `new Pool()` would
-// leak a pool per edit until Postgres refused new connections.
+// Next re-evaluates modules on every edit in dev, so a plain `new Pool()` would leak one per edit.
 const globalForPool = globalThis as { wickenPool?: Pool }
 
-// Postgres kills anything still running after ten seconds, so one pathological query cannot
-// hold a connection open indefinitely. Every query here should finish in milliseconds.
+// Postgres kills anything still running after ten seconds; every query here should take milliseconds.
 export const pool =
   globalForPool.wickenPool ?? new Pool({ connectionString: env.DATABASE_URL, statement_timeout: 10_000 })
 

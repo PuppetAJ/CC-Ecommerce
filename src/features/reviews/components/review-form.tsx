@@ -6,6 +6,7 @@ import { useActionState, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/elements/button'
 import { submitReview, type ReviewState } from '../actions'
+import { Textarea } from '@/components/ui/textarea'
 
 export function ReviewForm({
   productId,
@@ -18,16 +19,15 @@ export function ReviewForm({
   existing?: { rating: number; body: string } | null
   signedIn: boolean
 }) {
-  const [state, action, pending] = useActionState<ReviewState, FormData>(submitReview, undefined as never)
+  const [state, action, pending] = useActionState<ReviewState, FormData>(submitReview, undefined)
   const [rating, setRating] = useState(existing?.rating ?? 0)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Thank you, your review is up')
+    if (state?.ok) toast.success('Thank you, your review is up')
     if (state?.error) toast.error(state.error)
   }, [state])
 
-  // Asked before the writing, not after it: the server already knows who is reading, so
-  // there is no reason to let somebody compose a review they cannot post.
+  // Asked before the writing, so nobody composes a review they turn out not to be allowed to post.
   if (!signedIn || state?.needsLogin) {
     return (
       <p className="text-sm text-olive-600 dark:text-olive-400">
@@ -71,14 +71,13 @@ export function ReviewForm({
 
       <label className="flex flex-col gap-2">
         <span className="sr-only">Your review</span>
-        <textarea
+        <Textarea
           name="body"
           required
           maxLength={2000}
           rows={4}
           defaultValue={existing?.body ?? ''}
           placeholder="How does it look, feel, hold up?"
-          className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
         />
       </label>
 

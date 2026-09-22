@@ -3,10 +3,7 @@ import { markOrderPaid } from './db/queries/orders.ts'
 import { env } from './env.ts'
 import { stripe } from './stripe.ts'
 
-/**
- * The webhook's whole job, kept out of the route so it is reachable by the test runner,
- * which cannot resolve the `@/` alias. The route is left as HTTP plumbing.
- */
+/** Kept out of the route so the test runner can reach it: it cannot resolve the `@/` alias. */
 export async function receiveStripeEvent(rawBody: string, signature: string | null): Promise<Response> {
   if (!stripe || !env.STRIPE_WEBHOOK_SECRET) return new Response('Stripe is not configured', { status: 503 })
   if (!signature) return new Response('Missing signature', { status: 400 })
@@ -22,8 +19,7 @@ export async function receiveStripeEvent(rawBody: string, signature: string | nu
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object
     if (session.payment_status === 'paid') {
-      // Pays, decrements stock and clears the cart in one transaction. Its UPDATE matches
-      // only a pending order, so a redelivery changes nothing.
+      // One transaction, and its UPDATE matches only a pending order, so a redelivery changes nothing.
       const applied = await markOrderPaid(session.id)
       console.log(`stripe ${event.id}: ${applied ? 'order marked paid' : 'already handled, ignored'}`)
     }

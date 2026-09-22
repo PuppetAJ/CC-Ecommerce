@@ -1,14 +1,13 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState, useTransition, type FormEvent } from 'react'
+import { useRef, useTransition, type FormEvent } from 'react'
+import { control } from '@/components/elements/control'
+import { useDebouncedQuery } from '@/components/use-debounced-query'
 
 const LIMIT = 100
 
-/**
- * Filters as you type, like the shop's search box, and stays a plain GET form so every
- * filtered view is a URL that still works with JavaScript off.
- */
+/** The admin's copy of the shop's search box, over whichever selects the list needs. */
 export function SearchFilters({
   action,
   placeholder,
@@ -21,21 +20,13 @@ export function SearchFilters({
   selects?: { name: string; label: string; value?: string; options: { value: string; label: string }[] }[]
 }) {
   const form = useRef<HTMLFormElement>(null)
-  const [value, setValue] = useState(defaults.q ?? '')
-  const [pending, start] = useTransition()
+  const [, start] = useTransition()
   const router = useRouter()
 
-  // A primitive, not the defaults object: a fresh identity each render relooped the effect
-  // on the shop's search box and flooded the server.
-  const applied = defaults.q ?? ''
-
-  useEffect(() => {
-    const wanted = value.trim().slice(0, LIMIT)
-    // Already showing this query, so there is nothing to ask for.
-    if (wanted === applied) return
-
-    // A pause rather than a keystroke, or every letter is a round trip.
-    const timer = setTimeout(() => {
+  const { value, setValue, pending } = useDebouncedQuery({
+    applied: defaults.q ?? '',
+    maxLength: LIMIT,
+    build: (wanted) => {
       // Read at fire time, so whatever the selects hold now rides along with the query.
       const search = new URLSearchParams()
       if (form.current) {
@@ -45,10 +36,9 @@ export function SearchFilters({
       }
       if (wanted) search.set('q', wanted)
       const query = search.toString()
-      start(() => router.replace(query ? `${action}?${query}` : action, { scroll: false }))
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [value, applied, action, router])
+      return query ? `${action}?${query}` : action
+    },
+  })
 
   function apply(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -60,8 +50,7 @@ export function SearchFilters({
     start(() => router.replace(query ? `${action}?${query}` : action, { scroll: false }))
   }
 
-  const field =
-    'rounded-lg border border-olive-300 bg-transparent px-3 py-1.5 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white'
+  const field = `${control} px-3 py-1.5`
 
   return (
     <form ref={form} action={action} onSubmit={apply} className="flex flex-wrap items-center gap-3">

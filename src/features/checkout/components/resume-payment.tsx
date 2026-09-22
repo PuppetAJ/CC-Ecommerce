@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { Button } from '@/components/elements/button'
 import { resumePayment, type CheckoutState } from '../actions'
+import { FormError } from '@/components/elements/form-error'
 
 /** An order left unpaid is otherwise a dead end: the cart it came from is already gone. */
 export function ResumePayment({ orderId, size = 'md' }: { orderId: number; size?: 'md' | 'lg' }) {
@@ -13,11 +14,7 @@ export function ResumePayment({ orderId, size = 'md' }: { orderId: number; size?
       <Button type="submit" size={size} disabled={pending} className="self-start">
         {pending ? 'Opening Stripe…' : 'Complete payment'}
       </Button>
-      {state?.error ? (
-        <p role="alert" className="text-sm text-destructive">
-          {state.error}
-        </p>
-      ) : null}
+      {state?.error ? <FormError>{state.error}</FormError> : null}
     </form>
   )
 }

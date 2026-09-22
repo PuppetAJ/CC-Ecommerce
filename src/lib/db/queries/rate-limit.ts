@@ -1,7 +1,7 @@
 import 'server-only'
 import { pool } from '../pool.ts'
 
-export type RateLimitResult = { allowed: boolean; retryAfter: number }
+type RateLimitResult = { allowed: boolean; retryAfter: number }
 
 // One statement, or concurrent attempts all pass the same stale count.
 export async function consume(key: string, { window, max }: { window: number; max: number }): Promise<RateLimitResult> {

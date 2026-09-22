@@ -3,9 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth/session'
 import { saveReview, voteOnReview } from '@/lib/db/queries/reviews'
+import { limitAttempts, throttled } from '@/lib/rate-limit'
 import { review, reviewVote } from './schemas'
+import { succeeded, type ActionState } from '@/lib/action-state'
 
-export type ReviewState = { error?: string; needsLogin?: boolean; savedAt?: number }
+export type ReviewState = ActionState<{ needsLogin?: boolean }>
 
 export async function submitReview(_previous: ReviewState, formData: FormData): Promise<ReviewState> {
   // Not requireUser: being bounced out of the page you were reading is worse than being asked.
@@ -19,13 +21,15 @@ export async function submitReview(_previous: ReviewState, formData: FormData): 
   })
   if (!parsed.success) return { error: 'Choose a rating and write a few words.' }
 
+  if (!(await limitAttempts('review', 10))) return { error: throttled }
+
   await saveReview(session.user.id, parsed.data.productId, parsed.data.rating, parsed.data.body)
   // The product page is cached, and its reviews are not part of that cache key.
   revalidatePath(`/products/${formData.get('slug')}`)
-  return { savedAt: Date.now() }
+  return succeeded()
 }
 
-export type VoteState = { error?: string; needsLogin?: boolean }
+type VoteState = ActionState<{ needsLogin?: boolean }>
 
 export async function voteOnHelpfulness(
   productId: number,

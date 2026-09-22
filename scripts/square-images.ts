@@ -1,22 +1,38 @@
 import sharp from 'sharp'
 
-/**
- * Some photographs put their subject right across the frame. The shop crops to a square, which
- * takes a third of the width off a 3:2 photograph, so those subjects lose their ends. Sliding
- * the crop around only chooses which third to lose.
- *
- * So the photograph is squared before it is ever cropped. The bands above and below are the
- * photograph's own top and bottom edges, stretched and blurred, so each continues the scene it
- * touches: the wall above, the table below. The earlier version used a blurred copy of the
- * whole picture, which put a ghost of the subject in each band and read as a glitch at tile size.
- */
-const wide = ['carved-catch-all', 'lidded-keepsake-box', 'turned-serving-trays']
+/** A blurred copy ghosted the subject, so the bands stretch the photograph's own top and bottom edges. */
+const banded = ['carved-catch-all', 'turned-serving-trays']
+
+// Where the subject only fills part of a wide frame, a square cut from it beats bands around it.
+const cropped: Record<string, { left: number; top: number; side: number }> = {
+  'lidded-keepsake-box': { left: 130, top: 45, side: 1555 },
+}
 
 // Overlap tucks the seam under the photograph; the strip is thin so it carries color, not shapes.
 const overlap = 40
 const stripShare = 0.1
 
-for (const slug of wide) {
+for (const [slug, { left, top, side }] of Object.entries(cropped)) {
+  const file = `public/images/${slug}.jpg`
+  const { width = 0, height = 0 } = await sharp(file).metadata()
+  if (width === height) {
+    console.log(`${slug}  already square`)
+    continue
+  }
+  if (left + side > width || top + side > height) {
+    throw new Error(`${slug}: a ${side}px square at ${left},${top} does not fit in ${width}×${height}`)
+  }
+
+  const bytes = await sharp(await sharp(file).toBuffer())
+    .extract({ left, top, width: side, height: side })
+    .jpeg({ quality: 82, mozjpeg: true })
+    .toBuffer()
+
+  await sharp(bytes).toFile(file)
+  console.log(`${slug}  ${width}×${height} -> ${side}×${side}  ${(bytes.length / 1024).toFixed(0)}kb`)
+}
+
+for (const slug of banded) {
   const file = `public/images/${slug}.jpg`
   const source = await sharp(file).toBuffer()
   const { width = 0, height = 0 } = await sharp(source).metadata()
@@ -27,9 +43,9 @@ for (const slug of wide) {
 
   const pad = Math.round((width - height) / 2)
   const strip = Math.round(height * stripShare)
-  const band = (top: number, tall: number) =>
+  const band = (bandTop: number, tall: number) =>
     sharp(source)
-      .extract({ left: 0, top, width, height: strip })
+      .extract({ left: 0, top: bandTop, width, height: strip })
       .resize(width, tall, { fit: 'fill' })
       .blur(70)
       .modulate({ saturation: 0.85 })

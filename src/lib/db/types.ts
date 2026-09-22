@@ -4,6 +4,12 @@ export type Category = (typeof categories)[number]
 export const orderStatuses = ['pending', 'paid', 'canceled'] as const
 export type OrderStatus = (typeof orderStatuses)[number]
 
+export const eventNames = ['view', 'product_view', 'add_to_cart', 'checkout_started', 'purchase'] as const
+export type EventName = (typeof eventNames)[number]
+
+export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
+export type ReviewSort = (typeof reviewSorts)[number]
+
 export type Product = {
   id: number
   slug: string

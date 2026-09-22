@@ -1,11 +1,5 @@
-/**
- * Filterable facets, derived by hand from each product's `materials` prose.
- *
- * Not regex-derived on purpose: "Ash top" is a wood and "wood ash glaze" is a glaze made
- * from ash, and no pattern tells those apart. Thirty-seven rows are quicker to read than a
- * parser is to trust.
- */
-export type Facets = { materials: string[]; color: string | null }
+/** Derived by hand: "Ash top" is a wood and "wood ash glaze" is not, and no pattern tells those apart. */
+type Facets = { materials: string[]; color: string | null }
 
 export const productFacets: Record<string, Facets> = {
   // Furniture: the wood is the material and the finish leaves it its own color.

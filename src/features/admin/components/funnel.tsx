@@ -1,9 +1,7 @@
 import type { Funnel as Steps } from '@/lib/db/queries/events'
+import { formatCount } from '@/lib/format'
 
-/**
- * Sessions reaching each step, as bars sharing one scale. Sequential, one hue: this is a
- * magnitude down an ordered path, not five categories.
- */
+/** Bars share one scale and one hue: a magnitude down an ordered path, not five categories. */
 export function Funnel({ steps }: { steps: Steps }) {
   const rows = [
     ['Visited', steps.sessions],
@@ -26,7 +24,7 @@ export function Funnel({ steps }: { steps: Steps }) {
             <div className="flex items-baseline justify-between gap-4 text-sm">
               <span className="text-olive-700 dark:text-olive-300">{label}</span>
               <span className="text-olive-950 tabular-nums dark:text-white">
-                {count.toLocaleString('en-US')}
+                {formatCount(count)}
                 {kept !== null && (
                   <span className="text-xs text-olive-600 dark:text-olive-400">
                     {' · '}

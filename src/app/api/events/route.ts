@@ -3,10 +3,7 @@ import { recordEvent } from '@/lib/db/queries/events'
 import { consume } from '@/lib/db/queries/rate-limit'
 import { trackedEvent } from '@/lib/analytics'
 
-/**
- * A public write endpoint, so it is rate limited per session and answers 204 whatever
- * happens. A visitor's page is never made worse by a measurement failing.
- */
+/** A public write, so it is rate limited per session and answers 204 whatever happens. */
 export async function POST(request: Request): Promise<Response> {
   const parsed = trackedEvent.safeParse(await request.json().catch(() => null))
   if (!parsed.success) return new Response(null, { status: 204 })

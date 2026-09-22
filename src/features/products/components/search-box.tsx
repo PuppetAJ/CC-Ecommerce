@@ -1,42 +1,24 @@
 'use client'
 
 import { SearchIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState, useTransition } from 'react'
+import { control } from '@/components/elements/control'
+import { useDebouncedQuery } from '@/components/use-debounced-query'
 import { searchMaxLength, shopHref, type ShopSearch } from '../schemas'
 
-/**
- * Filters as you type, against a trigram index rather than a warm cache, so the cost does not
- * grow with how many distinct things people search for.
- *
- * It stays a real GET form so search still works with JavaScript off; the typing is the
- * enhancement on top.
- */
+/** Filters as you type against a trigram index, and stays a real GET form without JavaScript. */
 export function SearchBox({ search }: { search: ShopSearch }) {
-  const [value, setValue] = useState(search.q ?? '')
-  const [pending, start] = useTransition()
-  const router = useRouter()
-
-  // Primitives, not the `search` object: a fresh identity each render relooped the effect.
-  const applied = search.q ?? ''
   const withoutQuery = shopHref({ ...search, q: undefined })
-
-  useEffect(() => {
-    // The schema's own bound: what it rejects comes back as no query, which never matches.
-    const wanted = value.trim().slice(0, searchMaxLength)
-    // Already showing this query, so there is nothing to ask for.
-    if (wanted === applied) return
-
-    // A pause rather than a keystroke, or every letter is a round trip.
-    const timer = setTimeout(() => {
+  const { value, setValue, pending } = useDebouncedQuery({
+    applied: search.q ?? '',
+    maxLength: searchMaxLength,
+    build: (wanted) => {
       const [path, existing = ''] = withoutQuery.split('?')
       const params = new URLSearchParams(existing)
       if (wanted) params.set('q', wanted)
       const query = params.toString()
-      start(() => router.replace(query ? `${path}?${query}` : path, { scroll: false }))
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [value, applied, withoutQuery, router])
+      return query ? `${path}?${query}` : path
+    },
+  })
 
   return (
     <form action="/shop" className="relative flex w-full items-center gap-2 sm:w-auto">
@@ -50,7 +32,7 @@ export function SearchBox({ search }: { search: ShopSearch }) {
         maxLength={searchMaxLength}
         placeholder="Search the collection"
         aria-label="Search the collection"
-        className="w-full rounded-lg border border-olive-300 bg-transparent py-1.5 pr-9 pl-3 text-sm text-olive-950 placeholder:text-olive-500 focus:ring-2 focus:ring-ring focus:outline-none sm:w-56 dark:border-olive-800 dark:text-white"
+        className={`${control} w-full py-1.5 pr-9 pl-3 sm:w-56`}
       />
       <SearchIcon
         aria-hidden

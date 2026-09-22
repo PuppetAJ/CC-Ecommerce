@@ -29,10 +29,7 @@ export function track(name: string, productId?: number | null): void {
   fetch('/api/events', { method: 'POST', body, keepalive: true }).catch(() => {})
 }
 
-/**
- * Views are recorded here rather than on the server because a page render can be served from
- * the cache under Cache Components, and a render that never runs cannot count itself.
- */
+/** Recorded on the client because a cached render never runs and so cannot count itself. */
 export function TrackView() {
   const path = usePathname()
   useEffect(() => track('view'), [path])

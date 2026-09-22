@@ -1,4 +1,4 @@
-import { formatPrice } from '@/lib/format'
+import { formatMonthAndDay, formatPrice } from '@/lib/format'
 
 /** Business days only, matching the "3–5 business days" the product pages promise. */
 function arrivalWindow(from = new Date()) {
@@ -11,8 +11,7 @@ function arrivalWindow(from = new Date()) {
     }
     return date
   }
-  const format = (date: Date) => date.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })
-  return `${format(add(3))} – ${format(add(5))}`
+  return `${formatMonthAndDay(add(3))} – ${formatMonthAndDay(add(5))}`
 }
 
 export function OrderBreakdown({ subtotal }: { subtotal: number }) {

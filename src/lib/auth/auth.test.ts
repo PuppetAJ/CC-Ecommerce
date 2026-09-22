@@ -5,8 +5,7 @@ import { pool } from '../db/pool.ts'
 import { resetDatabase } from '../db/test-support.ts'
 import { authOptions } from './options.ts'
 
-// ./index.ts pulls next/headers, which will not resolve here. Building the instance
-// from the shared options is the same thing the seed script does.
+// ./index.ts pulls next/headers, which will not resolve here, so the instance is built from the options.
 const auth = betterAuth(authOptions)
 
 after(() => pool.end())
@@ -42,8 +41,7 @@ describe('authentication', () => {
   })
 
   it('never lets the sign-up body choose its own role', async () => {
-    // input: false on the field is what makes this so; without it a crafted POST to
-    // /api/auth/sign-up/email would hand the caller the admin dashboard.
+    // Without input: false on the field, a crafted sign-up POST would hand the caller the admin dashboard.
     await auth.api.signUpEmail({ body: { ...shopper, role: 'admin' } as never })
 
     const { rows } = await pool.query<{ role: string }>('SELECT role FROM users')

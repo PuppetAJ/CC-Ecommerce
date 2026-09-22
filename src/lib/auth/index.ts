@@ -9,10 +9,7 @@ export const auth = betterAuth({
   ...authOptions,
   plugins: [nextCookies()],
   databaseHooks: {
-    // Every sign-in makes a session, so this is the one place that covers email,
-    // registration and Google alike.
+    // Every sign-in makes a session, so this covers email, registration and Google alike.
     session: { create: { after: async (session) => adoptGuestCart(session.userId) } },
   },
 })
-
-export type Session = typeof auth.$Infer.Session

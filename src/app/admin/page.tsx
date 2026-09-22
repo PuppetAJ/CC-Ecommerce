@@ -10,14 +10,14 @@ import { TrendChart } from '@/features/admin/components/trend-chart'
 import { adminHref, adminSearchSchema, rangeLabels, ranges, windows } from '@/features/admin/schemas'
 import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
-import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/admin'
+import { lowStock, revenueByDay, salesByCategory, topSellers, totalsBetween } from '@/lib/db/queries/dashboard'
 import { funnelBetween, sessionsByDay, visitorsBetween } from '@/lib/db/queries/events'
-import { formatPrice } from '@/lib/format'
+import { formatCount, formatDay, formatPrice } from '@/lib/format'
+import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Admin' }
 
-// Silences instant-navigation validation for the session read; it does not change the status
-// code, which with Cache Components is settled before the check runs.
+// Silences instant-navigation validation for the session read; the status code is settled before the check.
 export const instant = false
 
 export default async function Page({ searchParams }: PageProps<'/admin'>) {
@@ -27,7 +27,7 @@ export default async function Page({ searchParams }: PageProps<'/admin'>) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Overview</h1>
+        <AdminHeading>Overview</AdminHeading>
         <SortSelect
           label="Period"
           value={range}
@@ -62,7 +62,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
   ])
 
   // Spelled out in every row, so nobody has to remember which period is selected.
-  const since = from.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  const since = formatDay(from)
   const conversion = funnel.sessions > 0 ? (funnel.purchases / funnel.sessions) * 100 : 0
   const wasConversion = wasFunnel.sessions > 0 ? (wasFunnel.purchases / wasFunnel.sessions) * 100 : 0
 
@@ -113,8 +113,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
         {visitors.known === 0 ? (
           <Empty>No signed-in shopper looked at anything in this period.</Empty>
         ) : (
-          // Every row carries its own denominator, so no percentage can be read against the
-          // wrong total. This is the one panel counting people rather than visits.
+          // Every row carries its own denominator, and this is the one panel counting people, not visits.
           <ul className="flex flex-col gap-4">
             {[
               {
@@ -135,11 +134,11 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
             ].map(({ count, of, says }) => (
               <li key={says} className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                 <span className="font-display text-xl font-medium text-olive-950 tabular-nums dark:text-white">
-                  {count.toLocaleString('en-US')}
+                  {formatCount(count)}
                   {of !== null && (
                     <span className="text-base font-normal text-olive-600 dark:text-olive-400">
                       {' of '}
-                      {of.toLocaleString('en-US')}
+                      {formatCount(of)}
                     </span>
                   )}
                 </span>

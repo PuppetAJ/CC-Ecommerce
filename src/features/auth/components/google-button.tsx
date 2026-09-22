@@ -4,7 +4,7 @@ import { useActionState } from 'react'
 import { GoogleIcon } from '@/components/icons/google-icon'
 import { SoftButton } from '@/components/elements/button'
 import { signInWithGoogle, type AuthState } from '../actions'
-import { FormError } from './field'
+import { FormError } from '@/components/elements/form-error'
 
 export function GoogleButton({ next, label }: { next: string; label: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(signInWithGoogle, undefined)

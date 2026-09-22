@@ -26,9 +26,7 @@ export default async function Page({ searchParams }: PageProps<'/checkout/succes
   )
 }
 
-// Reads only. Payment is granted by the webhook, so arriving here with somebody else's
-// session id shows nothing, and arriving with your own before Stripe has called still
-// shows the order as pending rather than inventing a paid one.
+// Reads only: payment is granted by the webhook, so this page never invents a paid order.
 async function Confirmation({ sessionId }: { sessionId?: string }) {
   const user = await requireUser()
   const order = sessionId ? await getOrderByStripeSession(sessionId, user.id) : null

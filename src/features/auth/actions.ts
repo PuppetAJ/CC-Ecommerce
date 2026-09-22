@@ -5,23 +5,23 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { demoAccounts } from '@/lib/auth/demo'
-import { limitAttempts } from '@/lib/rate-limit'
+import { limitAttempts, throttled } from '@/lib/rate-limit'
 import { credentials, registration, safeNext } from './schemas'
+import type { ActionState } from '@/lib/action-state'
 
-export type AuthState = { error: string } | undefined
+export type AuthState = ActionState
 
-// Better Auth answers 429 from its own rate limiter, and a wrong password and an
-// unknown email both answer 401 so the form cannot be used to enumerate accounts.
+// A wrong password and an unknown email both answer 401, so the form cannot enumerate accounts.
 function messageFor(error: unknown, fallback: string): string {
   if (error instanceof APIError) {
-    if (error.status === 'TOO_MANY_REQUESTS') return 'Too many attempts. Wait a minute and try again.'
+    if (error.status === 'TOO_MANY_REQUESTS') return throttled
     if (error.body?.code === 'USER_ALREADY_EXISTS') return 'An account already uses that email address.'
   }
   return fallback
 }
 
 export async function signIn(_previous: AuthState, formData: FormData): Promise<AuthState> {
-  if (!(await limitAttempts('sign-in'))) return { error: 'Too many attempts. Wait a minute and try again.' }
+  if (!(await limitAttempts('sign-in'))) return { error: throttled }
 
   const parsed = credentials.safeParse({ email: formData.get('email'), password: formData.get('password') })
   if (!parsed.success) return { error: 'Enter an email address and a password of at least 10 characters.' }
@@ -36,7 +36,7 @@ export async function signIn(_previous: AuthState, formData: FormData): Promise<
 }
 
 export async function register(_previous: AuthState, formData: FormData): Promise<AuthState> {
-  if (!(await limitAttempts('register'))) return { error: 'Too many attempts. Wait a minute and try again.' }
+  if (!(await limitAttempts('register'))) return { error: throttled }
 
   const parsed = registration.safeParse({
     name: formData.get('name'),
@@ -69,9 +69,8 @@ export async function signInWithGoogle(_previous: AuthState, formData: FormData)
 }
 
 export async function signInAsDemo(_previous: AuthState, formData: FormData): Promise<AuthState> {
-  // Looser than sign-in: the demo password is printed on the page, so this is not a
-  // guessing target and the limit only exists to blunt abuse.
-  if (!(await limitAttempts('demo', 15))) return { error: 'Too many attempts. Wait a minute and try again.' }
+  // Looser than sign-in: the demo password is printed on the page, so this is not a guessing target.
+  if (!(await limitAttempts('demo', 15))) return { error: throttled }
 
   const account = formData.get('role') === 'admin' ? demoAccounts.admin : demoAccounts.customer
 

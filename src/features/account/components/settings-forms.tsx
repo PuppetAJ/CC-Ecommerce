@@ -8,10 +8,10 @@ import { Label } from '@/components/ui/label'
 import { deleteAccount, updateName, type AccountState } from '../actions'
 
 export function NameForm({ name, readOnly }: { name: string; readOnly: boolean }) {
-  const [state, action, pending] = useActionState<AccountState, FormData>(updateName, {})
+  const [state, action, pending] = useActionState<AccountState, FormData>(updateName, undefined)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Name updated')
+    if (state?.ok) toast.success('Name updated')
     if (state?.error) toast.error(state.error)
   }, [state])
 
@@ -30,7 +30,7 @@ export function NameForm({ name, readOnly }: { name: string; readOnly: boolean }
 }
 
 export function DeleteForm({ email, readOnly }: { email: string; readOnly: boolean }) {
-  const [state, action, pending] = useActionState<AccountState, FormData>(deleteAccount, {})
+  const [state, action, pending] = useActionState<AccountState, FormData>(deleteAccount, undefined)
   const [confirm, setConfirm] = useState('')
 
   useEffect(() => {

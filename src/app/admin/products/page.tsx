@@ -1,26 +1,26 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { Cell, IndexTable, IndexTableSkeleton } from '@/features/admin/components/index-table'
+import { Cell, IndexTable, IndexTableSkeleton, Row } from '@/features/admin/components/index-table'
 import { Pagination } from '@/features/admin/components/pagination'
 import { SearchFilters } from '@/features/admin/components/search-filters'
-import { pageHref, pageNumber } from '@/features/admin/schemas'
+import { adminListSearch, pageHref } from '@/features/admin/schemas'
 import { categoryLabels } from '@/features/products/schemas'
 import { requireAdmin } from '@/lib/auth/session'
-import { listAdminProducts, perPage } from '@/lib/db/queries/admin'
+import { listAdminProducts } from '@/lib/db/queries/admin'
+import { perPage } from '@/lib/db/queries/paging'
 import { categories } from '@/lib/db/types'
 import { formatPrice } from '@/lib/format'
 import { z } from 'zod'
+import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Products · Admin' }
 
 export const instant = false
 
-const search = z.object({
-  q: z.string().trim().min(1).max(100).optional().catch(undefined),
+const search = adminListSearch.extend({
   category: z.enum(categories).optional().catch(undefined),
   stock: z.enum(['low', 'out']).optional().catch(undefined),
-  page: pageNumber,
 })
 
 export default async function Page({ searchParams }: PageProps<'/admin/products'>) {
@@ -29,7 +29,7 @@ export default async function Page({ searchParams }: PageProps<'/admin/products'
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-medium text-olive-950 dark:text-white">Products</h1>
+      <AdminHeading>Products</AdminHeading>
       <SearchFilters
         action="/admin/products"
         placeholder="Name or slug"
@@ -66,7 +66,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
     <>
       <IndexTable columns={['Product', 'Price', 'Stock', 'Featured', '']} empty="No products match that.">
         {products.map((product) => (
-          <tr key={product.id} className="hover:bg-olive-950/[0.03] dark:hover:bg-white/[0.03]">
+          <Row key={product.id}>
             <Cell>
               <div className="flex items-center gap-3">
                 <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-tile">
@@ -119,7 +119,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
                 Edit
               </Link>
             </Cell>
-          </tr>
+          </Row>
         ))}
       </IndexTable>
       <Pagination

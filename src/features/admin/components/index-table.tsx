@@ -1,13 +1,9 @@
 import type { ReactNode } from 'react'
 import { Scroller } from '@/components/elements/scroller'
-import { perPage } from '@/lib/db/queries/admin'
+import { perPage } from '@/lib/db/queries/paging'
 import { Skeleton } from '@/components/ui/skeleton'
 
-/**
- * Shopify's resource index, in the shape their own guidance describes: one column, so the
- * hierarchy runs top to bottom and the row keeps its horizontal space for data. Each row
- * has one primary thing, one secondary, and a kicker that sits above both.
- */
+/** Shopify's resource index: one column, so the row keeps its horizontal space for data. */
 export function IndexTable({
   columns,
   children,
@@ -48,6 +44,10 @@ export function IndexTable({
       </table>
     </Scroller>
   )
+}
+
+export function Row({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <tr className={`hover:bg-olive-950/[0.03] dark:hover:bg-white/[0.03] ${className}`}>{children}</tr>
 }
 
 export function Cell({

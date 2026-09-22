@@ -1,6 +1,5 @@
 import { clsx } from 'clsx/lite'
 import type { ComponentProps, ReactNode } from 'react'
-import { Section } from '../elements/section'
 
 export function Feature({
   icon,
@@ -21,19 +20,5 @@ export function Feature({
       </div>
       <div className="flex flex-col gap-4 text-olive-700 dark:text-olive-400">{subheadline}</div>
     </div>
-  )
-}
-
-export function FeaturesThreeColumn({
-  features,
-  ...props
-}: {
-  demo?: ReactNode
-  features: ReactNode
-} & Omit<ComponentProps<typeof Section>, 'children'>) {
-  return (
-    <Section {...props}>
-      <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">{features}</div>
-    </Section>
   )
 }

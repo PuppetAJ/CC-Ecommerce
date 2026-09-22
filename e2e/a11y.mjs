@@ -33,12 +33,10 @@ async function audit(page, label, path) {
   } else {
     await page.goto(BASE + path, { waitUntil: 'networkidle' })
   }
-  // Contrast is measured on the resting state. Caught mid-fade, a tile is half transparent and
-  // every color on it reads as failing, which says nothing about the design.
+  // Contrast is measured on the resting state; caught mid-fade every color on a tile reads as failing.
   await page
     .waitForFunction(
-      // Nothing part way: a tile is either revealed or still waiting to be scrolled to, and axe
-      // reads a fully transparent one as invisible. Which tiles those are is Motion's business.
+      // axe reads a fully transparent tile as invisible, so nothing may be caught part way.
       () =>
         [...document.querySelectorAll('[data-stagger]')].every((n) => {
           const shown = Number(getComputedStyle(n).opacity)
@@ -91,8 +89,7 @@ for (const colorScheme of ['light', 'dark']) {
 
   await context.close()
 
-  // The admin is a different shell again, and it is where the tables live. Its own context,
-  // because the signed-in shopper above is redirected away from the login page.
+  // Its own context: the signed-in shopper above is redirected away from the login page.
   const adminContext = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme })
   const adminPage = await adminContext.newPage()
   adminPage.setDefaultTimeout(20_000)

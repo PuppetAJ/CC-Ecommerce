@@ -5,15 +5,15 @@ import { toast } from 'sonner'
 import { Button } from '@/components/elements/button'
 import type { Product } from '@/lib/db/types'
 import { saveProduct, type AdminState } from '../actions'
+import { control } from '@/components/elements/control'
 
-const field =
-  'w-full rounded-lg border border-olive-300 bg-transparent px-3 py-2 text-sm text-olive-950 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white'
+const field = `${control} w-full px-3 py-2`
 
 export function ProductForm({ product }: { product: Product }) {
   const [state, action, pending] = useActionState<AdminState, FormData>(saveProduct, undefined)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Saved to the storefront')
+    if (state?.ok) toast.success('Saved to the storefront')
     if (state?.error) toast.error(state.error)
   }, [state])
 

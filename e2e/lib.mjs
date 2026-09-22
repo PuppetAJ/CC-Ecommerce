@@ -3,6 +3,9 @@ import { chromium } from 'playwright'
 
 export const BASE = process.env.E2E_BASE_URL ?? 'http://localhost:3000'
 
+// Printed because the default is the dev server, and a suite run against the wrong one fails oddly.
+console.log(`against ${BASE}`)
+
 // Matches scripts/demo-users.ts; the suite runs against a seeded database.
 export const demo = {
   shopper: { email: 'shopper@wicken.store', password: 'demo-password', name: 'Demo Shopper' },
@@ -58,6 +61,49 @@ export function reporter() {
   }
 
   return { check, section, report, results }
+}
+
+/** Waits for the layout to stop moving, which is what a fixed pause after a goto was standing in for. */
+export async function laidOut(page) {
+  // A skeleton on screen means a Suspense boundary is still streaming its real content in.
+  await page
+    .waitForFunction(() => document.querySelectorAll('[data-slot="skeleton"]').length === 0, null, { timeout: 20_000 })
+    .catch(() => {})
+  await page.evaluate(() => document.fonts.ready)
+  // Hydration can still move things, so this waits for the width to agree with itself twice over.
+  await page.waitForFunction(
+    () =>
+      new Promise((resolve) => {
+        const width = () => document.documentElement.scrollWidth
+        const first = width()
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve(width() === first))),
+        )
+      }),
+    null,
+    { timeout: 15_000 },
+  )
+}
+
+/** Opens a page and waits for it to settle, rather than guessing how long that takes. */
+export async function open(page, path) {
+  // Admin pages prefetch every link they carry, so networkidle never settles on them.
+  const admin = path.startsWith('/admin')
+  await page.goto(`${BASE}${path}`, { waitUntil: admin ? 'domcontentloaded' : 'networkidle' })
+  if (admin) await page.locator('h1').first().waitFor()
+  await laidOut(page)
+}
+
+/** A Server Action is a POST to the page itself, and waiting for that beats waiting for the toast it raises. */
+export async function submitted(page, run) {
+  const answered = page.waitForResponse((response) => response.request().method() === 'POST', { timeout: 20_000 })
+  await run()
+  await answered
+}
+
+/** Waits for a message to appear anywhere on the page: a toast, an inline error, a confirmation. */
+export async function waitForText(page, pattern, timeout = 15_000) {
+  await page.getByText(pattern).first().waitFor({ timeout })
 }
 
 /** The stamp keeps a rerun from colliding with the account the last one made. */

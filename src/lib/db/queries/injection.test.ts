@@ -8,8 +8,7 @@ import { listAdminProducts, listAllReviews, listCustomers } from './admin.ts'
 after(() => pool.end())
 beforeEach(resetDatabase)
 
-// The payloads a scanner would send. They are only interesting if the catalog survives them
-// and still answers honestly, so each one checks both.
+// Each payload checks both that the catalog survives it and that it still answers honestly.
 const payloads = [
   "'; DROP TABLE products; --",
   "' OR '1'='1",
@@ -55,11 +54,7 @@ describe('hostile input reaches the database as a value, never as SQL', () => {
     assert.equal((await listProducts({ search: '_' })).length, 0)
   })
 
-  /**
-   * The one place SQL text is assembled rather than bound is the sort clause. The attacker can
-   * only ever supply the key; every value is a literal in a frozen map. This asserts the map
-   * cannot be walked off, including through the prototype chain.
-   */
+  /** The sort clause is the only assembled SQL, so its frozen map must not be walkable by prototype. */
   it('refuses a sort it does not recognize instead of splicing it in', async () => {
     await insertProduct({ name: 'Ridge Mug' })
 

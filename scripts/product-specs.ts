@@ -1,5 +1,4 @@
-// Generated demo specifications. Dimensions and materials come from the product itself;
-// the rest is plausible detail for a fictional studio, so treat it as copy, not fact.
+// Dimensions and materials come from the product; the rest is invented copy, not fact.
 
 export const productSpecs: Record<string, Record<string, Record<string, string>>> = {
   'ridge-breakfast-mug': {

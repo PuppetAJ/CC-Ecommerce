@@ -7,16 +7,13 @@ import { Section } from '@/components/elements/section'
 import { Subheading } from '@/components/elements/subheading'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Stars } from '@/features/reviews/components/stars'
-import { getTestimonials } from '@/features/reviews/data'
+import { listTestimonials } from '@/lib/db/queries/reviews'
 
 const card = 'w-[min(20rem,85vw)] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
 
-/**
- * Quotes pulled from the reviews table rather than written for the landing page, so every one
- * of them is findable on the product it belongs to.
- */
+/** Quotes come from the reviews table, so each one is findable on the product it belongs to. */
 export async function Voices() {
-  const quotes = await getTestimonials(6)
+  const quotes = await listTestimonials(6)
   if (quotes.length < 3) return null
 
   return (

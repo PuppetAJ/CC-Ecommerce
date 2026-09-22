@@ -1,9 +1,4 @@
-/**
- * The mark beside the wordmark. A rowan, which is what a wicken tree is: three lobes that read
- * as a canopy at a glance and as a berry cluster on a second look.
- *
- * Decorative only. Every place it appears already says "Wicken" in text beside it.
- */
+/** A rowan, which is what a wicken tree is. Decorative only: every use says "Wicken" in text beside it. */
 export function Logo({ className = 'size-6' }: { className?: string }) {
   return (
     <svg

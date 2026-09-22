@@ -3,10 +3,11 @@
 import { z } from 'zod'
 import { getSession } from '@/lib/auth/session'
 import { toggleFavorite } from '@/lib/db/queries/favorites'
+import type { ActionState } from '@/lib/action-state'
 
 const target = z.object({ productId: z.coerce.number().int().positive() })
 
-export type FavoriteState = { favorited?: boolean; error?: string; needsLogin?: boolean }
+type FavoriteState = ActionState<{ favorited?: boolean; needsLogin?: boolean }>
 
 export async function toggle(productId: number): Promise<FavoriteState> {
   // Not requireUser: a signed-out visitor gets an invitation, not a redirect out of the grid.

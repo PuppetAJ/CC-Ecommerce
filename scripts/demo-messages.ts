@@ -1,8 +1,7 @@
 import { pool } from '../src/lib/db/pool.ts'
 import { people } from './demo-people.ts'
 
-// The kind of thing a small studio actually gets: a repair, a commission, a delivery question
-// and one person who wants to visit. Two are already dealt with, so the admin list has both states.
+// Two are already dealt with, so the admin list has both states.
 const notes: [number, string, boolean][] = [
   [
     0,

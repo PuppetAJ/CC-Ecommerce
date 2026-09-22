@@ -1,8 +1,6 @@
 import 'server-only'
 import { pool } from '../pool.ts'
-
-export const eventNames = ['view', 'product_view', 'add_to_cart', 'checkout_started', 'purchase'] as const
-export type EventName = (typeof eventNames)[number]
+import type { EventName } from '../types.ts'
 
 export async function recordEvent(event: {
   name: EventName
@@ -20,7 +18,7 @@ export async function recordEvent(event: {
   ])
 }
 
-export type Visitors = {
+type Visitors = {
   /** Accounts that looked at anything in the window. */
   known: number
   /** Of those, the ones that had also looked before it. */
@@ -29,10 +27,7 @@ export type Visitors = {
   bought: number
 }
 
-/**
- * The visitor-level view, which sessions alone cannot give. Only signed-in accounts appear
- * here: everybody else is counted as sessions, because there is nothing to join them on.
- */
+/** Only signed-in accounts appear: there is nothing to join anybody else on, so they stay sessions. */
 export async function visitorsBetween(from: Date, to: Date): Promise<Visitors> {
   const { rows } = await pool.query<{ known: string; returning: string; bought: string }>(
     `WITH seen AS (
@@ -61,10 +56,7 @@ export type Funnel = {
   purchases: number
 }
 
-/**
- * Counts distinct sessions at each step, not raw events, because a shopper who opens six
- * product pages is still one person deciding.
- */
+/** Distinct sessions, not raw events: six product pages is still one person deciding. */
 export async function funnelBetween(from: Date, to: Date): Promise<Funnel> {
   const { rows } = await pool.query<Record<keyof Funnel, string>>(
     `SELECT count(DISTINCT session) FILTER (WHERE name = 'view') AS sessions,
@@ -85,7 +77,7 @@ export async function funnelBetween(from: Date, to: Date): Promise<Funnel> {
   }
 }
 
-export type SessionPoint = { day: string; sessions: number }
+type SessionPoint = { day: string; sessions: number }
 
 export async function sessionsByDay(from: Date, to: Date): Promise<SessionPoint[]> {
   const { rows } = await pool.query<{ day: string; sessions: string }>(
@@ -97,16 +89,4 @@ export async function sessionsByDay(from: Date, to: Date): Promise<SessionPoint[
     [from, to],
   )
   return rows.map((row) => ({ day: row.day, sessions: Number(row.sessions) }))
-}
-
-export type PopularPage = { path: string; views: number }
-
-export async function popularPages(from: Date, to: Date, limit = 6): Promise<PopularPage[]> {
-  const { rows } = await pool.query<{ path: string; views: string }>(
-    `SELECT path, count(*) AS views FROM events
-      WHERE name = 'view' AND created_at >= $1 AND created_at < $2
-      GROUP BY path ORDER BY count(*) DESC LIMIT $3`,
-    [from, to, limit],
-  )
-  return rows.map((row) => ({ path: row.path, views: Number(row.views) }))
 }

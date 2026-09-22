@@ -8,8 +8,9 @@ import { auth } from '@/lib/auth'
 import { demoAccounts } from '@/lib/auth/demo'
 import { getSession } from '@/lib/auth/session'
 import { deleteUser, renameUser } from '@/lib/db/queries/account'
+import { succeeded, type ActionState } from '@/lib/action-state'
 
-export type AccountState = { error?: string; savedAt?: number }
+export type AccountState = ActionState
 
 const displayName = z.object({ name: z.string().trim().min(1).max(80) })
 
@@ -28,7 +29,7 @@ export async function updateName(_previous: AccountState, formData: FormData): P
 
   await renameUser(session.user.id, parsed.data.name)
   revalidatePath('/', 'layout')
-  return { savedAt: Date.now() }
+  return succeeded()
 }
 
 export async function deleteAccount(_previous: AccountState, formData: FormData): Promise<AccountState> {

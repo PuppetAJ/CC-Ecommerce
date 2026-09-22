@@ -6,7 +6,7 @@ const styles: Record<Order['status'], string> = {
   canceled: 'bg-olive-950/5 text-olive-600 dark:bg-white/5 dark:text-olive-400',
 }
 
-const labels: Record<Order['status'], string> = {
+export const orderStatusLabels: Record<Order['status'], string> = {
   paid: 'Paid',
   pending: 'Awaiting payment',
   canceled: 'Canceled',
@@ -15,7 +15,7 @@ const labels: Record<Order['status'], string> = {
 export function OrderStatus({ status }: { status: Order['status'] }) {
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${styles[status]}`}>
-      {labels[status]}
+      {orderStatusLabels[status]}
     </span>
   )
 }

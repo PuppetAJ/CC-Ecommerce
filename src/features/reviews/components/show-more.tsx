@@ -2,13 +2,7 @@
 
 import { Children, useState, type ReactNode } from 'react'
 
-/**
- * Caps a long list and reveals the rest in place. The children arrive already rendered by the
- * server, so dates keep their server formatting and nothing is fetched to expand.
- *
- * At a few thousand reviews this would need real pagination; at a few dozen, sending them all
- * and hiding the tail is cheaper than a second round trip.
- */
+/** Children arrive server-rendered, so expanding fetches nothing; thousands would need real paging. */
 export function ShowMore({ initial, noun, children }: { initial: number; noun: string; children: ReactNode }) {
   const items = Children.toArray(children)
   const [all, setAll] = useState(false)

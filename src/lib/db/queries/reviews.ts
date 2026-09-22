@@ -1,5 +1,6 @@
 import 'server-only'
 import { pool } from '../pool.ts'
+import type { ReviewSort } from '../types.ts'
 
 export type Review = {
   user_id: string
@@ -13,10 +14,7 @@ export type Review = {
   own_vote: boolean | null
 }
 
-export type ReviewSummary = { count: number; average: number }
-
-export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
-export type ReviewSort = (typeof reviewSorts)[number]
+type ReviewSummary = { count: number; average: number }
 
 const net = 'count(*) FILTER (WHERE v.helpful) - count(*) FILTER (WHERE NOT v.helpful)'
 
@@ -116,7 +114,7 @@ export async function summarizeMany(productIds: number[]): Promise<Map<number, R
   return new Map(rows.map((row) => [row.product_id, { count: Number(row.count), average: Number(row.average) }]))
 }
 
-export type Testimonial = {
+type Testimonial = {
   author: string
   body: string
   rating: number
@@ -126,9 +124,7 @@ export type Testimonial = {
 }
 
 export async function listTestimonials(limit = 3): Promise<Testimonial[]> {
-  // Seeded reviews rather than invented quotes, so what the landing page shows is the same
-  // writing a shopper finds on the product itself. Distinct on the body, because the demo
-  // reviewers share a pool of sentences and the band would otherwise print one of them twice.
+  // Distinct on the body: the demo reviewers share a pool of sentences, so the band would repeat one.
   const { rows } = await pool.query<Testimonial>(
     `SELECT * FROM (
        SELECT DISTINCT ON (r.body) u.name AS author, r.body, r.rating,
