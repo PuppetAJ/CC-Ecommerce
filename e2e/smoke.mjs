@@ -15,11 +15,11 @@ import {
 const { browser, page, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
 
-section('Catalogue')
+section('Catalog')
 {
   await page.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
   const all = await page.locator('a[href^="/products/"]').count()
-  check('the shop lists the seeded catalogue', all >= 30, `${all} tiles`)
+  check('the shop lists the seeded catalog', all >= 30, `${all} tiles`)
 
   await page.goto(`${BASE}/shop?category=vases`, { waitUntil: 'networkidle' })
   const vases = await page.locator('a[href^="/products/"]').count()
@@ -36,6 +36,84 @@ section('Catalogue')
   await page.goto(`${BASE}/shop?category=bogus&sort=bogus`, { waitUntil: 'networkidle' })
   const bogus = await page.locator('a[href^="/products/"]').count()
   check('nonsense search params fall back rather than throwing', bogus >= 30, `${bogus} tiles`)
+}
+
+section('The landing page sells something')
+{
+  const { context, page: home } = await freshPage(browser)
+  await home.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  const text = await visibleText(home)
+
+  const ways = await home.getByRole('main').locator('a[href^="/shop?category="]').count()
+  check('every category is a way in', ways === 6, `${ways} categories`)
+
+  const featured = await home.locator('main article').count()
+  check('and four pieces are offered by name', featured === 4, `${featured} tiles`)
+  check('with a way through to the rest', /See the whole collection/.test(text))
+  check('somebody is shown making something', (await home.locator('img[src*="editorial-throwing"]').count()) > 0)
+
+  // The band quotes the reviews table rather than invented copy, so the quote has to be
+  // findable on the product it came from.
+  const quote = (await home.locator('blockquote').first().innerText()).replaceAll(/[\u201c\u201d"]/g, '').trim()
+  const onward = await home.locator('figcaption a').first().getAttribute('href')
+  check('the quotes name the piece they are about', Boolean(onward?.startsWith('/products/')), String(onward))
+  const product = await (await fetch(`${BASE}${onward}`)).text()
+  check('and are real reviews, still there on the product', product.includes(quote.slice(0, 40)), quote.slice(0, 40))
+
+  const asks = await home.getByRole('button', { name: 'Subscribe' }).count()
+  check('the page asks for an email once, not twice', asks === 1, `${asks} signup forms`)
+  await home.setViewportSize({ width: 320, height: 900 })
+  await home.waitForTimeout(200)
+  const flush = await home.locator('footer').evaluate((f) => getComputedStyle(f).paddingTop)
+  check('and on a phone the closing card meets the footer', flush === '0px', flush)
+  await context.close()
+}
+
+section('About earns its page')
+{
+  await page.goto(`${BASE}/about`, { waitUntil: 'networkidle' })
+  const photographs = await page.locator('main img').count()
+  check('the editorial photographs are finally used', photographs >= 4, `${photographs} photographs`)
+
+  const text = await visibleText(page)
+  check('the making is explained rather than asserted', /Handling clay while the light is good/.test(text))
+  check('and the landing page promise is kept', /Maren/.test(text))
+}
+
+section('The help page')
+{
+  const { context, page: help } = await freshPage(browser)
+  await help.goto(`${BASE}/faq`, { waitUntil: 'networkidle' })
+  check('the old FAQ route redirects rather than 404s', help.url().endsWith('/help'), help.url())
+
+  const text = await visibleText(help)
+  check(
+    'it covers all three of the footer labels',
+    /Shipping/.test(text) && /Returns/.test(text) && /Care and repair/.test(text),
+  )
+  const questions = await help.locator('[data-slot="accordion-trigger"]').count()
+  check('with a page of questions rather than a stub', questions >= 12, `${questions} questions`)
+
+  for (const id of ['shipping', 'returns', 'care', 'contact']) {
+    check(`the footer's #${id} link lands somewhere`, (await help.locator(`#${id}`).count()) === 1)
+  }
+
+  // A form that discarded what people typed would be worse than printing an address, so the
+  // message has to survive as far as the admin.
+  const said = `A question from the browser suite at ${Date.now()}`
+  await help.fill('#name', 'Suite Sender')
+  await help.fill('#email', 'sender@wicken.test')
+  await help.fill('#body', said)
+  await help.getByRole('button', { name: 'Send', exact: true }).click()
+  await help.waitForTimeout(2000)
+  check('the form says it arrived', /Thank you for reaching out/i.test(await visibleText(help)))
+  await context.close()
+
+  const { context: theirs, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  await admin.goto(`${BASE}/admin/messages`, { waitUntil: 'networkidle' })
+  check('and it is waiting in the admin', (await visibleText(admin)).includes(said))
+  await theirs.close()
 }
 
 section('Product page')
@@ -154,7 +232,7 @@ section('Signing in and out')
   await context.close()
 }
 
-section('Authorisation')
+section('Authorization')
 {
   const { context: shopperContext, page: shopper } = await freshPage(browser)
   await signInAsDemo(shopper, 'shopper')
@@ -238,9 +316,9 @@ section('Admin lists')
   const allOrders = await rows()
   check('orders are listed', allOrders > 0, `${allOrders} orders`)
 
-  await openAdmin(admin, `/admin/orders?status=cancelled`)
-  const cancelled = await rows()
-  check('and can be filtered by status', cancelled > 0 && cancelled < allOrders, `${cancelled} of ${allOrders}`)
+  await openAdmin(admin, `/admin/orders?status=canceled`)
+  const canceled = await rows()
+  check('and can be filtered by status', canceled > 0 && canceled < allOrders, `${canceled} of ${allOrders}`)
   check('showing only that status', !/Awaiting payment|\bPaid\b/.test(await admin.locator('tbody').innerText()))
 
   await openAdmin(admin, `/admin/products?stock=out`)
@@ -416,7 +494,7 @@ section('A Server Action is not protected by its button')
     async ([url, id, target]) => {
       const body = new FormData()
       body.set('id', target)
-      body.set('status', 'cancelled')
+      body.set('status', 'canceled')
       const response = await fetch(url, { method: 'POST', headers: { 'Next-Action': id }, body })
       return { status: response.status, body: (await response.text()).slice(0, 200) }
     },
@@ -424,7 +502,7 @@ section('A Server Action is not protected by its button')
   )
   // Not 404: a 404 would mean the id was wrong and nothing was actually tested.
   check('the replayed call reaches the action', replay.status !== 404, `responded ${replay.status}`)
-  check('but a shopper is refused', !/"status":"cancelled"|savedAt/.test(replay.body), replay.body.slice(0, 80))
+  check('but a shopper is refused', !/"status":"canceled"|savedAt/.test(replay.body), replay.body.slice(0, 80))
   await shopperContext.close()
 
   // And the order is still what it was, which is the part that actually matters.
@@ -458,6 +536,7 @@ section('Nothing scrolls sideways on a phone')
     ['the shop', '/shop'],
     ['a filtered shop', '/shop?material=oak&price=over-200'],
     ['a product', '/products/spouted-pendant'],
+    ['the help page', '/help'],
     ['the cart', '/cart'],
   ]) {
     await fits(label, path)
@@ -507,7 +586,13 @@ section('Products arrive one after another')
   await shop.waitForTimeout(2500)
 
   const began = await shop.evaluate(() => [...window.__began.entries()].slice(0, 8).map(([, at]) => at))
-  check('they do not all appear at once', began.length > 4 && began.at(-1) - began[0] > 200, began.join(' '))
+  // At least a row, at least forty milliseconds apart on average: the step is sixty, and a CI
+  // runner with fewer tiles in view is still expected to space the ones it has.
+  check(
+    'they do not all appear at once',
+    began.length >= 4 && began.at(-1) - began[0] >= (began.length - 1) * 40,
+    began.join(' '),
+  )
   // One after another, not a column at a time: the fifth tile starts behind the fourth rather
   // than alongside the first, which is what a delay counted by column would do.
   check(
@@ -535,7 +620,7 @@ section('Products arrive one after another')
   // The rest wait to be scrolled to, which is what makes the reveal visible down a long page.
   // Scrolled the way a person does: jumping straight to the end never intersects the middle.
   for (let step = 0; step < 24; step++) {
-    await shop.evaluate(() => window.scrollBy(0, window.innerHeight * 0.9))
+    await shop.evaluate(() => window.scrollBy({ top: window.innerHeight * 0.9, behavior: 'instant' }))
     await shop.waitForTimeout(160)
   }
   await shop.waitForTimeout(1500)
@@ -671,6 +756,58 @@ section('A phone at its narrowest')
   check('where there is room the rail is simply there', await roomy.locator('[data-inline-filters="rail"]').isVisible())
   check('and nothing is hidden behind a button', await roomy.getByRole('button', { name: /^Filters/ }).isHidden())
   await wide.close()
+}
+
+section('The menu knows when its button has gone')
+{
+  // An iPad turning to landscape crosses lg, and used to be left with the sheet open over the desktop layout.
+  const context = await browser.newContext({ viewport: { width: 800, height: 900 } })
+  const tablet = await context.newPage()
+  await tablet.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  await tablet.getByRole('button', { name: 'Open menu' }).click()
+  await tablet.waitForTimeout(500)
+  const sheet = tablet.locator('[data-slot="sheet-content"]')
+  check('the menu opens on a tablet', await sheet.isVisible())
+
+  await tablet.setViewportSize({ width: 1200, height: 900 })
+  await tablet.waitForTimeout(600)
+  check('and closes itself when the width leaves it no button', await sheet.isHidden())
+
+  await tablet.setViewportSize({ width: 800, height: 900 })
+  await tablet.waitForTimeout(600)
+  check('without reopening when the width comes back', await sheet.isHidden())
+  await context.close()
+}
+
+section('The newsletter keeps what it is given')
+{
+  const { context, page: visitor } = await freshPage(browser)
+  await visitor.goto(`${BASE}/about`, { waitUntil: 'networkidle' })
+  const footer = visitor.getByRole('contentinfo')
+  const email = `reader${Date.now()}@wicken.test`
+  await footer.getByLabel('Email').fill(email)
+  await footer.getByRole('button', { name: 'Subscribe' }).click()
+  await visitor.waitForTimeout(1500)
+  check('signing up says thanks', /write when the next batch/i.test(await footer.innerText()))
+
+  await visitor.goto(`${BASE}/help`, { waitUntil: 'networkidle' })
+  const again = visitor.getByRole('contentinfo')
+  await again.getByLabel('Email').fill(email.toUpperCase())
+  await again.getByRole('button', { name: 'Subscribe' }).click()
+  await visitor.waitForTimeout(1500)
+  check('and the same address, however it is typed, is one row', /already on the list/i.test(await again.innerText()))
+  await context.close()
+
+  const { context: theirs, page: admin } = await freshPage(browser)
+  await signInAsDemo(admin, 'admin')
+  await admin.goto(`${BASE}/admin/customers`, { waitUntil: 'networkidle' })
+  const counted = (await visibleText(admin)).match(/(\d+) on the newsletter list/)
+  check(
+    'and the admin can see how many signed up',
+    Boolean(counted) && Number(counted[1]) >= 7,
+    counted?.[0] ?? 'no count',
+  )
+  await theirs.close()
 }
 
 section('Where login sends you afterwards')
@@ -824,14 +961,14 @@ section('The shop skeleton mirrors the shop')
   check('and the category pills above it', pills > 3, `${pills} pills`)
 }
 
-section('The widened catalogue')
+section('The widened catalog')
 {
   const { context, page: shop } = await freshPage(browser)
   const tiles = () => shop.locator('article').count()
 
   await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
   const all = await tiles()
-  check('the catalogue has grown', all >= 45, `${all} pieces`)
+  check('the catalog has grown', all >= 45, `${all} pieces`)
 
   for (const [label, category] of [
     ['textiles', 'textiles'],
@@ -880,7 +1017,7 @@ section('Material and color filters')
   )
 
   // The gradient is sized to the padding box by default, so a bordered circle shows a square of
-  // colour with pale crescents where the curve runs past it.
+  // color with pale crescents where the curve runs past it.
   const mixed = shop.locator('label[title="Mixed"] span[aria-hidden]')
   if ((await mixed.count()) > 0) {
     check(
@@ -989,7 +1126,7 @@ section('Filtering does not reload or flood')
   await shop.waitForTimeout(600)
   const boxes = shop.locator('label:has(input[name="material"][value="stoneware"])')
   await boxes.scrollIntoViewIfNeeded()
-  await shop.evaluate(() => window.scrollBy(0, 120))
+  await shop.evaluate(() => window.scrollBy({ top: 120, behavior: 'instant' }))
   await shop.waitForTimeout(300)
   const before = await shop.evaluate(() => window.scrollY)
 
@@ -1258,7 +1395,7 @@ section('Checkout')
   await buyer.keyboard.press('Escape')
   await buyer.goto(`${BASE}/checkout`, { waitUntil: 'networkidle' })
   const summary = await visibleText(buyer)
-  check('the cart is summarised before paying', /Ash Dining Table/.test(summary))
+  check('the cart is summarized before paying', /Ash Dining Table/.test(summary))
 
   // CI has no Stripe key, so the handover is checked only where one is configured. The
   // order still has to be created either way, which is the part that is ours.
@@ -1493,8 +1630,10 @@ section('Choosing a review sort does not jump')
 {
   const { context, page: reader } = await freshPage(browser)
   await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
-  await reader.locator('#reviews').scrollIntoViewIfNeeded()
-  await reader.evaluate(() => window.scrollBy(0, 90))
+  // Scrolled to the control itself, which is the only way a person reaches it. Leaving it above
+  // the fold and reaching for it anyway makes the browser scroll it into view on focus, and that
+  // movement is the test's own doing rather than the sort's.
+  await reader.getByLabel('Sort reviews').scrollIntoViewIfNeeded()
   await reader.waitForTimeout(400)
   const before = await reader.evaluate(() => window.scrollY)
 

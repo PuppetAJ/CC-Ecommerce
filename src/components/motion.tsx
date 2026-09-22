@@ -79,6 +79,45 @@ export function Stagger({ children, className }: { children: ReactNode; classNam
   )
 }
 
+/**
+ * Plays the moment it mounts, for what is already on screen when the page opens. `Rise` waits to
+ * be scrolled to, which for the hero means waiting for nothing.
+ */
+export function Enter({
+  children,
+  className,
+  delay = 0,
+  as = 'div',
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+  /** A span where the parent only accepts phrasing content, such as inside a heading. */
+  as?: 'div' | 'span'
+}) {
+  const still = useReducedMotion()
+  const Tag = as === 'span' ? m.span : m.div
+  if (still)
+    return as === 'span' ? <span className={className}>{children}</span> : <div className={className}>{children}</div>
+
+  return (
+    <LazyMotion features={domAnimation} strict>
+      <Tag
+        className={className}
+        data-stagger
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay, type: 'spring', stiffness: 240, damping: 26 }}
+      >
+        {children}
+      </Tag>
+      <noscript>
+        <style>{'[data-stagger]{opacity:1!important;transform:none!important}'}</style>
+      </noscript>
+    </LazyMotion>
+  )
+}
+
 /** One thing rising into place, for a heading or a panel rather than a list. */
 export function Rise({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const still = useReducedMotion()

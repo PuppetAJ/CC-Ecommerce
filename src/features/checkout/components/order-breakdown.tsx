@@ -1,6 +1,6 @@
 import { formatPrice } from '@/lib/format'
 
-/** Working days only, matching the "3–5 working days" the product pages promise. */
+/** Business days only, matching the "3–5 business days" the product pages promise. */
 function arrivalWindow(from = new Date()) {
   const add = (days: number) => {
     const date = new Date(from)
@@ -31,7 +31,7 @@ export function OrderBreakdown({ subtotal }: { subtotal: number }) {
         <span className="tabular-nums">{formatPrice(subtotal)}</span>
       </div>
       <p className="text-xs text-olive-600 dark:text-olive-400">
-        Arrives {arrivalWindow()}, packed in straw board rather than plastic.
+        Arrives {arrivalWindow()}, packed in molded paper instead of plastic.
       </p>
     </div>
   )

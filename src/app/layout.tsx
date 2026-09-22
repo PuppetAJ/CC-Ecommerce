@@ -10,7 +10,8 @@ const monaSans = Mona_Sans({ subsets: ['latin'], variable: '--font-mona', axes: 
 
 export const metadata: Metadata = {
   title: { default: 'Wicken', template: '%s · Wicken' },
-  description: 'Furniture and ceramics, made in small batches.',
+  description:
+    'Ceramics and wood from a small studio, plus a few things from workshops we trust. Made in small batches.',
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {

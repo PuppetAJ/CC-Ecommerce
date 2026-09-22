@@ -19,12 +19,12 @@ export function HeroTwoColumnWithPhoto({
   subheadline: ReactNode
   cta?: ReactNode
   photo?: ReactNode
-  // Fixes the photo at 13:10 instead of letting the text column decide its height.
+  // Fixes the photo at 13:10 beside the text and 3:2 once stacked, so a tablet is not all photograph.
   tallPhoto?: boolean
 } & ComponentProps<'section'>) {
   return (
     <section className={clsx('py-16', className)} {...props}>
-      <Container className={clsx('flex gap-16 max-xl:flex-col', tallPhoto && 'xl:items-center')}>
+      <Container className={clsx('flex gap-10 max-lg:flex-col lg:gap-12 xl:gap-16', tallPhoto && 'lg:items-center')}>
         <div className="flex flex-1 flex-col items-start justify-center gap-6">
           {eyebrow}
           <Heading className="max-w-5xl">{headline}</Heading>
@@ -36,7 +36,7 @@ export function HeroTwoColumnWithPhoto({
         <div
           className={clsx(
             'flex flex-1 overflow-hidden rounded-xl outline -outline-offset-1 outline-black/5 *:object-cover dark:outline-white/5',
-            tallPhoto && '*:h-full xl:aspect-13/10',
+            tallPhoto && '*:h-full max-lg:aspect-3/2 lg:aspect-13/10',
           )}
         >
           {photo}

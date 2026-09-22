@@ -65,9 +65,9 @@ export default async function Page() {
 
         <ol className="flex flex-col gap-4 border-t border-olive-950/10 pt-8 dark:border-white/10">
           {[
-            ['Pay with Stripe', 'You will be handed to Stripe to enter a card. We never see it.'],
-            ['We pack it', 'Straw board and paper, no plastic, usually the next working day.'],
-            ['It arrives', 'Three to five working days. Anything unused can come back within thirty.'],
+            ['Pay with Stripe', "You'll be handed to Stripe to enter a card. We never see it."],
+            ['We pack it', 'Molded paper and cardboard, no plastic, usually the next business day.'],
+            ['It arrives', 'Three to five business days. Anything unused can come back within thirty.'],
           ].map(([title, detail], step) => (
             <li key={title} className="flex gap-4">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-olive-950/5 text-xs font-medium text-olive-950 dark:bg-white/10 dark:text-white">
@@ -98,7 +98,7 @@ export default async function Page() {
               </p>
               <p className="mt-1">
                 <code className="rounded bg-olive-950/5 px-1 py-0.5 dark:bg-white/10">4242 4242 4242 4242</code>, any
-                future expiry, any CVC, any postcode. No money moves.
+                future expiry, any CVC, any ZIP code. No money moves.
               </p>
             </div>
           </>

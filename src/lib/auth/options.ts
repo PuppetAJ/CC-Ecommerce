@@ -19,7 +19,7 @@ export const authOptions = {
   baseURL: env.APP_URL,
   secret: env.BETTER_AUTH_SECRET,
 
-  // The same pg pool the catalogue queries use, so there is one connection budget.
+  // The same pg pool the catalog queries use, so there is one connection budget.
   database: pool,
 
   emailAndPassword: {

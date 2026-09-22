@@ -1,21 +1,21 @@
 /**
  * Filterable facets, derived by hand from each product's `materials` prose.
  *
- * Not regex-derived on purpose: "Ash top" is a timber and "wood ash glaze" is a glaze made
+ * Not regex-derived on purpose: "Ash top" is a wood and "wood ash glaze" is a glaze made
  * from ash, and no pattern tells those apart. Thirty-seven rows are quicker to read than a
  * parser is to trust.
  */
 export type Facets = { materials: string[]; color: string | null }
 
 export const productFacets: Record<string, Facets> = {
-  // Furniture: the timber is the material and the finish leaves it its own color.
+  // Furniture: the wood is the material and the finish leaves it its own color.
   'ash-dining-table': { materials: ['ash', 'steel'], color: 'natural' },
   'elm-side-table': { materials: ['elm'], color: 'natural' },
-  'low-workshop-stool': { materials: ['pine', 'reclaimed-timber'], color: 'natural' },
+  'low-workshop-stool': { materials: ['pine', 'reclaimed-wood'], color: 'natural' },
   'oak-book-table': { materials: ['oak'], color: 'natural' },
   'oak-dining-chair': { materials: ['oak'], color: 'natural' },
   'oak-wall-shelf': { materials: ['oak'], color: 'natural' },
-  'weathered-stool': { materials: ['reclaimed-timber'], color: 'natural' },
+  'weathered-stool': { materials: ['reclaimed-wood'], color: 'natural' },
 
   // Lighting.
   'bedside-lamp': { materials: ['stoneware', 'linen'], color: 'cream' },
@@ -25,7 +25,7 @@ export const productFacets: Record<string, Facets> = {
   'hanging-pendant-shade': { materials: ['porcelain'], color: 'white' },
   'kiln-table-lamp': { materials: ['stoneware', 'glass'], color: 'white' },
   'spouted-pendant': { materials: ['stoneware'], color: 'cream' },
-  'stone-candle-set': { materials: ['stone', 'wax'], color: 'grey' },
+  'stone-candle-set': { materials: ['stone', 'wax'], color: 'gray' },
   'taper-candle-holders': { materials: ['porcelain'], color: 'white' },
 
   // Tableware.
@@ -49,17 +49,17 @@ export const productFacets: Record<string, Facets> = {
   'cobalt-column-vase': { materials: ['stoneware'], color: 'blue' },
   'harvest-vase': { materials: ['earthenware'], color: 'terracotta' },
   'oxblood-vase': { materials: ['porcelain'], color: 'red' },
-  'smoke-glaze-vase': { materials: ['stoneware'], color: 'grey' },
+  'smoke-glaze-vase': { materials: ['stoneware'], color: 'gray' },
   'tall-stem-vase': { materials: ['stoneware'], color: 'white' },
   'wide-mouth-vessel': { materials: ['porcelain'], color: 'white' },
-  'washed-linen-napkins': { materials: ['linen'], color: 'grey' },
+  'washed-linen-napkins': { materials: ['linen'], color: 'gray' },
   'linen-bread-cloth': { materials: ['linen'], color: 'natural' },
   'studio-apron': { materials: ['linen', 'brass'], color: 'natural' },
   'heavy-linen-throw': { materials: ['linen'], color: 'natural' },
   'linen-table-runner': { materials: ['linen'], color: 'natural' },
   'lidded-keepsake-box': { materials: ['walnut'], color: 'natural' },
   'turned-serving-trays': { materials: ['oak'], color: 'natural' },
-  'stoneware-storage-jars': { materials: ['stoneware'], color: 'grey' },
+  'stoneware-storage-jars': { materials: ['stoneware'], color: 'gray' },
   'turned-walnut-bowl': { materials: ['walnut'], color: 'natural' },
   'carved-catch-all': { materials: ['walnut'], color: 'natural' },
 }

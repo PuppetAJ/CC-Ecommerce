@@ -104,7 +104,7 @@ describe('filtering by material and color', () => {
     assert.equal((await listProducts({ materials: [], colors: [] })).length, 4)
   })
 
-  it('offers only the facets the catalogue actually carries', async () => {
+  it('offers only the facets the catalog actually carries', async () => {
     await stock()
     const { materials, colors } = await listFacets()
 

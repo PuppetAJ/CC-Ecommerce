@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useId } from 'react'
+import { useId, useTransition } from 'react'
 
 // Options carry their own hrefs so this stays a leaf: no searchParams read, no Suspense needed.
 export function SortSelect({
@@ -18,6 +18,7 @@ export function SortSelect({
 }) {
   const router = useRouter()
   const id = useId()
+  const [, start] = useTransition()
   return (
     <div className="flex min-w-0 items-center gap-2">
       {/* Read out but not drawn on a phone, where the words cost the select the room it needs
@@ -30,7 +31,11 @@ export function SortSelect({
         value={value}
         onChange={(event) => {
           const next = options.find((option) => option.value === event.target.value)
-          if (next) router.push(next.href, { scroll })
+          if (!next) return
+          // In a transition, or the Suspense boundary below swaps a thousand pixels of reviews
+          // for a one line fallback, the document shrinks and the browser clamps the scroll.
+          // The hash comes off for the same reason: followed, it scrolls to the anchor.
+          start(() => router.push(scroll ? next.href : next.href.split('#')[0], { scroll }))
         }}
         className="min-w-0 rounded-lg border border-olive-300 bg-transparent py-1.5 pr-8 pl-3 text-sm text-olive-950 focus:ring-2 focus:ring-ring focus:outline-none dark:border-olive-800 dark:text-white"
       >

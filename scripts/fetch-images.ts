@@ -74,7 +74,11 @@ const byFile = new Map(existing.map((credit) => [credit.file, credit]))
 // after downloading, and a re-run for new products used to quietly overwrite that work.
 const force = process.env.FORCE === '1'
 
+// ONLY=a,b narrows a forced run to a few files, so re-fetching three originals does not touch the rest.
+const only = new Set((process.env.ONLY ?? '').split(',').filter(Boolean))
+
 for (const { file, id } of assignments) {
+  if (only.size > 0 && !only.has(file)) continue
   if (!force && existsSync(`public/images/${file}.jpg`) && byFile.has(file)) {
     console.log(`${file}.jpg  kept`)
     continue

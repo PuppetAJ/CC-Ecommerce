@@ -31,7 +31,7 @@ const box =
 const row = 'flex cursor-pointer items-center gap-2.5 text-sm'
 const label = 'text-olive-700 dark:text-olive-300'
 
-function Tick() {
+function Checkmark() {
   return (
     <svg viewBox="0 0 12 12" aria-hidden className="size-3">
       <path d="M2.5 6.2 4.7 8.5 9.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -67,7 +67,7 @@ function Check({
         className="peer sr-only"
       />
       <span className={`${box} ${round ? 'rounded-full' : 'rounded-sm'}`}>
-        <Tick />
+        <Checkmark />
       </span>
       <span className={label}>{children}</span>
     </label>

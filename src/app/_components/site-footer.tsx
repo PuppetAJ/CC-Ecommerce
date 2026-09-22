@@ -1,8 +1,22 @@
 import { FooterCategory, FooterLink, FooterWithLinkCategories } from '@/components/sections/footer-with-link-categories'
+import { NewsletterForm } from '@/features/newsletter/components/newsletter-form'
 
 export function SiteFooter() {
   return (
     <FooterWithLinkCategories
+      notice={
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+          <div className="flex max-w-md flex-col gap-2">
+            <h2 className="font-display text-xl font-medium text-olive-950 dark:text-white">
+              Hear when a batch is out
+            </h2>
+            <p className="text-sm/6 text-olive-700 dark:text-olive-400">
+              One email when something new comes out of the kiln. Nothing else, and it&rsquo;s easy to stop.
+            </p>
+          </div>
+          <NewsletterForm source="footer" />
+        </div>
+      }
       links={
         <>
           <FooterCategory title="Shop">
@@ -15,14 +29,14 @@ export function SiteFooter() {
           </FooterCategory>
           <FooterCategory title="Studio">
             <FooterLink href="/about">About</FooterLink>
-            <FooterLink href="/about">How it is made</FooterLink>
+            <FooterLink href="/about#made">How it is made</FooterLink>
             <FooterLink href="/shop">The collection</FooterLink>
           </FooterCategory>
           <FooterCategory title="Help">
-            <FooterLink href="/faq">Shipping</FooterLink>
-            <FooterLink href="/faq">Returns</FooterLink>
-            <FooterLink href="/faq">Care and repair</FooterLink>
-            <FooterLink href="/faq">FAQ</FooterLink>
+            <FooterLink href="/help#shipping">Shipping</FooterLink>
+            <FooterLink href="/help#returns">Returns</FooterLink>
+            <FooterLink href="/help#care">Care and repair</FooterLink>
+            <FooterLink href="/help#contact">Contact us</FooterLink>
           </FooterCategory>
           <FooterCategory title="Account">
             <FooterLink href="/login">Log in</FooterLink>

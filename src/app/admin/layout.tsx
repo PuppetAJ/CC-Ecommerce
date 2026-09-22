@@ -12,7 +12,7 @@ export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
         <Container className="flex h-14 items-center justify-between gap-6">
           <div className="flex items-center gap-1.5">
             <Logo className="size-5 shrink-0 text-olive-950 dark:text-white" />
-            {/* The two words share a baseline; the mark is centred against them. */}
+            {/* The two words share a baseline; the mark is centered against them. */}
             <span className="flex items-baseline gap-2">
               <span className="font-display text-lg font-medium text-olive-950 dark:text-white">Wicken</span>
               <span className="text-sm text-olive-600 dark:text-olive-400">Admin</span>

@@ -7,7 +7,7 @@ import { formatPrice } from '@/lib/format'
 // Every slice sits against all three others, so these four are checked as all pairs, not neighbors.
 const slots = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)']
 
-/** Labelled by the caller: a chart has no business knowing the catalogue's vocabulary. */
+/** Labeled by the caller: a chart has no business knowing the catalog's vocabulary. */
 export function CategorySplitChart({ split }: { split: { label: string; revenue_cents: number }[] }) {
   const total = split.reduce((sum, row) => sum + row.revenue_cents, 0)
   const data = split.map((row, index) => ({

@@ -25,16 +25,24 @@ export function FooterLink({ href, className, ...props }: { href: string } & Omi
 export function FooterWithLinkCategories({
   links,
   fineprint,
+  notice,
   className,
   ...props
 }: {
   links: ReactNode
   fineprint: ReactNode
+  /** A row above the links, for the one thing the footer asks of a visitor. */
+  notice?: ReactNode
 } & ComponentProps<'footer'>) {
   return (
     <footer className={clsx('pt-16', className)} {...props}>
       <div className="bg-olive-950/2.5 py-16 text-olive-950 dark:bg-white/5 dark:text-white">
         <Container className="flex flex-col gap-16">
+          {notice && (
+            <div data-footer-notice className="border-b border-olive-950/10 pb-12 dark:border-white/10">
+              {notice}
+            </div>
+          )}
           <nav className="grid grid-cols-2 gap-6 text-sm/7 sm:has-[>:last-child:nth-child(3)]:grid-cols-3 sm:has-[>:nth-child(5)]:grid-cols-3 md:has-[>:last-child:nth-child(4)]:grid-cols-4 lg:has-[>:nth-child(5)]:grid-cols-5">
             {links}
           </nav>

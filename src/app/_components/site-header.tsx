@@ -4,7 +4,7 @@ import { CartSheet } from '@/app/_components/cart-sheet'
 import { Container } from '@/components/elements/container'
 import { Logo } from '@/components/elements/logo'
 import { MobileNav } from '@/app/_components/mobile-nav'
-import { AccountMenu, AccountMenuFallback } from '@/features/auth/components/account-menu'
+import { AccountMenu, AccountMenuFallback, SheetAccount } from '@/features/auth/components/account-menu'
 import { CartBadge } from '@/features/cart/components/cart-badge'
 import { CartContents, CartContentsSkeleton } from '@/features/cart/components/cart-contents'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -48,7 +48,13 @@ export function SiteHeader() {
           <Suspense fallback={<AccountMenuFallback />}>
             <AccountMenu />
           </Suspense>
-          <MobileNav />
+          <MobileNav
+            account={
+              <Suspense fallback={null}>
+                <SheetAccount />
+              </Suspense>
+            }
+          />
         </div>
       </Container>
     </header>

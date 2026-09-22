@@ -6,18 +6,18 @@ import { QuickActions } from '@/app/_components/quick-actions'
 import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
 import { FacetFilters } from '@/features/products/components/facet-filters'
 import { ShopToolbar } from '@/features/products/components/shop-toolbar'
-import { getCatalogue, getFacets } from '@/features/products/data'
+import { getCatalog, getFacets } from '@/features/products/data'
 import { fromShop, shopSearchSchema } from '@/features/products/schemas'
 import { getSession } from '@/lib/auth/session'
 import { listFavoriteIds } from '@/lib/db/queries/favorites'
-import { summariseMany } from '@/lib/db/queries/reviews'
+import { summarizeMany } from '@/lib/db/queries/reviews'
 import { Stars } from '@/features/reviews/components/stars'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
 export const metadata = {
   title: 'Shop',
-  description: 'Stoneware and timber, thrown, turned and joined by hand in small batches.',
+  description: 'Stoneware and wood from our workshop, plus a few things from four others, in small batches.',
 }
 
 export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
@@ -26,7 +26,7 @@ export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
       <div className="flex flex-col gap-4">
         <Heading>The collection</Heading>
         <Text size="lg" className="max-w-2xl">
-          <p>Everything we make, in the batch that is currently out of the kiln.</p>
+          <p>Everything we make, plus the few things we buy in, in the batch that's here right now.</p>
         </Text>
       </div>
       {/* searchParams is request data, so it is read below a boundary and the heading above prerenders. */}
@@ -39,12 +39,12 @@ export default function ShopPage({ searchParams }: PageProps<'/shop'>) {
 
 async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'>) {
   const search = shopSearchSchema.parse(await searchParams)
-  const [products, facets] = await Promise.all([getCatalogue(search), getFacets()])
+  const [products, facets] = await Promise.all([getCatalog(search), getFacets()])
 
   // One query for the whole grid rather than one per tile.
   const session = await getSession()
   const favorites = new Set(session ? await listFavoriteIds(session.user.id) : [])
-  const ratings = await summariseMany(products.map((product) => product.id))
+  const ratings = await summarizeMany(products.map((product) => product.id))
 
   const state = fromShop(search)
 
