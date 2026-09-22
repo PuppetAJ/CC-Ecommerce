@@ -2,7 +2,8 @@
 export const shipping = [
   {
     question: 'How long does delivery take?',
-    answer: 'Ceramics ship within three business days. Furniture is made to order and takes four to six weeks.',
+    answer:
+      'Ceramics, vases and linen leave us in three to five business days. Storage takes one to two weeks, lighting two to three, and furniture is cut to order and takes four to six. Everything in one order ships together, so the slowest piece sets the date.',
   },
   {
     question: 'What does shipping cost?',

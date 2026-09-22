@@ -28,8 +28,8 @@ export function HowItIsMade() {
           </div>
           <Text className="text-pretty">
             <p>
-              The clay and the wood are ours. The lighting, glass and linen come from four workshops we've worked with
-              for years.
+              The clay and the wood are ours. The glass, the linen and the candles come from three workshops we have
+              bought from for years.
             </p>
           </Text>
           <div className="flex flex-col gap-6">
@@ -38,8 +38,8 @@ export function HowItIsMade() {
               subheadline="Clay and wood, in batches small enough that we've handled every piece before it ships."
             />
             <Feature
-              headline="The rest from four workshops"
-              subheadline="Lighting, glass and linen from makers we know by name and can call."
+              headline="The rest from three workshops"
+              subheadline="Glass, linen and candles from makers we know by name and can call."
             />
             <Feature
               headline="Built to be repaired"
