@@ -8,8 +8,9 @@ import { env } from '@/lib/env'
 import { stripe } from '@/lib/stripe'
 import type { Order } from '@/lib/db/types'
 import type Stripe from 'stripe'
+import type { ActionState } from '@/lib/action-state'
 
-export type CheckoutState = { error: string } | undefined
+export type CheckoutState = ActionState
 
 export async function startCheckout(): Promise<CheckoutState> {
   const user = await requireUser()

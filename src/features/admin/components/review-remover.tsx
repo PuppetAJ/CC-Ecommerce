@@ -10,7 +10,7 @@ export function ReviewRemover({ userId, productId, author }: { userId: string; p
   const [state, action, pending] = useActionState<AdminState, FormData>(removeReview, undefined)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Review removed')
+    if (state?.ok) toast.success('Review removed')
     if (state?.error) toast.error(state.error)
   }, [state])
 

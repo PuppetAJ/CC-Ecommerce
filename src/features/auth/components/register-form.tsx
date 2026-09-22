@@ -4,10 +4,10 @@ import { useActionState } from 'react'
 import { register, type AuthState } from '../actions'
 import { Field } from '@/components/elements/field'
 import { FormError } from '@/components/elements/form-error'
-import { SubmitButton } from './submit-button'
+import { Button } from '@/components/elements/button'
 
 export function RegisterForm({ next }: { next: string }) {
-  const [state, action] = useActionState<AuthState, FormData>(register, undefined)
+  const [state, action, pending] = useActionState<AuthState, FormData>(register, undefined)
 
   return (
     <form action={action} className="grid gap-4">
@@ -24,7 +24,9 @@ export function RegisterForm({ next }: { next: string }) {
         hint="At least 10 characters."
       />
       {state?.error ? <FormError>{state.error}</FormError> : null}
-      <SubmitButton pendingLabel="Creating your account…">Create account</SubmitButton>
+      <Button type="submit" size="lg" disabled={pending} className="mt-2 w-full">
+        {pending ? 'Creating your account…' : 'Create account'}
+      </Button>
     </form>
   )
 }

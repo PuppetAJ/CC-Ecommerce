@@ -3,12 +3,14 @@
 import { addCartItem, removeCartItem, setCartItemQuantity } from '@/lib/db/queries/cart'
 import { resolveCartId } from './cart'
 import { cartLine, cartTarget } from './schemas'
+import { succeeded, type ActionState } from '@/lib/action-state'
+
+// No session check: a cart belongs to a cookie until somebody signs in, and guests may shop.
 
 // No revalidatePath here. A form action re-renders its own route tree, and the imperative
 // ones are refreshed by the client that called them, which keeps the catalog cache intact.
 
-// addedAt is a fresh number every time, so the client can tell one success from the next.
-export type CartState = { error?: string; addedAt?: number } | undefined
+export type CartState = ActionState
 
 export async function addToCart(_previous: CartState, formData: FormData): Promise<CartState> {
   const parsed = cartLine.safeParse({
@@ -18,7 +20,7 @@ export async function addToCart(_previous: CartState, formData: FormData): Promi
   if (!parsed.success) return { error: 'That product could not be added.' }
 
   await addCartItem(await resolveCartId(), parsed.data.productId, Math.max(1, parsed.data.quantity))
-  return { addedAt: Date.now() }
+  return succeeded()
 }
 
 export async function setQuantity(productId: number, quantity: number): Promise<CartState> {
@@ -41,5 +43,5 @@ export async function quickAdd(productId: number): Promise<CartState> {
   if (!parsed.success) return { error: 'That product could not be added.' }
 
   await addCartItem(await resolveCartId(), parsed.data.productId, 1)
-  return { addedAt: Date.now() }
+  return succeeded()
 }

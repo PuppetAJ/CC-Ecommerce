@@ -2,10 +2,10 @@
 
 import { useActionState } from 'react'
 import { Button } from '@/components/elements/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { sendMessage, type MessageState } from '../actions'
 import { FormError } from '@/components/elements/form-error'
+import { Field } from '@/components/elements/field'
 import { Honeypot } from '@/components/elements/honeypot'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -20,9 +20,9 @@ export function ContactForm({
   email?: string
   waiting?: boolean
 }) {
-  const [state, action, pending] = useActionState<MessageState, FormData>(sendMessage, {})
+  const [state, action, pending] = useActionState<MessageState, FormData>(sendMessage, undefined)
 
-  if (state.sentAt) {
+  if (state?.ok) {
     return (
       <p role="status" className="rounded-xl bg-olive-950/2.5 p-6 text-sm/7 dark:bg-white/5">
         Thank you for reaching out. Somebody reads these every morning, and you'd normally hear back within a day or
@@ -41,22 +41,8 @@ export function ContactForm({
 
       <fieldset disabled={waiting} className="flex flex-col gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="grid gap-2.5">
-            <Label htmlFor="name">Your name</Label>
-            <Input id="name" name="name" required maxLength={80} defaultValue={name} className="h-10" />
-          </div>
-          <div className="grid gap-2.5">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              required
-              maxLength={160}
-              defaultValue={email}
-              className="h-10"
-            />
-          </div>
+          <Field label="Your name" name="name" required maxLength={80} defaultValue={name} />
+          <Field label="Email" name="email" type="email" required maxLength={160} defaultValue={email} />
         </div>
 
         <div className="grid gap-2.5">
@@ -73,7 +59,7 @@ export function ContactForm({
         </div>
       </fieldset>
 
-      {state.error && <FormError>{state.error}</FormError>}
+      {state?.error && <FormError>{state.error}</FormError>}
 
       <Button type="submit" size="lg" disabled={pending} className="self-start">
         {pending ? 'Sending…' : 'Send'}

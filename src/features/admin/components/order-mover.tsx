@@ -12,7 +12,7 @@ export function OrderMover({ orderId, status }: { orderId: number; status: Order
   const [state, action, pending] = useActionState<AdminState, FormData>(moveOrder, undefined)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Order updated')
+    if (state?.ok) toast.success('Order updated')
     if (state?.error) toast.error(state.error)
   }, [state])
 

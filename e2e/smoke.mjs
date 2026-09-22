@@ -502,7 +502,7 @@ section('A Server Action is not protected by its button')
   )
   // Not 404: a 404 would mean the id was wrong and nothing was actually tested.
   check('the replayed call reaches the action', replay.status !== 404, `responded ${replay.status}`)
-  check('but a shopper is refused', !/"status":"canceled"|savedAt/.test(replay.body), replay.body.slice(0, 80))
+  check('but a shopper is refused', !/"status":"canceled"|"ok":/.test(replay.body), replay.body.slice(0, 80))
   await shopperContext.close()
 
   // And the order is still what it was, which is the part that actually matters.

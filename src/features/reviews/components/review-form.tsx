@@ -19,11 +19,11 @@ export function ReviewForm({
   existing?: { rating: number; body: string } | null
   signedIn: boolean
 }) {
-  const [state, action, pending] = useActionState<ReviewState, FormData>(submitReview, undefined as never)
+  const [state, action, pending] = useActionState<ReviewState, FormData>(submitReview, undefined)
   const [rating, setRating] = useState(existing?.rating ?? 0)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Thank you, your review is up')
+    if (state?.ok) toast.success('Thank you, your review is up')
     if (state?.error) toast.error(state.error)
   }, [state])
 

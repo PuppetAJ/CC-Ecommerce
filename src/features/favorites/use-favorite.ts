@@ -16,12 +16,12 @@ export function useFavorite(productId: number, name: string, initial: boolean) {
       const previous = isFavorite
       setIsFavorite(!previous)
       const result = await toggle(productId)
-      if (result.needsLogin || result.error) {
+      if (result?.needsLogin || result?.error) {
         setIsFavorite(previous)
         toast.error(result.needsLogin ? 'Log in to save favorites' : result.error!)
         return
       }
-      setIsFavorite(Boolean(result.favorited))
+      setIsFavorite(Boolean(result?.favorited))
       // The favorites page is a list of exactly these, so removing one has to drop the tile.
       router.refresh()
     })

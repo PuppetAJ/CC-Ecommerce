@@ -37,9 +37,9 @@ export function AddToCart({
       toast.error(state.error)
       return
     }
-    if (!state?.addedAt) return
+    if (!state?.ok) return
 
-    const token = `${productId}:${state.addedAt}`
+    const token = `${productId}:${state.ok}`
     if (handled.has(token)) return
     handled.add(token)
     track('add_to_cart', productId)

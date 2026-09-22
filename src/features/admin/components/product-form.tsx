@@ -13,7 +13,7 @@ export function ProductForm({ product }: { product: Product }) {
   const [state, action, pending] = useActionState<AdminState, FormData>(saveProduct, undefined)
 
   useEffect(() => {
-    if (state?.savedAt) toast.success('Saved to the storefront')
+    if (state?.ok) toast.success('Saved to the storefront')
     if (state?.error) toast.error(state.error)
   }, [state])
 
