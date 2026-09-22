@@ -139,6 +139,8 @@ section('The admin search filters as you type')
   await signInAsDemo(admin, 'admin')
   let requests = 0
   admin.on('request', (request) => {
+    // Prefetches are the router filling its cache, not the typing asking the server for anything.
+    if (request.headers()['next-router-prefetch']) return
     if (request.url().includes('/admin/products') && request.resourceType() !== 'image') requests++
   })
 
@@ -191,6 +193,7 @@ section('The admin writes for real')
   await open(admin, editUrl.replace(BASE, ''))
   await admin.fill('input[name="salePrice"]', '99.00')
   await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
+  await waitForText(admin, /has to be below the price/i)
   check('a sale price above the price is refused', /has to be below the price/i.test(await visibleText(admin)))
 
   await open(admin, editUrl.replace(BASE, ''))

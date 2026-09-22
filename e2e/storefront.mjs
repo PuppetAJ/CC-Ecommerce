@@ -329,6 +329,8 @@ section('Filtering does not reload or flood')
   const { context, page: shop } = await freshPage(browser)
   let requests = 0
   shop.on('request', (request) => {
+    // Prefetches are the router filling its cache, not the typing asking the server for anything.
+    if (request.headers()['next-router-prefetch']) return
     if (request.url().includes('/shop') && request.resourceType() !== 'image') requests++
   })
 
