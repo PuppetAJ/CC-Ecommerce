@@ -36,7 +36,8 @@ section('Authorization')
   await signInAsDemo(admin, 'admin')
   check('the demo admin can', /Admin/.test(await visibleText(admin)))
   // /admin sits outside the (store) layout, so the header is only on the store pages.
-  await admin.goto(`${BASE}/`, { waitUntil: 'networkidle' })
+  // Not networkidle: the landing page streams several bands and keeps a slow runner busy past the timeout.
+  await admin.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' })
   check('and the admin menu links there', (await openAccountMenu(admin)).includes('Admin dashboard'))
   await adminContext.close()
 

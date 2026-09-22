@@ -126,8 +126,24 @@ export async function signInAsDemo(page, role = 'shopper') {
 }
 
 export async function openAccountMenu(page) {
-  await page.locator('button[aria-label="Account menu"]').click()
-  return page.locator('[role="menu"]').innerText()
+  const menu = page.locator('[role="menu"]')
+  // Retried because the button is server-rendered and does nothing until the page has hydrated.
+  await expect(async () => {
+    await page.locator('button[aria-label="Account menu"]').click()
+    await menu.waitFor({ timeout: 2_000 })
+  })
+  return menu.innerText()
+}
+
+/** Runs something until it stops throwing, which is how you wait for hydration without networkidle. */
+async function expect(run, attempts = 10) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await run()
+    } catch (error) {
+      if (attempt >= attempts) throw error
+    }
+  }
 }
 
 /** Visible text with the scripts stripped, for asserting on what a person would actually read. */
