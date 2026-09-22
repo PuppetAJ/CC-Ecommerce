@@ -207,6 +207,22 @@ section('Checkout')
 
   await signInAsDemo(buyer, 'shopper')
 
+  // A dining table and a mug in one order: the order ships together, so the table sets the date.
+  for (const slug of ['ash-dining-table', 'ridge-breakfast-mug']) {
+    await open(buyer, `/products/${slug}`)
+    await buyer.getByRole('button', { name: 'Add to cart' }).click()
+    await buyer.locator('[data-slot="sheet-content"]').waitFor()
+    await buyer.keyboard.press('Escape')
+  }
+  await open(buyer, '/checkout')
+  const promised = await visibleText(buyer)
+  check(
+    'the slowest thing in the order sets the date',
+    /four to six weeks/.test(promised),
+    promised.match(/It arrives\n[^\n]*/)?.[0],
+  )
+  check('and the arrival window agrees', !/business days/.test(promised.match(/Arrives[^\n]*/)?.[0] ?? ''))
+
   // The demo account persists between runs, so start from a known cart.
   const emptyTheCart = async () => {
     await buyer.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })

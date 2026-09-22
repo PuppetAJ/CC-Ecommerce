@@ -25,6 +25,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Fragment } from 'react'
 import { ProductReviews, RatingSummary } from '@/features/reviews/components/product-reviews'
+import { leadTimeFor, leadTimeShort } from '@/lib/lead-times'
+import { madeByLine } from '@/lib/makers'
 
 export async function generateMetadata({ params }: PageProps<'/products/[slug]'>): Promise<Metadata> {
   const product = await getProduct((await params).slug)
@@ -55,6 +57,7 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
   const related = await getRelated(product, 12)
   const soldOut = product.stock_quantity === 0
   const low = !soldOut && product.stock_quantity <= 3
+  const lead = leadTimeFor(product.category)
 
   return (
     <Container className="flex flex-col gap-16 py-10">
@@ -89,12 +92,16 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
                 <RatingSummary productId={product.id} />
               </Suspense>
 
+              <p className="text-sm text-olive-600 dark:text-olive-400">{madeByLine(product.made_by)}</p>
+
               <p className="text-sm text-olive-600 dark:text-olive-400">
                 {soldOut
                   ? 'Back when the next batch comes out of the kiln.'
-                  : low
-                    ? `Only ${product.stock_quantity} left`
-                    : 'In stock, ships in 3–5 days'}
+                  : lead.madeToOrder
+                    ? `Made to order, ${leadTimeShort(lead)}`
+                    : low
+                      ? `Only ${product.stock_quantity} left, ships in ${leadTimeShort(lead)}`
+                      : `In stock, ships in ${leadTimeShort(lead)}`}
               </p>
             </Enter>
 
@@ -193,8 +200,8 @@ export default async function ProductPage({ params, searchParams }: PageProps<'/
             <AccordionItem value="shipping">
               <AccordionTrigger>Shipping and returns</AccordionTrigger>
               <AccordionContent>
-                Ships in 3–5 business days, packed in molded paper instead of plastic. Return anything unused within 30
-                days and we'll arrange the pickup.
+                {lead.madeToOrder ? 'Made to order, so it takes' : 'Ships in'} {leadTimeShort(lead)}, packed in molded
+                paper instead of plastic. Return anything unused within 30 days and we&rsquo;ll arrange the pickup.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

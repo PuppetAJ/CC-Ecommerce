@@ -108,11 +108,17 @@ section('Product page')
   await page.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
   const text = await visibleText(page)
   check('the product page shows its price', /\$\d/.test(text))
+  check('and says who made it', /Made in our studio in Hudson/.test(text), text.match(/Made [^\n]*/)?.[0])
+  check(
+    'and that furniture is cut to order',
+    /Made to order, 4–6 weeks/.test(text),
+    text.match(/Made to order[^\n]*/)?.[0],
+  )
   check('dimensions are visible without opening anything', /Dimensions/i.test(text))
   check('related products are offered', (await page.locator('a[href^="/products/"]').count()) > 0)
 
   // Availability belongs with the price and the rating, not stranded under the button.
-  const stockAt = text.search(/In stock, ships|Only \d+ left|next batch comes out/)
+  const stockAt = text.search(/In stock, ships|Made to order|Only \d+ left|next batch comes out/)
   check('availability is stated', stockAt > -1, text.slice(Math.max(0, stockAt - 20), stockAt + 40))
   check('and sits above the description', stockAt < text.indexOf('Add to cart'))
   const ratingAt = text.search(/\d\.\d · \d+ review/)
@@ -172,6 +178,27 @@ section('Image magnifier')
   await page.keyboard.press('Escape')
   await page.waitForTimeout(400)
   check('escape closes it', (await page.locator('[role="dialog"]').count()) === 0)
+}
+
+section('Who made it, and how long it takes')
+{
+  const { context, page: reader } = await freshPage(browser)
+  for (const [slug, maker, lead] of [
+    ['linen-table-runner', 'Rosedale Weaving', '3–5 business days'],
+    ['globe-wall-light', 'Kestrel Glass', '2–3 weeks'],
+    ['ridge-breakfast-mug', 'our studio', '3–5 business days'],
+  ]) {
+    await open(reader, `/products/${slug}`)
+    const said = await visibleText(reader)
+    check(`${slug} names its maker`, said.includes(maker), said.match(/Made [^\n]*/)?.[0])
+    check(`and quotes ${lead}`, said.includes(lead), said.match(/(ships in|Made to order,)[^\n]*/)?.[0])
+  }
+
+  // The claim on the landing page has to match what the catalog actually holds.
+  await open(reader, '/')
+  const band = await visibleText(reader)
+  check('the landing page counts the workshops correctly', /three workshops/.test(band))
+  await context.close()
 }
 
 section('A missing product')

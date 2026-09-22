@@ -10,6 +10,9 @@ export type EventName = (typeof eventNames)[number]
 export const reviewSorts = ['helpful', 'recent', 'highest', 'lowest'] as const
 export type ReviewSort = (typeof reviewSorts)[number]
 
+export const makers = ['kestrel-glass', 'rosedale-weaving', 'fennimore-wax'] as const
+export type Maker = (typeof makers)[number]
+
 export type Product = {
   id: number
   slug: string
@@ -26,6 +29,8 @@ export type Product = {
   specs: Record<string, Record<string, string>>
   image_url: string | null
   is_featured: boolean
+  /** Null when we made it ourselves; otherwise the workshop it came from. */
+  made_by: Maker | null
   created_at: Date
 }
 
@@ -34,6 +39,7 @@ export type CartItem = {
   product_id: number
   slug: string
   name: string
+  category: Category
   image_url: string | null
   unit_price_cents: number
   stock_quantity: number

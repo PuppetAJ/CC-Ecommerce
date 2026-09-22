@@ -15,7 +15,7 @@ import { TestimonialTwoColumnWithLargePhoto } from '@/components/sections/testim
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Two makers, four workshops they buy from, and a kiln that decides what the rest of the week looks like.',
+    'Two makers, three workshops they buy from, and a kiln that decides what the rest of the week looks like.',
 }
 
 export default function AboutPage() {
@@ -76,6 +76,11 @@ export default function AboutPage() {
         <p>
           Nothing is lacquered. Oil marks more easily and needs redoing every few years, but it means a scratch sands
           out instead of staying.
+        </p>
+        <p>
+          What we don&rsquo;t make ourselves comes from three workshops we have bought from for years. Kestrel Glass in
+          Beacon blows the glass, Rosedale Weaving in Hudson weaves the linen, and Fennimore Wax in Kingston pours the
+          candles. Every product page says which of us made it.
         </p>
       </Step>
 

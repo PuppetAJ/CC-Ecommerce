@@ -8,6 +8,17 @@ import { products } from './catalog.ts'
 import { productFacets } from './product-facets.ts'
 import { productSpecs } from './product-specs.ts'
 
+// Anything with clay or wood in it we made; the rest is the work of one of the three workshops.
+const ourOwn = ['stoneware', 'porcelain', 'earthenware', 'oak', 'ash', 'elm', 'pine', 'walnut', 'reclaimed-wood']
+
+function whoMadeIt(materials: string[]): string | null {
+  if (materials.some((material) => ourOwn.includes(material))) return null
+  if (materials.includes('linen')) return 'rosedale-weaving'
+  if (materials.includes('glass')) return 'kestrel-glass'
+  if (materials.includes('wax') || materials.includes('stone')) return 'fennimore-wax'
+  return null
+}
+
 const client = await pool.connect()
 try {
   await client.query('BEGIN')
@@ -32,9 +43,10 @@ try {
     )
   }
   for (const [slug, facets] of Object.entries(productFacets)) {
-    await client.query('UPDATE products SET material_tags = $1, color = $2 WHERE slug = $3', [
+    await client.query('UPDATE products SET material_tags = $1, color = $2, made_by = $3 WHERE slug = $4', [
       facets.materials,
       facets.color,
+      whoMadeIt(facets.materials),
       slug,
     ])
   }

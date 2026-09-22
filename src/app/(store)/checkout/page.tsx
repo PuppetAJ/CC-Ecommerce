@@ -9,6 +9,7 @@ import { formatPrice } from '@/lib/format'
 import { stripeEnabled } from '@/lib/env'
 import { EmptyState } from '@/components/elements/empty-state'
 import { OrderLines } from '@/components/elements/order-lines'
+import { leadTimeWords, slowestLeadTime } from '@/lib/lead-times'
 
 export const metadata = { title: 'Checkout' }
 
@@ -27,6 +28,8 @@ export default async function Page() {
   }
 
   const total = cartSubtotal(items)
+  // The order ships together, so the slowest thing in it is the honest answer.
+  const lead = slowestLeadTime(items.map((item) => item.category))
 
   return (
     <Container className="grid gap-12 py-16 lg:grid-cols-[1fr_24rem]">
@@ -41,7 +44,10 @@ export default async function Page() {
           {[
             ['Pay with Stripe', "You'll be handed to Stripe to enter a card. We never see it."],
             ['We pack it', 'Molded paper and cardboard, no plastic, usually the next business day.'],
-            ['It arrives', 'Three to five business days. Anything unused can come back within thirty.'],
+            [
+              'It arrives',
+              `${lead.madeToOrder ? 'Made to order, so' : 'About'} ${leadTimeWords(lead)}. Anything unused can come back within thirty.`,
+            ],
           ].map(([title, detail], step) => (
             <li key={title} className="flex gap-4">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-olive-950/5 text-xs font-medium text-olive-950 dark:bg-white/10 dark:text-white">
@@ -61,7 +67,7 @@ export default async function Page() {
           <span>Signed in as</span>
           <span className="truncate text-olive-950 dark:text-white">{user.email}</span>
         </div>
-        <OrderBreakdown subtotal={total} />
+        <OrderBreakdown subtotal={total} categories={items.map((item) => item.category)} />
 
         {stripeEnabled ? (
           <>
