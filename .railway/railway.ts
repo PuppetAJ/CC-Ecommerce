@@ -24,8 +24,12 @@ export default defineRailway(() => {
       NODE_ENV: 'production',
       PORT: '8080',
       NEXT_PUBLIC_APP_URL: 'https://wicken.up.railway.app',
-      // Railway resolves this reference to the database's own connection string.
+      // Railway resolves this to the database's own connection string; migrations run as the owner it names.
       DATABASE_URL: '${{Postgres.DATABASE_URL}}',
+      // The running app connects as the restricted role the migrations create; only its password is a secret.
+      APP_DATABASE_URL:
+        'postgresql://wicken_app:${{Wicken.APP_DATABASE_PASSWORD}}@${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}',
+      APP_DATABASE_PASSWORD: preserve(),
       // Set in the dashboard and never in this file; listed so applying does not delete them.
       BETTER_AUTH_SECRET: preserve(),
       STRIPE_SECRET_KEY: preserve(),

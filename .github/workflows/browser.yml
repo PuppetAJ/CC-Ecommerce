@@ -37,6 +37,8 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://wicken:wicken@127.0.0.1:5432/wicken
+      # The app runs as the restricted role here, as it does in production, so a missing grant fails a PR.
+      APP_DATABASE_URL: postgresql://wicken_app:ci@127.0.0.1:5432/wicken
       BETTER_AUTH_SECRET: ci-secret-not-used-for-anything-real
       NEXT_PUBLIC_APP_URL: http://localhost:3000
 
@@ -70,6 +72,9 @@ jobs:
             next-${{ runner.os }}-
 
       - run: pnpm db:migrate
+
+      # The migration creates the role without a login; each environment gives it one.
+      - run: psql "$DATABASE_URL" -c "ALTER ROLE wicken_app LOGIN PASSWORD 'ci'"
 
       # The suites assert on real products and on the two demo accounts.
       - run: pnpm db:seed
