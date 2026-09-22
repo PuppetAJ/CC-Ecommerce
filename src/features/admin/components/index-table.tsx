@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Scroller } from '@/components/elements/scroller'
-import { perPage } from '@/lib/db/queries/admin'
+import { perPage } from '@/lib/db/queries/paging'
 import { Skeleton } from '@/components/ui/skeleton'
 
 /**
