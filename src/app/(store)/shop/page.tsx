@@ -64,6 +64,8 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
           <FacetFilters search={search} facets={facets} />
         </div>
         <div className="min-w-0">
+          {/* The filter rail carries the only other headings, and it is hidden below lg. */}
+          <h2 className="sr-only">Products</h2>
           {products.length > 0 ? (
             <ProductGrid
               // Keyed on the filters, so a new set of products arrives with its reveal unspent.

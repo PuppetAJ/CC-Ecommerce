@@ -53,6 +53,7 @@ export function LandingHero() {
             width={1600}
             height={1060}
             priority
+            sizes="(min-width: 1024px) 50vw, 100vw"
             className="h-full w-full object-cover"
           />
         </Enter>
