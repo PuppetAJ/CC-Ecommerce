@@ -5,11 +5,14 @@ import {
   freshPage,
   launch,
   newShopper,
+  open,
   openAccountMenu,
   reporter,
   signInAsDemo,
   signInWithForm,
+  submitted,
   visibleText,
+  waitForText,
 } from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
@@ -38,7 +41,7 @@ section('Signing in and out')
   check('the shopper menu offers no admin link', !menu.includes('Admin'))
 
   await fresh.getByRole('button', { name: 'Log out' }).click()
-  await fresh.waitForTimeout(1500)
+  await fresh.getByRole('banner').getByRole('link', { name: 'Log in' }).waitFor()
   check(
     'signing out restores the signed-out header',
     await fresh.getByRole('link', { name: 'Sign up' }).first().isVisible(),
@@ -85,12 +88,12 @@ section('Finding your way back')
   )
 
   await nav.locator('a[href^="/products/"]').first().click()
-  await nav.waitForTimeout(1500)
+  await nav.locator('nav[aria-label="Breadcrumb"]').waitFor()
   const crumbs = await nav.locator('nav[aria-label="Breadcrumb"]').innerText()
   check('the product page offers a way back', /Back to results/.test(crumbs), crumbs.replace(/\n/g, ' '))
 
   await nav.locator('nav[aria-label="Breadcrumb"] a').first().click()
-  await nav.waitForTimeout(1500)
+  await nav.waitForURL(/\/shop/)
   check(
     'and it lands on the same results',
     nav.url().includes('category=furniture') && nav.url().includes('sort=price-asc'),
@@ -106,9 +109,9 @@ section('Finding your way back')
   check('the header login link remembers where you are', loginHref.includes('next='), loginHref)
 
   await nav.getByRole('banner').getByRole('link', { name: 'Log in' }).click()
-  await nav.waitForTimeout(1200)
+  await nav.getByRole('button', { name: 'Demo shopper' }).waitFor()
   await nav.getByRole('button', { name: 'Demo shopper' }).click()
-  await nav.waitForTimeout(2500)
+  await nav.waitForURL((url) => !url.pathname.startsWith('/login'))
   check('and signing in returns you there', nav.url().includes('category=furniture'), nav.url())
   await context.close()
 }
@@ -131,12 +134,12 @@ section('Quick actions on the grid')
   )
 
   await add.click()
-  await shop.waitForTimeout(2000)
+  await waitForText(shop, /added to your cart/i)
   check('quick add puts it in the cart', (await badge().innerText()) === '1', name)
 
   // Signed out, favouriting should invite a login rather than fail silently.
   await card.locator('button[aria-label^="Save"]').click()
-  await shop.waitForTimeout(1200)
+  await waitForText(shop, /Log in to save/i)
   check('favouriting signed out asks for a login', /Log in to save/.test(await visibleText(shop)))
   await context.close()
 }
@@ -168,8 +171,7 @@ section('Favoriting from the product page')
 {
   const { context, page: reader } = await freshPage(browser)
   await signInAsDemo(reader, 'shopper')
-  await reader.goto(`${BASE}/products/oak-wall-shelf`, { waitUntil: 'networkidle' })
-  await reader.waitForTimeout(1200)
+  await open(reader, `/products/oak-wall-shelf`)
 
   const save = reader.locator('button[data-favorite="product"]')
   check('the product page carries its own save control', (await save.count()) === 1)
@@ -190,8 +192,7 @@ section('The account area')
   const { context, page: account } = await freshPage(browser)
   await signInAsDemo(account, 'shopper')
 
-  await account.goto(`${BASE}/account/favorites`, { waitUntil: 'networkidle' })
-  await account.waitForTimeout(1200)
+  await open(account, `/account/favorites`)
   check('favorites has its own page', /Favorites/.test(await visibleText(account)))
   const sidebar = await account.locator('nav[aria-label="Account"]').innerText()
   check(
@@ -205,10 +206,9 @@ section('The account area')
   const card = account.locator('article').first()
   const name = await card.locator('h3').innerText()
   await card.locator('button[aria-label^="Save"]').click()
-  await account.waitForTimeout(1500)
+  await card.locator('button[aria-label^="Remove"]').first().waitFor()
 
-  await account.goto(`${BASE}/account/favorites`, { waitUntil: 'networkidle' })
-  await account.waitForTimeout(1200)
+  await open(account, `/account/favorites`)
   check('a saved product is listed there', (await visibleText(account)).includes(name), name)
 
   // Leave the demo account as it was found.
@@ -224,8 +224,7 @@ section('The newsletter keeps what it is given')
   const footer = visitor.getByRole('contentinfo')
   const email = `reader${Date.now()}@wicken.test`
   await footer.getByLabel('Email').fill(email)
-  await footer.getByRole('button', { name: 'Subscribe' }).click()
-  await visitor.waitForTimeout(1500)
+  await submitted(visitor, () => footer.getByRole('button', { name: 'Subscribe' }).click())
   check('signing up says thanks', /write when the next batch/i.test(await footer.innerText()))
 
   await visitor.goto(`${BASE}/help`, { waitUntil: 'networkidle' })

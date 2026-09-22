@@ -1,8 +1,25 @@
 // How the site behaves at a phone width, and the motion that arrives with it. Needs a seeded database.
-import { BASE, freshPage, launch, reporter, signInAsDemo } from './lib.mjs'
+import { BASE, freshPage, launch, open, reporter, signInAsDemo } from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
+
+/** The stagger is the one thing here that really takes time; wait for it to finish rather than guess. */
+async function settledTiles(page) {
+  await page
+    .waitForFunction(
+      () =>
+        [...document.querySelectorAll('[data-stagger]')]
+          .filter((n) => {
+            const box = n.getBoundingClientRect()
+            return box.top >= 0 && box.bottom <= window.innerHeight
+          })
+          .every((n) => Number(getComputedStyle(n).opacity) === 1),
+      null,
+      { timeout: 20_000 },
+    )
+    .catch(() => {})
+}
 
 section('Nothing scrolls sideways on a phone')
 {
@@ -11,8 +28,7 @@ section('Nothing scrolls sideways on a phone')
   const narrow = await context.newPage()
   narrow.setDefaultTimeout(20_000)
   const fits = async (label, path) => {
-    await narrow.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
-    await narrow.waitForTimeout(1200)
+    await open(narrow, path)
     const width = await narrow.evaluate(() => document.documentElement.scrollWidth)
     check(`${label} fits a 320px screen`, width <= 321, `${width}px wide`)
   }
@@ -42,9 +58,7 @@ section('Nothing scrolls sideways on a phone')
     ['the orders list', '/admin/orders'],
     ['the products list', '/admin/products'],
   ]) {
-    await tiny.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
-    await tiny.locator('h1').first().waitFor()
-    await tiny.waitForTimeout(1800)
+    await open(tiny, path)
     const width = await tiny.evaluate(() => document.documentElement.scrollWidth)
     check(`${label} fits a 320px screen`, width <= 321, `${width}px wide`)
   }
@@ -68,7 +82,7 @@ section('Products arrive one after another')
     requestAnimationFrame(tick)
   })
   await shop.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
-  await shop.waitForTimeout(2500)
+  await shop.waitForFunction(() => (window.__began?.size ?? 0) >= 8, null, { timeout: 20_000 }).catch(() => {})
 
   const began = await shop.evaluate(() => [...window.__began.entries()].slice(0, 8).map(([, at]) => at))
   // The step is 60ms, so 40ms on average leaves a slower CI runner room and still proves the spacing.
@@ -84,7 +98,7 @@ section('Products arrive one after another')
     began.join(' '),
   )
 
-  await shop.waitForTimeout(3000)
+  await settledTiles(shop)
   // Fully on screen: a tile hanging off the bottom edge is below the threshold that starts it.
   const onScreen = await shop.evaluate(() =>
     [...document.querySelectorAll('[data-stagger]')]
@@ -105,7 +119,7 @@ section('Products arrive one after another')
     await shop.evaluate(() => window.scrollBy({ top: window.innerHeight * 0.9, behavior: 'instant' }))
     await shop.waitForTimeout(160)
   }
-  await shop.waitForTimeout(1500)
+  await settledTiles(shop)
   const all = await shop.evaluate(() =>
     [...document.querySelectorAll('[data-stagger]')].map((n) => Number(getComputedStyle(n).opacity)),
   )
@@ -120,8 +134,7 @@ section('Products arrive one after another')
 
   const still = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' })
   const quiet = await still.newPage()
-  await quiet.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
-  await quiet.waitForTimeout(500)
+  await open(quiet, '/shop')
   check('reduced motion skips the animation entirely', (await quiet.locator('[data-stagger]').count()) === 0)
   check(
     'and shows the products at once',
@@ -132,7 +145,7 @@ section('Products arrive one after another')
   // A category is a new set of products, not the old ones relabeled, so the reveal plays again.
   const { context: swapped, page: swap } = await freshPage(browser)
   await swap.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
-  await swap.waitForTimeout(3000)
+  await settledTiles(swap)
   const topRow = await swap.evaluate(() =>
     [...document.querySelectorAll('[data-stagger]')].slice(0, 4).map((n) => Number(getComputedStyle(n).opacity)),
   )
@@ -163,16 +176,14 @@ section('A phone at its narrowest')
   await signInAsDemo(tiny, 'shopper')
 
   for (const slug of ['ash-dining-table', 'harvest-vase']) {
-    await tiny.goto(`${BASE}/products/${slug}`, { waitUntil: 'domcontentloaded' })
-    await tiny.waitForTimeout(1400)
+    await open(tiny, `/products/${slug}`)
     await tiny.getByRole('button', { name: 'Add to cart' }).click()
-    await tiny.waitForTimeout(1600)
+    await tiny.locator('[data-slot="sheet-content"]').waitFor()
     await tiny.keyboard.press('Escape')
   }
 
   const fits = async (label, path) => {
-    await tiny.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' })
-    await tiny.waitForTimeout(1600)
+    await open(tiny, path)
     const width = await tiny.evaluate(() => document.documentElement.scrollWidth)
     check(`${label} fits`, width <= 321, `${width}px`)
     // Anything inside a sideways scroller is meant to be off screen, so it does not count.
@@ -206,8 +217,7 @@ section('A phone at its narrowest')
   check('and Add to cart has the next line to itself', buy.width > 240, `${Math.round(buy.width)}px wide`)
 
   // One column, because two at this width is 140px of photograph.
-  await tiny.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
-  await tiny.waitForTimeout(2000)
+  await open(tiny, '/shop')
   // The grid's own column count: a tile waiting to be scrolled to is scaled down, so measured edges lie.
   const columns = await tiny.evaluate(() => {
     let node = document.querySelector('article')
@@ -219,8 +229,8 @@ section('A phone at its narrowest')
   // At this width the rail would stack three lists above the products and fill most of the screen.
   check('the filter rail is out of the way', await tiny.locator('[data-inline-filters="rail"]').isHidden())
   await tiny.getByRole('button', { name: /^Filters/ }).click()
-  await tiny.waitForTimeout(700)
   const sheet = tiny.locator('[data-slot="sheet-content"]')
+  await sheet.waitFor()
   check('and one button brings them all up', await sheet.isVisible())
   const inside = await sheet.innerText()
   check('with the categories folded in beside them', /Category/.test(inside) && /Price/.test(inside))
@@ -229,8 +239,7 @@ section('A phone at its narrowest')
 
   const wide = await browser.newContext({ viewport: { width: 1280, height: 900 } })
   const roomy = await wide.newPage()
-  await roomy.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
-  await roomy.waitForTimeout(2000)
+  await open(roomy, '/shop')
   check('where there is room the rail is simply there', await roomy.locator('[data-inline-filters="rail"]').isVisible())
   check('and nothing is hidden behind a button', await roomy.getByRole('button', { name: /^Filters/ }).isHidden())
   await wide.close()
@@ -243,12 +252,12 @@ section('The menu knows when its button has gone')
   const tablet = await context.newPage()
   await tablet.goto(`${BASE}/`, { waitUntil: 'networkidle' })
   await tablet.getByRole('button', { name: 'Open menu' }).click()
-  await tablet.waitForTimeout(500)
   const sheet = tablet.locator('[data-slot="sheet-content"]')
+  await sheet.waitFor()
   check('the menu opens on a tablet', await sheet.isVisible())
 
   await tablet.setViewportSize({ width: 1200, height: 900 })
-  await tablet.waitForTimeout(600)
+  await sheet.waitFor({ state: 'hidden' }).catch(() => {})
   check('and closes itself when the width leaves it no button', await sheet.isHidden())
 
   await tablet.setViewportSize({ width: 800, height: 900 })

@@ -1,5 +1,16 @@
 // The admin area, and that a Server Action checks its own caller. Needs a seeded database.
-import { BASE, freshPage, launch, openAccountMenu, reporter, signInAsDemo, visibleText } from './lib.mjs'
+import {
+  BASE,
+  freshPage,
+  launch,
+  open,
+  openAccountMenu,
+  reporter,
+  signInAsDemo,
+  submitted,
+  visibleText,
+  waitForText,
+} from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
@@ -8,8 +19,7 @@ section('Authorization')
 {
   const { context: shopperContext, page: shopper } = await freshPage(browser)
   await signInAsDemo(shopper, 'shopper')
-  await shopper.goto(`${BASE}/admin`, { waitUntil: 'domcontentloaded' })
-  await shopper.waitForTimeout(1500)
+  await open(shopper, `/admin`)
   const blocked = await visibleText(shopper)
   check('a shopper cannot reach the admin area', /not here/i.test(blocked), blocked.split('\n').slice(0, 2).join(' | '))
   check('and is served none of its markup', !/Gross sales|Best sellers/i.test(await shopper.content()))
@@ -176,12 +186,10 @@ section('The admin writes for real')
 
   await admin.fill('input[name="stock"]', '12')
   await admin.fill('input[name="price"]', '19.50')
-  await admin.getByRole('button', { name: /Save changes/ }).click()
-  await admin.waitForTimeout(2500)
+  await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
 
   // The storefront is cached by tag, so this is the real question: did the shop notice?
-  await admin.goto(`${BASE}/products/salt-cellar`, { waitUntil: 'networkidle' })
-  await admin.waitForTimeout(1500)
+  await open(admin, `/products/salt-cellar`)
   const shop = await visibleText(admin)
   check('an edit reaches the storefront', /\$19\.50/.test(shop), shop.slice(0, 100))
   check('and the stock with it', !/Back when the next batch/.test(shop))
@@ -189,8 +197,7 @@ section('The admin writes for real')
   // A sale that is not a saving is refused, in the action rather than the form.
   await openAdmin(admin, editUrl.replace(BASE, ''))
   await admin.fill('input[name="salePrice"]', '99.00')
-  await admin.getByRole('button', { name: /Save changes/ }).click()
-  await admin.waitForTimeout(2000)
+  await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
   check('a sale price above the price is refused', /has to be below the price/i.test(await visibleText(admin)))
 
   await openAdmin(admin, editUrl.replace(BASE, ''))
@@ -198,26 +205,23 @@ section('The admin writes for real')
 
   // An empty sale field used to arrive as 0 and make the product free, so it has to leave no sale.
   await admin.fill('input[name="salePrice"]', '')
-  await admin.getByRole('button', { name: /Save changes/ }).click()
-  await admin.waitForTimeout(2500)
-  await admin.goto(`${BASE}/products/salt-cellar`, { waitUntil: 'networkidle' })
-  await admin.waitForTimeout(1500)
+  await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
+  await open(admin, `/products/salt-cellar`)
   const priced = await visibleText(admin)
   check('an empty sale price is no sale, not a free product', !/\$0\.00/.test(priced), priced.slice(0, 90))
 
   // Zero is refused outright rather than quietly meaning "free".
   await openAdmin(admin, editUrl.replace(BASE, ''))
   await admin.fill('input[name="salePrice"]', '0')
-  await admin.getByRole('button', { name: /Save changes/ }).click()
-  await admin.waitForTimeout(2000)
+  await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
+  await waitForText(admin, /more than nothing/i)
   check('a sale price of nothing is refused', /more than nothing/i.test(await visibleText(admin)))
 
   // Put it back, so a rerun starts where this one did.
   await admin.fill('input[name="price"]', wasPrice)
   await admin.fill('input[name="stock"]', wasStock)
   await admin.fill('input[name="salePrice"]', '')
-  await admin.getByRole('button', { name: /Save changes/ }).click()
-  await admin.waitForTimeout(2500)
+  await submitted(admin, () => admin.getByRole('button', { name: /Save changes/ }).click())
   await openAdmin(admin, editUrl.replace(BASE, ''))
   check(
     'the product is left as it was found',

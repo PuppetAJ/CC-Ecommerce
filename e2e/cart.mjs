@@ -1,5 +1,5 @@
 // The cart, the guest cart being claimed, and checkout. Needs a seeded database.
-import { BASE, freshPage, launch, reporter, signInAsDemo, visibleText } from './lib.mjs'
+import { BASE, freshPage, launch, open, reporter, signInAsDemo, visibleText } from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
@@ -13,7 +13,7 @@ section('Cart')
   check('a fresh visitor has no cart badge', (await badge().count()) === 0)
 
   await shop.getByRole('button', { name: 'Add to cart' }).click()
-  await shop.waitForTimeout(2000)
+  await shop.locator('[data-slot="sheet-content"]').waitFor()
   check('adding opens the cart sheet', await shop.locator('[role="dialog"]').isVisible())
   check('and the badge appears', (await badge().innerText()) === '1')
 
@@ -29,7 +29,7 @@ section('Cart')
   await shop.keyboard.press('Escape')
   await shop.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
   await shop.getByRole('button', { name: 'Add to cart' }).click()
-  await shop.waitForTimeout(2000)
+  await shop.locator('[data-slot="sheet-content"]').waitFor()
   check('a second product is a second line', (await badge().innerText()) === '3')
 
   await shop.keyboard.press('Escape')
@@ -71,7 +71,7 @@ section('The sheet does not reopen by itself')
   await shop.locator('a[href="/products/oak-wall-shelf"]').first().click()
   await shop.waitForTimeout(1500)
   await shop.getByRole('button', { name: 'Add to cart' }).click()
-  await shop.waitForTimeout(2000)
+  await shop.locator('[data-slot="sheet-content"]').waitFor()
   check('adding opens the sheet', await sheet())
 
   await shop.keyboard.press('Escape')
@@ -86,7 +86,7 @@ section('The sheet does not reopen by itself')
   check('coming back to the product does not reopen it', !(await sheet()))
 
   await shop.getByRole('button', { name: 'Add to cart' }).click()
-  await shop.waitForTimeout(2000)
+  await shop.locator('[data-slot="sheet-content"]').waitFor()
   check('and a genuine add still opens it', await sheet())
   await context.close()
 }
@@ -113,7 +113,7 @@ section('Carrying a guest cart into an account')
   const add = async (slug) => {
     await guest.goto(`${BASE}/products/${slug}`, { waitUntil: 'networkidle' })
     await guest.getByRole('button', { name: 'Add to cart' }).click()
-    await guest.waitForTimeout(2000)
+    await guest.locator('[data-slot="sheet-content"]').waitFor()
     await guest.keyboard.press('Escape')
   }
   const signOut = async () => {
@@ -151,7 +151,7 @@ section('A claimed cart cannot be reached by its old cookie')
   const { context: victimContext, page: victim } = await freshPage(browser)
   await victim.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
   await victim.getByRole('button', { name: 'Add to cart' }).click()
-  await victim.waitForTimeout(2000)
+  await victim.locator('[data-slot="sheet-content"]').waitFor()
 
   const cookie = (await victimContext.cookies()).find((c) => c.name === 'wicken_cart')
   check('the guest cart cookie is httpOnly', Boolean(cookie?.httpOnly))
@@ -167,7 +167,7 @@ section('A claimed cart cannot be reached by its old cookie')
 
   await holder.goto(`${BASE}/products/harvest-vase`, { waitUntil: 'networkidle' })
   await holder.getByRole('button', { name: 'Add to cart' }).click()
-  await holder.waitForTimeout(2000)
+  await holder.locator('[data-slot="sheet-content"]').waitFor()
   await victim.goto(`${BASE}/cart`, { waitUntil: 'networkidle' })
   const victimCart = await visibleText(victim)
   check(
@@ -214,7 +214,7 @@ section('Checkout')
 
   await buyer.goto(`${BASE}/products/ash-dining-table`, { waitUntil: 'networkidle' })
   await buyer.getByRole('button', { name: 'Add to cart' }).click()
-  await buyer.waitForTimeout(2000)
+  await buyer.locator('[data-slot="sheet-content"]').waitFor()
   await buyer.keyboard.press('Escape')
   await buyer.goto(`${BASE}/checkout`, { waitUntil: 'networkidle' })
   const summary = await visibleText(buyer)
@@ -257,8 +257,7 @@ section('Checkout')
 
     // The detail page sits in the same column as the list, so their headings share an edge.
     const detailEdge = (await buyer.locator('h1').first().boundingBox()).x
-    await buyer.goto(`${BASE}/account/orders`, { waitUntil: 'networkidle' })
-    await buyer.waitForTimeout(800)
+    await open(buyer, `/account/orders`)
     const listEdge = (await buyer.locator('h1').first().boundingBox()).x
     check(
       'one order lines up with the list it came from',

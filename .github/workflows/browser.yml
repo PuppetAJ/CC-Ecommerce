@@ -1,5 +1,5 @@
-# The browser suite, on pull requests only. It builds and boots the app, so it is
-# slower than CI and is not a required check: main is gated by ci.yml alone.
+# The browser suites, on pull requests only. They build and boot the app, so this is slower than
+# ci.yml and is not a required check: main is gated by ci.yml alone.
 name: Browser suite
 
 on:
@@ -12,7 +12,13 @@ concurrency:
 jobs:
   browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+
+    # One runner per area, so the wall clock is the longest area rather than the sum of them all.
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [storefront, layout, account, admin, cart, a11y]
 
     services:
       postgres:
@@ -46,11 +52,26 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Chromium is ~130MB and never changes between runs of the same Playwright version.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
       - run: pnpm exec playwright install --with-deps chromium
+
+      # Next's own build cache; the fallback key means a source change still starts from something warm.
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'public/**') }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            next-${{ runner.os }}-
 
       - run: pnpm db:migrate
 
-      # The suite asserts on real products and on the two demo accounts.
+      # The suites assert on real products and on the two demo accounts.
       - run: pnpm db:seed
 
       - run: pnpm build
@@ -64,12 +85,10 @@ jobs:
           done
           echo "The app did not come up"; cat app.log; exit 1
 
-      - run: pnpm test:e2e
-
-      - run: pnpm test:a11y
+      - run: node e2e/${{ matrix.suite }}.mjs
 
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: app-log
+          name: app-log-${{ matrix.suite }}
           path: app.log

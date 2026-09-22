@@ -1,5 +1,5 @@
 // The shop, the pages that sell, and everything a visitor sees signed out. Needs a seeded database.
-import { BASE, freshPage, launch, reporter, signInAsDemo, visibleText } from './lib.mjs'
+import { BASE, freshPage, launch, open, reporter, signInAsDemo, visibleText, waitForText } from './lib.mjs'
 
 const { browser, page, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
@@ -92,7 +92,7 @@ section('The help page')
   await help.fill('#email', 'sender@wicken.test')
   await help.fill('#body', said)
   await help.getByRole('button', { name: 'Send', exact: true }).click()
-  await help.waitForTimeout(2000)
+  await waitForText(help, /Thank you for reaching out/i)
   check('the form says it arrived', /Thank you for reaching out/i.test(await visibleText(help)))
   await context.close()
 
@@ -284,19 +284,19 @@ section('Material and color filters')
   }
 
   await shop.locator('label:has(input[name="material"][value="oak"])').click()
-  await shop.waitForTimeout(1500)
+  await shop.waitForURL((url) => url.searchParams.getAll('material').includes('oak'))
   const oak = await tiles()
   check('checking a box filters the grid', oak > 0 && oak < all, `${all} to ${oak}`)
   check('and the URL carries it', shop.url().includes('material=oak'), shop.url())
   check('the box stays checked', await shop.locator('input[name="material"][value="oak"]').isChecked())
 
   await shop.locator('label:has(input[name="material"][value="ash"])').click()
-  await shop.waitForTimeout(1500)
+  await shop.waitForURL((url) => url.searchParams.getAll('material').includes('ash'))
   // Overlap, not intersection: nothing is made of oak *and* ash.
   check('two materials returns either, not both', (await tiles()) > oak, `${await tiles()} tiles`)
 
   await shop.locator('label:has(input[name="material"][value="oak"])').click()
-  await shop.waitForTimeout(1500)
+  await shop.waitForURL((url) => !url.searchParams.getAll('material').includes('oak'))
   check(
     'unchecking removes only that one',
     shop.url().includes('material=ash') && !shop.url().includes('oak'),
@@ -332,8 +332,7 @@ section('Filtering does not reload or flood')
     if (request.url().includes('/shop') && request.resourceType() !== 'image') requests++
   })
 
-  await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
-  await shop.waitForTimeout(600)
+  await open(shop, '/shop')
   requests = 0
 
   // Typing used to re-run its own effect on the render its navigation caused, which is a loop.
@@ -342,7 +341,7 @@ section('Filtering does not reload or flood')
     await shop.keyboard.type(letter)
     await shop.waitForTimeout(80)
   }
-  await shop.waitForTimeout(2500)
+  await shop.waitForURL((url) => url.searchParams.get('q') === 'teapot')
   const afterTyping = requests
   check('typing is debounced into one request', afterTyping <= 3, `${afterTyping} for six keystrokes`)
 
@@ -351,13 +350,12 @@ section('Filtering does not reload or flood')
 
   // fill() ignores maxLength, so unclamped 150 characters reach the URL and the schema drops them.
   await shop.locator('input[type="search"][name="q"]').fill('a'.repeat(150))
-  await shop.waitForTimeout(2500)
+  await shop.waitForURL((url) => (url.searchParams.get('q') ?? '').length === 100)
   const asked = new URL(shop.url()).searchParams.get('q') ?? ''
   check('an over-long query is clamped to what the schema accepts', asked.length === 100, `${asked.length} chars`)
 
   // Scrolled to where the checkbox is on screen, so the click itself cannot scroll.
-  await shop.goto(`${BASE}/shop`, { waitUntil: 'networkidle' })
-  await shop.waitForTimeout(600)
+  await open(shop, '/shop')
   const boxes = shop.locator('label:has(input[name="material"][value="stoneware"])')
   await boxes.scrollIntoViewIfNeeded()
   await shop.evaluate(() => window.scrollBy({ top: 120, behavior: 'instant' }))
@@ -365,7 +363,7 @@ section('Filtering does not reload or flood')
   const before = await shop.evaluate(() => window.scrollY)
 
   await boxes.click()
-  await shop.waitForTimeout(2200)
+  await shop.waitForURL((url) => url.searchParams.getAll('material').includes('stoneware'))
   const after = await shop.evaluate(() => window.scrollY)
   check('filtering keeps the scroll position', Math.abs(before - after) < 60, `${before} to ${after}`)
   check(
@@ -409,7 +407,7 @@ section('Price bands')
   const fill = (box) => box.evaluate((node) => getComputedStyle(node).backgroundColor)
   const idle = await fill(boxOf('price', 'under-50'))
   await shop.locator('label:has(input[name="price"][value="under-50"])').click()
-  await shop.waitForTimeout(1200)
+  await shop.waitForURL((url) => url.searchParams.getAll('price').includes('under-50'))
   check('and it fills once checked', (await fill(boxOf('price', 'under-50'))) !== idle, `was ${idle}`)
   await context.close()
 }
@@ -424,7 +422,7 @@ section('Sale prices')
   check('a sale product shows both prices', /\$58\.50/.test(page) && /\$78\.00/.test(page), page.slice(0, 120))
 
   await shopper.getByRole('button', { name: 'Add to cart' }).click()
-  await shopper.waitForTimeout(2000)
+  await shopper.locator('[data-slot="sheet-content"]').waitFor()
   const sheet = await shopper.locator('[role="dialog"]').innerText()
   // The important one: the cart has to charge the sale price, not the list price.
   check(

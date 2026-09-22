@@ -63,6 +63,43 @@ export function reporter() {
   return { check, section, report, results }
 }
 
+/** Waits for the layout to stop moving, which is what a fixed pause after a goto was standing in for. */
+export async function laidOut(page) {
+  await page.evaluate(() => document.fonts.ready)
+  // Hydration can still move things, so this waits for the width to agree with itself twice over.
+  await page.waitForFunction(
+    () =>
+      new Promise((resolve) => {
+        const width = () => document.documentElement.scrollWidth
+        const first = width()
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve(width() === first))),
+        )
+      }),
+    null,
+    { timeout: 15_000 },
+  )
+}
+
+/** Opens a page and waits for it to settle, rather than guessing how long that takes. */
+export async function open(page, path) {
+  // networkidle is this project's hydration signal: the client bundle has landed and run by then.
+  await page.goto(`${BASE}${path}`, { waitUntil: 'networkidle' })
+  await laidOut(page)
+}
+
+/** A Server Action is a POST to the page itself, and waiting for that beats waiting for the toast it raises. */
+export async function submitted(page, run) {
+  const answered = page.waitForResponse((response) => response.request().method() === 'POST', { timeout: 20_000 })
+  await run()
+  await answered
+}
+
+/** Waits for a message to appear anywhere on the page: a toast, an inline error, a confirmation. */
+export async function waitForText(page, pattern, timeout = 15_000) {
+  await page.getByText(pattern).first().waitFor({ timeout })
+}
+
 /** The stamp keeps a rerun from colliding with the account the last one made. */
 export function newShopper() {
   const stamp = Date.now()
