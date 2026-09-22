@@ -2,13 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 
-/**
- * A horizontally scrolling strip that says so.
- *
- * A scrollbar is hidden on a trackpad and absent on a phone, so content that runs off the edge
- * simply looks cut off. This fades the edge that still has something past it, and stops fading
- * once there is not.
- */
+/** A scrollbar is hidden on a trackpad and absent on a phone, so this fades an edge with content past it. */
 export function Scroller({
   children,
   className = '',

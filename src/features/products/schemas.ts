@@ -89,8 +89,7 @@ export const colorSwatches: Record<(typeof colors)[number], string> = {
   mixed: 'conic-gradient(#e8e0cf 0deg 120deg, #b0674a 120deg 240deg, #2f4f7a 240deg 360deg)',
 }
 
-// Bands rather than a slider: the catalog runs $18 to $1,280 with most of it under $200,
-// so a slider would spend most of its travel on four products.
+// Bands, not a slider: most of a $18 to $1,280 catalog is under $200, so a slider mostly travels empty.
 export const priceBands = ['under-50', '50-100', '100-200', 'over-200'] as const
 
 export const priceBandLabels: Record<(typeof priceBands)[number], string> = {

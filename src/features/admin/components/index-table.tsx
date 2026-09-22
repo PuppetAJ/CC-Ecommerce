@@ -3,11 +3,7 @@ import { Scroller } from '@/components/elements/scroller'
 import { perPage } from '@/lib/db/queries/paging'
 import { Skeleton } from '@/components/ui/skeleton'
 
-/**
- * Shopify's resource index, in the shape their own guidance describes: one column, so the
- * hierarchy runs top to bottom and the row keeps its horizontal space for data. Each row
- * has one primary thing, one secondary, and a kicker that sits above both.
- */
+/** Shopify's resource index: one column, so the row keeps its horizontal space for data. */
 export function IndexTable({
   columns,
   children,

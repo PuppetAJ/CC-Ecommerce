@@ -66,8 +66,7 @@ async function Results({ searchParams }: Pick<PageProps<'/shop'>, 'searchParams'
         <div className="min-w-0">
           {products.length > 0 ? (
             <ProductGrid
-              // Keyed on the filters, so a new set of products arrives rather than replacing the
-              // old one in place with its reveal already spent.
+              // Keyed on the filters, so a new set of products arrives with its reveal unspent.
               key={state || 'all'}
               products={products}
               from={state}

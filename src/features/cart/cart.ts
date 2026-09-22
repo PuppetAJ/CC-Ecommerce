@@ -16,8 +16,7 @@ async function currentCartId(): Promise<string | null> {
   const session = await getSession()
   if (session) return getCartIdForUser(session.user.id)
 
-  // isGuestCart, not cartExists: once a cart is claimed by an account the cookie that
-  // used to name it must stop working, or whoever still holds that id keeps access.
+  // isGuestCart, not cartExists: once an account claims a cart, the old cookie must stop working.
   const cookieId = await readCartCookie()
   return cookieId && (await isGuestCart(cookieId)) ? cookieId : null
 }

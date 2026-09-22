@@ -11,8 +11,7 @@ import type { ActionState } from '@/lib/action-state'
 
 export type AuthState = ActionState
 
-// Better Auth answers 429 from its own rate limiter, and a wrong password and an
-// unknown email both answer 401 so the form cannot be used to enumerate accounts.
+// A wrong password and an unknown email both answer 401, so the form cannot enumerate accounts.
 function messageFor(error: unknown, fallback: string): string {
   if (error instanceof APIError) {
     if (error.status === 'TOO_MANY_REQUESTS') return throttled
@@ -70,8 +69,7 @@ export async function signInWithGoogle(_previous: AuthState, formData: FormData)
 }
 
 export async function signInAsDemo(_previous: AuthState, formData: FormData): Promise<AuthState> {
-  // Looser than sign-in: the demo password is printed on the page, so this is not a
-  // guessing target and the limit only exists to blunt abuse.
+  // Looser than sign-in: the demo password is printed on the page, so this is not a guessing target.
   if (!(await limitAttempts('demo', 15))) return { error: throttled }
 
   const account = formData.get('role') === 'admin' ? demoAccounts.admin : demoAccounts.customer

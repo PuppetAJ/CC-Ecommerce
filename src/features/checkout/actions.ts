@@ -21,8 +21,7 @@ export async function startCheckout(): Promise<CheckoutState> {
 
   let url: string | null = null
   try {
-    // The order is built from the cart rows and priced from the products table inside one
-    // transaction. Nothing about the amount comes from the browser, which is A#1.
+    // Priced from the products table in one transaction; nothing about the amount comes from the browser.
     const order = await createPendingOrder(user.id, cartId)
 
     const session = await payFor(stripe, order, user.email, `${env.APP_URL}/cart`)

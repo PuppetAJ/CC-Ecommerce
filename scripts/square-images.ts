@@ -1,15 +1,6 @@
 import sharp from 'sharp'
 
-/**
- * Some photographs put their subject right across the frame. The shop crops to a square, which
- * takes a third of the width off a 3:2 photograph, so those subjects lose their ends. Sliding
- * the crop around only chooses which third to lose.
- *
- * So the photograph is squared before it is ever cropped. The bands above and below are the
- * photograph's own top and bottom edges, stretched and blurred, so each continues the scene it
- * touches: the wall above, the table below. The earlier version used a blurred copy of the
- * whole picture, which put a ghost of the subject in each band and read as a glitch at tile size.
- */
+/** Squared before cropping; the bands stretch its own edges, since a blurred copy ghosted the subject. */
 const wide = ['carved-catch-all', 'lidded-keepsake-box', 'turned-serving-trays']
 
 // Overlap tucks the seam under the photograph; the strip is thin so it carries color, not shapes.

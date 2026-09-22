@@ -11,34 +11,22 @@ const apart = 120
 
 const rise: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
-  // `take` is called here rather than read as a number, which is the point: the place in the
-  // queue is claimed when the tile actually starts, not when it was rendered.
+  // `take` is called here so the queue place is claimed when the tile starts, not when it rendered.
   shown: (take: () => number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    // A spring rather than an ease: the small overshoot at the end is what makes the movement
-    // read as arriving rather than fading.
+    // A spring rather than an ease: the small overshoot reads as arriving rather than fading.
     transition: { delay: take() * step, type: 'spring', stiffness: 260, damping: 22 },
   }),
 }
 
-/**
- * Reveals its children one after another as they come into view.
- *
- * The children arrive **already rendered by the server** and are only wrapped here, so a grid of
- * forty-seven product tiles stays server-rendered and this wrapper is the only thing shipped.
- * Motion's features load through `LazyMotion`, which is a fraction of the whole library.
- *
- * The delay counts arrivals rather than positions: everything that comes into view together goes
- * one after another in reading order, and a tile scrolled to on its own starts straight away.
- */
+/** Wraps server-rendered children so only the wrapper ships; the delay counts arrivals, not positions. */
 export function Stagger({ children, className }: { children: ReactNode; className?: string }) {
   const still = useReducedMotion()
   const queue = useRef({ at: 0, next: 0, given: new Map<number, number>() })
 
-  // Remembered per tile, because Motion resolves a variant more than once and a tile that claimed
-  // a fresh slot each time would count double and reach the cap four tiles in.
+  // Remembered per tile: Motion resolves a variant more than once, and a fresh slot each time doubles.
   const take = useCallback((index: number) => {
     const had = queue.current.given.get(index)
     if (had !== undefined) return had
@@ -70,8 +58,7 @@ export function Stagger({ children, className }: { children: ReactNode; classNam
           </m.div>
         ))}
       </div>
-      {/* Motion writes its hidden state into the server markup, so without JavaScript nothing
-          would ever be revealed. This puts it back. */}
+      {/* Motion's hidden state is in the server markup, so without JavaScript nothing is ever revealed. */}
       <noscript>
         <style>{'[data-stagger]{opacity:1!important;transform:none!important}'}</style>
       </noscript>
@@ -79,10 +66,7 @@ export function Stagger({ children, className }: { children: ReactNode; classNam
   )
 }
 
-/**
- * Plays the moment it mounts, for what is already on screen when the page opens. `Rise` waits to
- * be scrolled to, which for the hero means waiting for nothing.
- */
+/** Plays on mount, for what is already on screen: `Rise` would wait to be scrolled to. */
 export function Enter({
   children,
   className,
@@ -142,10 +126,7 @@ export function Rise({ children, className, delay = 0 }: { children: ReactNode; 
   )
 }
 
-/**
- * A spring on a toggle, which is the thing CSS transitions cannot do: the overshoot is what makes
- * it read as a press rather than a fade. Falls back to no movement when motion is not wanted.
- */
+/** A spring, which CSS transitions cannot do; no movement at all when motion is not wanted. */
 export function Pop({ on, children, className }: { on: boolean; children: ReactNode; className?: string }) {
   const still = useReducedMotion()
   if (still) return <span className={className}>{children}</span>

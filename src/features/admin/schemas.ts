@@ -49,8 +49,7 @@ export function windows(range: Range): { from: Date; to: Date; wasFrom: Date; wa
 export const productEdit = z.object({
   id: z.coerce.number().int().positive(),
   priceDollars: z.coerce.number().min(0).max(100000),
-  // An empty field arrives as '', and z.coerce.number() turns that into 0, which stored a
-  // sale at $0.00 and made the product free. Emptiness has to become null before coercion.
+  // z.coerce.number() turns '' into 0, which made the product free, so empty becomes null first.
   salePriceDollars: z.preprocess(
     (value) => (value === '' || value === null || value === undefined ? null : value),
     z.coerce.number().min(0).max(100000).nullable(),

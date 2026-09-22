@@ -8,11 +8,7 @@ import { Pop } from '@/components/motion'
 import { quickAdd } from '@/features/cart/actions'
 import { useFavorite } from '@/features/favorites/use-favorite'
 
-// Revealed on hover only where there is a mouse. Touch has no hover and coarse pointers
-// need the 44px target, so there the buttons simply stay visible; focus-within covers the
-// keyboard. Research on this pattern is in docs/REDESIGN.md §15.
-// pointer-events-none, or this covers the whole tile and swallows clicks meant for the
-// card's link; the buttons themselves opt back in.
+// Coarse pointers never hover, so the buttons stay visible; pointer-events-none or this eats card clicks.
 const shell =
   'pointer-events-none absolute inset-0 z-10 hidden items-center justify-center gap-3 transition-opacity pointer-fine:flex ' +
   'pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:opacity-100 ' +

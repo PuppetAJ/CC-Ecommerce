@@ -16,11 +16,7 @@ import {
 import type { ShopSearch } from '../schemas'
 import { FacetFilters } from './facet-filters'
 
-/**
- * Every filter behind one button, for the widths where the rail would be a column of lists
- * above the products rather than beside them. The category chips fold in here too, since they
- * are the filter people reach for first and the toolbar has no room for them on a phone.
- */
+/** Every filter behind one button where the rail would stack above the products, chips included. */
 export function FilterSheet({
   search,
   facets,

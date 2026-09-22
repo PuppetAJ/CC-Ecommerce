@@ -4,11 +4,7 @@ import { Section } from '@/components/elements/section'
 import { ProductGrid, ProductGridSkeleton } from '@/features/products/components/product-grid'
 import { getFeatured } from '@/features/products/data'
 
-/**
- * Four pieces, one per category, on a page that otherwise sells nothing you can click.
- *
- * It carries its own link onward, which is why the page no longer ends on a bare button.
- */
+/** Four pieces, one per category, with the link onward so the page does not end on a bare button. */
 export async function Featured() {
   const products = await getFeatured(4)
   if (products.length === 0) return null

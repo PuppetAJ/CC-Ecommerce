@@ -1,20 +1,12 @@
-// How the site behaves at a phone width, and the motion that arrives with it.
-// Needs the app running against a seeded database.
-import {
-  BASE,
-  freshPage,
-  launch,
-  reporter,
-  signInAsDemo,
-} from './lib.mjs'
+// How the site behaves at a phone width, and the motion that arrives with it. Needs a seeded database.
+import { BASE, freshPage, launch, reporter, signInAsDemo } from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
 
 section('Nothing scrolls sideways on a phone')
 {
-  // 320px is the narrowest phone still in use. A document wider than its viewport means the
-  // page slides under the thumb, which is the thing people actually notice.
+  // 320px is the narrowest phone still in use; a document wider than its viewport slides under the thumb.
   const context = await browser.newContext({ viewport: { width: 320, height: 900 } })
   const narrow = await context.newPage()
   narrow.setDefaultTimeout(20_000)
@@ -62,8 +54,7 @@ section('Nothing scrolls sideways on a phone')
 section('Products arrive one after another')
 {
   const { context, page: shop } = await freshPage(browser)
-  // Each tile's first visible frame, recorded as it happens: sampling opacities at one instant
-  // cannot tell a tile that has finished from one that never started.
+  // Recorded as it happens: one sample cannot tell a tile that has finished from one that never started.
   await shop.addInitScript(() => {
     window.__began = new Map()
     const from = performance.now()
@@ -80,15 +71,13 @@ section('Products arrive one after another')
   await shop.waitForTimeout(2500)
 
   const began = await shop.evaluate(() => [...window.__began.entries()].slice(0, 8).map(([, at]) => at))
-  // At least a row, at least forty milliseconds apart on average: the step is sixty, and a CI
-  // runner with fewer tiles in view is still expected to space the ones it has.
+  // The step is 60ms, so 40ms on average leaves a slower CI runner room and still proves the spacing.
   check(
     'they do not all appear at once',
     began.length >= 4 && began.at(-1) - began[0] >= (began.length - 1) * 40,
     began.join(' '),
   )
-  // One after another, not a column at a time: the fifth tile starts behind the fourth rather
-  // than alongside the first, which is what a delay counted by column would do.
+  // The fifth tile starts behind the fourth, not alongside the first as a column-counted delay would.
   check(
     'and each one waits for the one before it',
     began.every((at, index) => index === 0 || at >= began[index - 1]),
@@ -111,7 +100,6 @@ section('Products arrive one after another')
     `${onScreen.length} tiles`,
   )
 
-  // The rest wait to be scrolled to, which is what makes the reveal visible down a long page.
   // Scrolled the way a person does: jumping straight to the end never intersects the middle.
   for (let step = 0; step < 24; step++) {
     await shop.evaluate(() => window.scrollBy({ top: window.innerHeight * 0.9, behavior: 'instant' }))
@@ -141,8 +129,7 @@ section('Products arrive one after another')
   )
   await still.close()
 
-  // A category is a new set of products, not the old ones relabelled, so the reveal plays again
-  // rather than swapping them in with it already spent.
+  // A category is a new set of products, not the old ones relabeled, so the reveal plays again.
   const { context: swapped, page: swap } = await freshPage(browser)
   await swap.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
   await swap.waitForTimeout(3000)
@@ -188,7 +175,6 @@ section('A phone at its narrowest')
     await tiny.waitForTimeout(1600)
     const width = await tiny.evaluate(() => document.documentElement.scrollWidth)
     check(`${label} fits`, width <= 321, `${width}px`)
-    // Nothing may run past the gutter either, which is how a clipped control goes unnoticed.
     // Anything inside a sideways scroller is meant to be off screen, so it does not count.
     const past = await tiny.evaluate(
       () =>
@@ -222,8 +208,7 @@ section('A phone at its narrowest')
   // One column, because two at this width is 140px of photograph.
   await tiny.goto(`${BASE}/shop`, { waitUntil: 'domcontentloaded' })
   await tiny.waitForTimeout(2000)
-  // The grid's own column count, not where the tiles have landed: one still waiting to be
-  // scrolled to is scaled down, and a measured edge says more about the animation than the layout.
+  // The grid's own column count: a tile waiting to be scrolled to is scaled down, so measured edges lie.
   const columns = await tiny.evaluate(() => {
     let node = document.querySelector('article')
     while (node && getComputedStyle(node).display !== 'grid') node = node.parentElement
@@ -231,8 +216,7 @@ section('A phone at its narrowest')
   })
   check('the shop drops to one column', columns === 1, `${columns} columns`)
 
-  // The rail here would be three lists stacked above the products rather than beside them,
-  // which is most of the screen before a single piece is seen.
+  // At this width the rail would stack three lists above the products and fill most of the screen.
   check('the filter rail is out of the way', await tiny.locator('[data-inline-filters="rail"]').isHidden())
   await tiny.getByRole('button', { name: /^Filters/ }).click()
   await tiny.waitForTimeout(700)

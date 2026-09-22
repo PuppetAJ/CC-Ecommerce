@@ -25,8 +25,7 @@ export async function saveProduct(_previous: AdminState, formData: FormData): Pr
   const sale = parsed.data.salePriceDollars
   const saleCents = sale === null ? null : Math.round(sale * 100)
   const priceCents = Math.round(parsed.data.priceDollars * 100)
-  // A sale that is not a saving is a mistake somebody is about to publish, and a sale of
-  // nothing makes the product free.
+  // A sale that is not a saving is about to be published, and a sale of nothing makes the product free.
   if (saleCents !== null && saleCents <= 0) return { error: 'A sale price has to be more than nothing.' }
   if (saleCents !== null && saleCents >= priceCents) return { error: 'A sale price has to be below the price.' }
 

@@ -41,8 +41,7 @@ export async function updateProduct(id: number, edit: ProductEdit): Promise<Prod
   return rows[0] ?? null
 }
 
-// A function, not a constant: the list needs a row count in the same statement and the single
-// order does not. count(*) OVER () lands after GROUP BY, so it counts orders, not order items.
+// A function, not a constant: count(*) OVER () lands after GROUP BY, so it counts orders, not items.
 const orderWithItems = (extra = '') => `
   SELECT o.*, u.name AS customer_name, u.email AS customer_email${extra}, ${orderItemsJson}
   FROM orders o

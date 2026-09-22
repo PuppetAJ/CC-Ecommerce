@@ -6,12 +6,10 @@ import type { Product } from '@/lib/db/types'
 import { Price, SaleBadge } from './price'
 import { focalPosition } from '../focal'
 
-// Square tiles keep 67% of a 3:2 photograph against 53% for a 4:5, so far less of each
-// frame is discarded and fewer products need a focal point. The grid never reflows either.
+// Square tiles keep 67% of a 3:2 photograph against 53% for a 4:5, so fewer need a focal point.
 const tile = 'relative aspect-square overflow-hidden rounded-xl bg-tile'
 
-// Two columns start at 400px and the container stops growing at 1280, so neither 100vw nor a
-// plain 25vw describes a tile; both ask for an image about twice the width actually drawn.
+// Two columns start at 400px and the container stops at 1280, so neither 100vw nor 25vw fits a tile.
 const gridSizes =
   '(min-width: 1280px) 240px, (min-width: 1024px) 18vw, (min-width: 640px) 350px, (min-width: 400px) 45vw, 92vw'
 
@@ -38,8 +36,7 @@ export function ProductCard({
   const soldOut = product.stock_quantity === 0
 
   return (
-    // Not a Link wrapper: the quick actions are buttons, and a button inside an anchor is
-    // invalid. The title carries a stretched link that covers the whole card instead.
+    // Not a Link wrapper: a button inside an anchor is invalid, so the title carries a stretched link.
     <article className="group relative flex flex-col gap-3">
       <div className={tile}>
         {product.image_url && (

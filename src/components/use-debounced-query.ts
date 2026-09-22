@@ -3,10 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition } from 'react'
 
-/**
- * Filters as you type against a URL rather than a cache, so every filtered view stays a real
- * address and the form still works with JavaScript off.
- */
+/** Filters against the URL rather than a cache, so every view stays an address and works without JS. */
 export function useDebouncedQuery({
   applied,
   maxLength,

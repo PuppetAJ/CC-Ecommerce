@@ -8,8 +8,7 @@ const grid = 'grid grid-cols-1 gap-x-6 gap-y-10 min-[400px]:grid-cols-2 lg:grid-
 export function ProductGrid({
   products,
   from,
-  // A slot, so the grid stays ignorant of the cart and favorites it would otherwise
-  // have to import across a feature boundary.
+  // A slot, so the grid never imports the cart or favorites across a feature boundary.
   actions,
   rating,
 }: {
@@ -19,12 +18,10 @@ export function ProductGrid({
   rating?: (product: Product) => ReactNode
 }) {
   return (
-    // Server-rendered tiles handed to a client wrapper: the cards stay on the server and only
-    // the wrapper ships.
+    // Server-rendered tiles handed to a client wrapper, so only the wrapper ships.
     <Stagger className={grid}>
       {products.map((product, i) => (
-        // The first row is above the fold on every breakpoint we support; the rows behind it are
-        // fetched early so a tile is never still loading when its reveal plays.
+        // The rows behind the first are fetched early so no tile is still loading when its reveal plays.
         <ProductCard
           key={product.id}
           product={product}

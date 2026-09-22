@@ -1,5 +1,4 @@
-// Registering, signing in, what is saved, and what is written. Throttling runs last: it spends the sign-in budget.
-// Needs the app running against a seeded database.
+// Throttling runs last because it spends the sign-in budget. Needs a seeded database.
 import {
   BASE,
   demo,
@@ -123,8 +122,7 @@ section('Quick actions on the grid')
   const card = shop.locator('article').first()
   const name = await card.locator('h3').innerText()
 
-  // The buttons exist in the DOM at all times; only their opacity is hovered. A touch
-  // device never fires hover, so they must be clickable without it.
+  // A touch device never fires hover, so the buttons must be clickable without it.
   const add = card.locator('button[aria-label^="Add"]')
   check('every tile carries a quick add', (await add.count()) === 1)
   check(

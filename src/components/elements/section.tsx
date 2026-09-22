@@ -23,8 +23,7 @@ export function Section({
   cta?: ReactNode
   /** A closer rhythm, for a page of sections rather than one section on its own. */
   tight?: boolean
-  /** Arrives with whatever it introduces, rather than sitting above an empty space until the
-   * content below it is scrolled to. */
+  /** Arrives with whatever it introduces rather than sitting above an empty space. */
   reveal?: boolean
 } & ComponentProps<'section'>) {
   return (

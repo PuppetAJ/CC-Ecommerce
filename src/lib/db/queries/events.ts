@@ -27,10 +27,7 @@ type Visitors = {
   bought: number
 }
 
-/**
- * The visitor-level view, which sessions alone cannot give. Only signed-in accounts appear
- * here: everybody else is counted as sessions, because there is nothing to join them on.
- */
+/** Only signed-in accounts appear: there is nothing to join anybody else on, so they stay sessions. */
 export async function visitorsBetween(from: Date, to: Date): Promise<Visitors> {
   const { rows } = await pool.query<{ known: string; returning: string; bought: string }>(
     `WITH seen AS (
@@ -59,10 +56,7 @@ export type Funnel = {
   purchases: number
 }
 
-/**
- * Counts distinct sessions at each step, not raw events, because a shopper who opens six
- * product pages is still one person deciding.
- */
+/** Distinct sessions, not raw events: six product pages is still one person deciding. */
 export async function funnelBetween(from: Date, to: Date): Promise<Funnel> {
   const { rows } = await pool.query<Record<keyof Funnel, string>>(
     `SELECT count(DISTINCT session) FILTER (WHERE name = 'view') AS sessions,

@@ -62,15 +62,13 @@ const assignments: { file: string; id: string }[] = [
 mkdirSync('public/images', { recursive: true })
 
 type Credit = { file: string; id: string; photographer: string; profile: string; source?: string; credited?: boolean }
-// Merged, not replaced: running this for a handful of new products must not drop the credits
-// already earned by the rest, nor the flags recording that Unsplash has been pinged.
+// Merged, not replaced: a run for a few new products must not drop the credits and flags the rest earned.
 const existing: Credit[] = existsSync('public/images/credits.json')
   ? (JSON.parse(readFileSync('public/images/credits.json', 'utf8')) as Credit[])
   : []
 const byFile = new Map(existing.map((credit) => [credit.file, credit]))
 
-// Anything already on disk is left alone unless FORCE=1: hero-teaware is sharpened by hand
-// after downloading, and a re-run for new products used to quietly overwrite that work.
+// Left alone unless FORCE=1: hero-teaware is sharpened by hand and a re-run used to overwrite that work.
 const force = process.env.FORCE === '1'
 
 // ONLY=a,b narrows a forced run to a few files, so re-fetching three originals does not touch the rest.

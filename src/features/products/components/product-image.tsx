@@ -34,8 +34,7 @@ export function ProductImage({ src, alt, objectPosition }: { src: string; alt: s
           src={src}
           alt={alt}
           fill
-          // The magnifier samples at 2.2x, so the tile asks for the full-size asset rather than
-          // its displayed width; that is also the one the lightbox opens, so it is a single download.
+          // The magnifier samples at 2.2x, and the lightbox opens the same asset, so it is one download.
           sizes="(min-width: 1024px) 1600px, 100vw"
           priority
           style={{

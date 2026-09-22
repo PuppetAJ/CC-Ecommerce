@@ -28,8 +28,7 @@ export async function listProducts({
   priceRanges?: [number, number | null][]
   sort?: ProductSort
 } = {}): Promise<Product[]> {
-  // Every parameter is always bound; a null means "no filter" so the SQL stays one
-  // statement. `&&` is array overlap, so picking oak and ash returns either, not both.
+  // A null means "no filter" so the SQL stays one statement; `&&` is overlap, so oak and ash means either.
   const { rows } = await pool.query<Product>(
     `SELECT * FROM products
      WHERE ($1::text IS NULL OR category = $1)
@@ -55,9 +54,7 @@ export async function listProducts({
   return rows
 }
 
-/** What to offer in the filters. Read from the catalog rather than the vocabulary, so a facet
- * nothing carries is never shown. Materials read alphabetically, because that is a list somebody
- * scans for a word; colors stay commonest-first, because a swatch has no word to scan for. */
+/** Read from the catalog rather than the vocabulary, so a facet nothing carries is never shown. */
 export async function listFacets(): Promise<{ materials: string[]; colors: string[] }> {
   const [materials, colors] = await Promise.all([
     pool.query<{ value: string }>('SELECT unnest(material_tags) AS value FROM products GROUP BY value ORDER BY value'),
@@ -97,8 +94,7 @@ export async function listRelatedProducts(product: Product, limit = 4): Promise<
 type CategoryCover = { category: Category; slug: string; count: number; image_url: string | null }
 
 export async function listCategoryCovers(): Promise<CategoryCover[]> {
-  // DISTINCT ON takes the first row of each group, which the ORDER BY makes the dearest piece
-  // in stock: a category is best introduced by something it is actually known for.
+  // The ORDER BY makes DISTINCT ON take the dearest piece in stock for each category.
   const { rows } = await pool.query<CategoryCover & { count: string }>(
     `SELECT DISTINCT ON (category) category, slug, image_url,
             count(*) OVER (PARTITION BY category) AS count

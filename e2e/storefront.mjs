@@ -1,13 +1,5 @@
-// The shop, the pages that sell, and everything a visitor sees signed out.
-// Needs the app running against a seeded database.
-import {
-  BASE,
-  freshPage,
-  launch,
-  reporter,
-  signInAsDemo,
-  visibleText,
-} from './lib.mjs'
+// The shop, the pages that sell, and everything a visitor sees signed out. Needs a seeded database.
+import { BASE, freshPage, launch, reporter, signInAsDemo, visibleText } from './lib.mjs'
 
 const { browser, page, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
@@ -49,8 +41,7 @@ section('The landing page sells something')
   check('with a way through to the rest', /See the whole collection/.test(text))
   check('somebody is shown making something', (await home.locator('img[src*="editorial-throwing"]').count()) > 0)
 
-  // The band quotes the reviews table rather than invented copy, so the quote has to be
-  // findable on the product it came from.
+  // The band quotes the reviews table, so the quote has to be findable on the product it came from.
   const quote = (await home.locator('blockquote').first().innerText()).replaceAll(/[\u201c\u201d"]/g, '').trim()
   const onward = await home.locator('figcaption a').first().getAttribute('href')
   check('the quotes name the piece they are about', Boolean(onward?.startsWith('/products/')), String(onward))
@@ -95,8 +86,7 @@ section('The help page')
     check(`the footer's #${id} link lands somewhere`, (await help.locator(`#${id}`).count()) === 1)
   }
 
-  // A form that discarded what people typed would be worse than printing an address, so the
-  // message has to survive as far as the admin.
+  // A discarded message would be worse than printing an address, so it has to survive as far as the admin.
   const said = `A question from the browser suite at ${Date.now()}`
   await help.fill('#name', 'Suite Sender')
   await help.fill('#email', 'sender@wicken.test')
@@ -217,8 +207,7 @@ section('More from a category')
 
 section('The shop skeleton mirrors the shop')
 {
-  // The prerendered shell is what a visitor sees before the grid streams in, so read it
-  // straight from the response rather than racing the browser for it.
+  // The prerendered shell is read straight from the response rather than racing the browser for it.
   const html = await (await fetch(`${BASE}/shop`)).text()
   const shell = html.split('<script>self.__next_f')[0]
 
@@ -285,8 +274,7 @@ section('Material and color filters')
     listed.slice(0, 5).join(', '),
   )
 
-  // The gradient is sized to the padding box by default, so a bordered circle shows a square of
-  // color with pale crescents where the curve runs past it.
+  // A gradient sized to the padding box leaves a bordered circle with pale crescents at the curve.
   const mixed = shop.locator('label[title="Mixed"] span[aria-hidden]')
   if ((await mixed.count()) > 0) {
     check(
@@ -348,8 +336,7 @@ section('Filtering does not reload or flood')
   await shop.waitForTimeout(600)
   requests = 0
 
-  // Typing used to re-run its own effect on the render its navigation caused, which is a
-  // loop. One debounced request for six keystrokes, and nothing at all once idle.
+  // Typing used to re-run its own effect on the render its navigation caused, which is a loop.
   await shop.locator('input[type="search"][name="q"]').click()
   for (const letter of 'teapot') {
     await shop.keyboard.type(letter)
@@ -362,8 +349,7 @@ section('Filtering does not reload or flood')
   await shop.waitForTimeout(3000)
   check('and stops once idle', requests === afterTyping, `${requests - afterTyping} more while idle`)
 
-  // fill() ignores maxLength, so this is the hostile case. Unclamped, 150 characters reach the
-  // URL, the schema drops them, and the effect never sees the query it asked for come back.
+  // fill() ignores maxLength, so unclamped 150 characters reach the URL and the schema drops them.
   await shop.locator('input[type="search"][name="q"]').fill('a'.repeat(150))
   await shop.waitForTimeout(2500)
   const asked = new URL(shop.url()).searchParams.get('q') ?? ''
@@ -549,9 +535,7 @@ section('Choosing a review sort does not jump')
 {
   const { context, page: reader } = await freshPage(browser)
   await reader.goto(`${BASE}/products/spouted-pendant`, { waitUntil: 'networkidle' })
-  // Scrolled to the control itself, which is the only way a person reaches it. Leaving it above
-  // the fold and reaching for it anyway makes the browser scroll it into view on focus, and that
-  // movement is the test's own doing rather than the sort's.
+  // Scrolled to the control first, or the browser's own scroll-into-view on focus is read as the sort's.
   await reader.getByLabel('Sort reviews').scrollIntoViewIfNeeded()
   await reader.waitForTimeout(400)
   const before = await reader.evaluate(() => window.scrollY)

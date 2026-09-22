@@ -1,10 +1,7 @@
 import type { Funnel as Steps } from '@/lib/db/queries/events'
 import { formatCount } from '@/lib/format'
 
-/**
- * Sessions reaching each step, as bars sharing one scale. Sequential, one hue: this is a
- * magnitude down an ordered path, not five categories.
- */
+/** Bars share one scale and one hue: a magnitude down an ordered path, not five categories. */
 export function Funnel({ steps }: { steps: Steps }) {
   const rows = [
     ['Visited', steps.sessions],

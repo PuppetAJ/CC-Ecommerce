@@ -12,8 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 export function ContactForm({
   name = '',
   email = '',
-  // True only for the streaming placeholder, so nobody types into a copy that is about to be
-  // replaced by the one carrying their name.
+  // True only for the streaming placeholder, so nobody types into a copy about to be replaced.
   waiting = false,
 }: {
   name?: string

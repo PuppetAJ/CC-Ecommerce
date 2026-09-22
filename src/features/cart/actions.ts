@@ -7,8 +7,7 @@ import { succeeded, type ActionState } from '@/lib/action-state'
 
 // No session check: a cart belongs to a cookie until somebody signs in, and guests may shop.
 
-// No revalidatePath here. A form action re-renders its own route tree, and the imperative
-// ones are refreshed by the client that called them, which keeps the catalog cache intact.
+// No revalidatePath: a form action re-renders its own tree and the rest are refreshed by their caller.
 
 export type CartState = ActionState
 

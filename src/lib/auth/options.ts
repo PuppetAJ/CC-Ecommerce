@@ -6,14 +6,12 @@ import { env, googleEnabled } from '../env.ts'
 const roles = ['customer', 'admin'] as const
 export type Role = (typeof roles)[number]
 
-// Better Auth infers an additional field as plain `string`, so comparing through
-// here is what makes a mistyped role name a type error rather than a silent false.
+// Better Auth infers the field as plain `string`, so comparing here makes a mistyped role a type error.
 export function hasRole(user: { role?: string | null }, role: Role): boolean {
   return user.role === role
 }
 
-// Kept apart from ./index.ts, which adds the Next plugin, so the seed script can
-// build its own instance under plain Node.
+// Kept apart from ./index.ts and its Next plugin so the seed script can build an instance under Node.
 export const authOptions = {
   appName: 'Wicken',
   baseURL: env.APP_URL,
@@ -74,8 +72,7 @@ export const authOptions = {
   },
 
   rateLimit: {
-    // Better Auth only rate limits in production by default; on in every mode here
-    // so the limit is something the tests can actually exercise.
+    // Better Auth only rate limits in production by default; on here so the tests can exercise it.
     enabled: true,
     storage: 'database',
     modelName: 'rate_limits',

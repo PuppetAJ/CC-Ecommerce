@@ -9,17 +9,14 @@ import { addToCart, type CartState } from '../actions'
 import { useCartOpen } from './cart-open'
 import { QuantityStepper } from './quantity-stepper'
 
-// Action state rides along in the client router cache, so returning to a product page
-// replays the last result. Remembering which ones were acted on keeps the sheet from
-// reopening on a visit the shopper did not add anything during.
+// Action state rides in the router cache and replays on return, so the sheet remembers what was acted on.
 const handled = new Set<string>()
 
 export function AddToCart({
   productId,
   name,
   stock,
-  // Rendered inside the form so the three controls share one wrapping row; it is a plain button,
-  // which nests in a form perfectly well.
+  // Inside the form so the three controls share one row; a plain button nests in a form perfectly well.
   save,
 }: {
   productId: number
@@ -44,8 +41,7 @@ export function AddToCart({
     handled.add(token)
     track('add_to_cart', productId)
     setOpen(true)
-    // The badge and the sheet live in the layout, whose segment the page's own action
-    // does not re-render, so this route is refreshed explicitly.
+    // The badge and sheet live in the layout, whose segment the page's action does not re-render.
     router.refresh()
   }, [state, productId, setOpen, router])
 
@@ -66,8 +62,7 @@ export function AddToCart({
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="quantity" value={quantity} />
       <QuantityStepper quantity={quantity} max={stock} onChange={setQuantity} disabled={pending} label={name} />
-      {/* Narrow, the count and the heart share the first line and the button takes the second;
-          wide, the button moves between them. */}
+      {/* Narrow, the count and heart take one line and the button the next; wide, it sits between them. */}
       {save && <div className="ml-auto sm:order-3 sm:ml-0">{save}</div>}
       <Button type="submit" size="lg" disabled={pending} className="order-last w-full sm:order-2 sm:w-44 sm:flex-none">
         {pending ? 'Adding…' : 'Add to cart'}

@@ -39,8 +39,7 @@ function Checkmark() {
   )
 }
 
-/** A checkbox we draw. Round for price, square elsewhere, but a tick either way so the round
- * one is not mistaken for a radio when several bands can be on at once. */
+/** Round for price, square elsewhere, but a tick either way so the round one is not read as a radio. */
 function Check({
   name,
   value,
@@ -86,14 +85,7 @@ function Group({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
-/**
- * Real checkboxes in a GET form, so the browser builds the query string and every
- * combination stays a URL that works with JavaScript off.
- *
- * With JavaScript the submit is intercepted and replayed through the router, because a
- * native submit is a full navigation: it reloads the page and throws away the scroll
- * position, which is miserable when the filters are halfway down a long grid.
- */
+/** Real checkboxes in a GET form, with the submit replayed through the router so scroll is not lost. */
 export function FacetFilters({
   search,
   facets,
@@ -109,8 +101,7 @@ export function FacetFilters({
   const router = useRouter()
   const submit = () => form.current?.requestSubmit()
 
-  // A box the shopper has touched stops following its attribute, so "Clear all" would leave it
-  // ticked with nothing filtered. Copying the attribute back onto the box puts the two in step.
+  // A touched box stops following its attribute, so "Clear all" would leave it ticked with nothing set.
   const applied = shopHref(search)
   useEffect(() => {
     for (const node of form.current?.querySelectorAll('input[type=checkbox],input[type=radio]') ?? []) {

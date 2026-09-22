@@ -17,8 +17,7 @@ import { AdminHeading } from '@/features/admin/components/admin-heading'
 
 export const metadata = { title: 'Admin' }
 
-// Silences instant-navigation validation for the session read; it does not change the status
-// code, which with Cache Components is settled before the check runs.
+// Silences instant-navigation validation for the session read; the status code is settled before the check.
 export const instant = false
 
 export default async function Page({ searchParams }: PageProps<'/admin'>) {
@@ -114,8 +113,7 @@ async function Figures({ range }: { range: '7' | '30' | '90' }) {
         {visitors.known === 0 ? (
           <Empty>No signed-in shopper looked at anything in this period.</Empty>
         ) : (
-          // Every row carries its own denominator, so no percentage can be read against the
-          // wrong total. This is the one panel counting people rather than visits.
+          // Every row carries its own denominator, and this is the one panel counting people, not visits.
           <ul className="flex flex-col gap-4">
             {[
               {

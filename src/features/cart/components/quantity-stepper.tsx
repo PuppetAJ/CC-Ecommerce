@@ -21,8 +21,7 @@ export function QuantityStepper({
   const step =
     'inline-flex size-8 items-center justify-center rounded-full text-olive-700 hover:bg-olive-950/10 disabled:opacity-40 disabled:hover:bg-transparent dark:text-olive-400 dark:hover:bg-white/10'
 
-  // The next press empties the line, so say so and show it rather than leaving a minus that
-  // appears to do the same thing as the one before it.
+  // The next press empties the line, so say so rather than leaving an unchanged-looking minus.
   const removes = min === 0 && quantity === 1
 
   return (

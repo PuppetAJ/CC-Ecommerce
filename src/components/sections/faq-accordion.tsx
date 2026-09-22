@@ -3,8 +3,7 @@ import { Container } from '@/components/elements/container'
 import { Subheading } from '@/components/elements/subheading'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
-// Replaces Oatmeal's faqs-two-column-accordion, which used @tailwindplus/elements. One centered
-// column rather than two: a heading with nothing beside it leaves half the page empty.
+// Replaces Oatmeal's faqs-two-column-accordion, which used @tailwindplus/elements; one column, not two.
 export function FaqAccordion({
   headline,
   icon,

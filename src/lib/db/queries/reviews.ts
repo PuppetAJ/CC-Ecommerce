@@ -124,9 +124,7 @@ type Testimonial = {
 }
 
 export async function listTestimonials(limit = 3): Promise<Testimonial[]> {
-  // Seeded reviews rather than invented quotes, so what the landing page shows is the same
-  // writing a shopper finds on the product itself. Distinct on the body, because the demo
-  // reviewers share a pool of sentences and the band would otherwise print one of them twice.
+  // Distinct on the body: the demo reviewers share a pool of sentences, so the band would repeat one.
   const { rows } = await pool.query<Testimonial>(
     `SELECT * FROM (
        SELECT DISTINCT ON (r.body) u.name AS author, r.body, r.rating,

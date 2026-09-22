@@ -22,8 +22,7 @@ export function SortSelect({
   const [, start] = useTransition()
   return (
     <div className="flex min-w-0 items-center gap-2">
-      {/* Read out but not drawn on a phone, where the words cost the select the room it needs
-          to show the option it is set to. */}
+      {/* Read out but not drawn on a phone, where the words cost the select the room for its option. */}
       <label htmlFor={id} className="sr-only text-sm text-olive-600 sm:not-sr-only dark:text-olive-400">
         {label}
       </label>
@@ -33,9 +32,7 @@ export function SortSelect({
         onChange={(event) => {
           const next = options.find((option) => option.value === event.target.value)
           if (!next) return
-          // In a transition, or the Suspense boundary below swaps a thousand pixels of reviews
-          // for a one line fallback, the document shrinks and the browser clamps the scroll.
-          // The hash comes off for the same reason: followed, it scrolls to the anchor.
+          // In a transition, or the fallback below shrinks the document and the browser clamps the scroll.
           start(() => router.push(scroll ? next.href : next.href.split('#')[0], { scroll }))
         }}
         className={`${control} min-w-0 py-1.5 pr-8 pl-3`}

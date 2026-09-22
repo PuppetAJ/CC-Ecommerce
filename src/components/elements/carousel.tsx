@@ -6,11 +6,7 @@ import { Children, useEffect, useRef, useState, type ReactNode } from 'react'
 const arrow =
   'inline-flex size-9 items-center justify-center rounded-full border border-olive-950/10 text-olive-700 transition-colors hover:bg-olive-950/5 disabled:opacity-30 disabled:hover:bg-transparent dark:border-white/15 dark:text-olive-400 dark:hover:bg-white/10'
 
-/**
- * A row that scrolls sideways, with arrows that page by whole items so nothing is left cut in
- * half at the edge. The arrows hide themselves when everything already fits, which is most of
- * the time on a wide screen.
- */
+/** Arrows page by whole items so nothing is left cut in half, and hide themselves when everything fits. */
 export function Carousel({
   title,
   children,
@@ -60,8 +56,7 @@ export function Carousel({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Heading and arrows share a row, which they could not when the heading lived in the page
-          and the arrows lived in here. */}
+      {/* Heading and arrows share a row, which they could not while the heading lived in the page. */}
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         {title}
         {hasOverflow && (

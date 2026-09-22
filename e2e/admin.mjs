@@ -1,14 +1,5 @@
-// The admin area, and that a Server Action checks its own caller.
-// Needs the app running against a seeded database.
-import {
-  BASE,
-  freshPage,
-  launch,
-  openAccountMenu,
-  reporter,
-  signInAsDemo,
-  visibleText,
-} from './lib.mjs'
+// The admin area, and that a Server Action checks its own caller. Needs a seeded database.
+import { BASE, freshPage, launch, openAccountMenu, reporter, signInAsDemo, visibleText } from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
@@ -23,8 +14,7 @@ section('Authorization')
   check('a shopper cannot reach the admin area', /not here/i.test(blocked), blocked.split('\n').slice(0, 2).join(' | '))
   check('and is served none of its markup', !/Gross sales|Best sellers/i.test(await shopper.content()))
 
-  // Every admin route guards itself, because a layout cannot: it serialises its children into
-  // the payload whatever it renders.
+  // Every admin route guards itself, because a layout serializes its children whatever it renders.
   for (const route of ['/admin/orders', '/admin/products', '/admin/customers', '/admin/reviews']) {
     await shopper.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded' })
     await shopper.waitForTimeout(1500)
@@ -123,8 +113,7 @@ section('Admin lists')
   await openAdmin(admin, `/admin/reviews`)
   check('showing different rows', second !== (await admin.locator('tbody').innerText()))
 
-  // The orders list read "1-NaN of NaN": its SELECT lives in a shared string that never got the
-  // count. Every list is checked, because the next one to be added will share the same helper.
+  // Every list is checked because they share one SELECT string, which once shipped without the count.
   for (const list of ['orders', 'products', 'customers', 'reviews']) {
     await openAdmin(admin, `/admin/${list}`)
     const footer = await visibleText(admin)
@@ -207,8 +196,7 @@ section('The admin writes for real')
   await openAdmin(admin, editUrl.replace(BASE, ''))
   check('and deleting is not offered', /Deleting products is disabled/.test(await visibleText(admin)))
 
-  // An empty sale field used to arrive as 0, which stored a sale at $0.00 and made the
-  // product free. Saving with the field empty has to leave no sale at all.
+  // An empty sale field used to arrive as 0 and make the product free, so it has to leave no sale.
   await admin.fill('input[name="salePrice"]', '')
   await admin.getByRole('button', { name: /Save changes/ }).click()
   await admin.waitForTimeout(2500)
@@ -241,10 +229,7 @@ section('The admin writes for real')
 
 section('A Server Action is not protected by its button')
 {
-  // The id has to come from a real submission: the markup only carries a placeholder, and a
-  // made-up id answers 404 for everybody, which would make this check pass without proving a
-  // thing. So the admin saves an order, the outgoing Next-Action header is captured, and the
-  // shopper replays exactly that call.
+  // A made-up id answers 404 for everybody, so the id comes from a real submission the admin just made.
   const { context, page: admin } = await freshPage(browser)
   await signInAsDemo(admin, 'admin')
   await openAdmin(admin, `/admin/orders`)

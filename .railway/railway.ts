@@ -1,10 +1,6 @@
 import { defineRailway, github, postgres, project, service } from 'railway/iac'
 
-/**
- * The Railway project. `railway config apply` shows its plan and asks first.
- * Service names must match the dashboard, and everything the project holds must
- * be listed: an omission reads as a deletion.
- */
+/** Every service must be listed and named as the dashboard names it: an omission reads as a deletion. */
 export default defineRailway(() => {
   // Deploy only once GitHub's checks have passed.
   const repository = github('PuppetAJ/CC-Ecommerce', { checkSuites: true })
@@ -31,8 +27,7 @@ export default defineRailway(() => {
     },
   })
 
-  // The demo admin writes for real, so something has to put the shop back. Runs nightly at
-  // 04:00 UTC, which is the quietest hour for a portfolio nobody is reading at 4am.
+  // The demo admin writes for real, so a nightly 04:00 UTC run puts the shop back.
   const reset = service('Reset', {
     source: repository,
     build: 'pnpm install --frozen-lockfile',

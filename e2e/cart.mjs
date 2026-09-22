@@ -1,13 +1,5 @@
-// The cart, the guest cart being claimed, and checkout.
-// Needs the app running against a seeded database.
-import {
-  BASE,
-  freshPage,
-  launch,
-  reporter,
-  signInAsDemo,
-  visibleText,
-} from './lib.mjs'
+// The cart, the guest cart being claimed, and checkout. Needs a seeded database.
+import { BASE, freshPage, launch, reporter, signInAsDemo, visibleText } from './lib.mjs'
 
 const { browser, pageErrors, close } = await launch()
 const { check, section, report } = reporter()
@@ -131,8 +123,7 @@ section('Carrying a guest cart into an account')
     await guest.waitForTimeout(2000)
   }
 
-  // The demo account persists between runs, so the section starts from a known cart
-  // rather than assuming a fresh seed, and leaves it empty again at the end.
+  // The demo account persists between runs, so this starts from a known cart and empties it at the end.
   await signInAsDemo(guest, 'shopper')
   await emptyTheCart()
   await signOut()
@@ -229,8 +220,7 @@ section('Checkout')
   const summary = await visibleText(buyer)
   check('the cart is summarized before paying', /Ash Dining Table/.test(summary))
 
-  // CI has no Stripe key, so the handover is checked only where one is configured. The
-  // order still has to be created either way, which is the part that is ours.
+  // CI has no Stripe key, so only the order creation is checked there; the handover needs a real key.
   const payable = !/not configured/.test(summary)
   if (payable) {
     check('the test card is offered, so nobody uses a real one', /4242 4242 4242 4242/.test(summary))

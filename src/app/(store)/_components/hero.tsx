@@ -5,8 +5,7 @@ import { Enter } from '@/components/motion'
 import { HeroTwoColumnWithPhoto } from '@/components/sections/hero-two-column-with-photo'
 import Image from 'next/image'
 
-// The first thing anybody sees, so it arrives a piece at a time rather than all at once. The
-// photograph leads by a beat; the words catch up.
+// Arrives a piece at a time: the photograph leads by a beat and the words catch up.
 export function LandingHero() {
   return (
     <HeroTwoColumnWithPhoto

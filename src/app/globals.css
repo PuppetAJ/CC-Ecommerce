@@ -143,8 +143,7 @@
 }
 
 @utility scroll-hint {
-  /* Fades whichever edge still has content past it. `--scroll-hint` is set by the element's own
-     scroll position, so the fade disappears once there is nothing more that way. */
+  /* --scroll-hint comes from the element's own scroll position, so the fade goes once nothing is past it. */
   scrollbar-width: none;
   mask-image: linear-gradient(
     to right,
@@ -161,8 +160,6 @@
   }
   html {
     @apply bg-background font-sans antialiased;
-    /* Anchors and scrollIntoView glide rather than cut, which is most of what a "jump" to a
-       section on this site is. */
     scroll-behavior: smooth;
   }
   @media (prefers-reduced-motion: reduce) {

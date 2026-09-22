@@ -3,11 +3,7 @@ import { ensurePeople, rolls } from './demo-people.ts'
 
 const DAYS = 90
 
-/**
- * Ninety days of invented orders, so the dashboard has a shape to draw rather than one spike
- * at `now()`. Deterministic: the same seed produces the same chart on every reseed, which is
- * what stops a figure moving under somebody who is reading it.
- */
+/** Ninety days of invented orders, deterministic so a reseed does not move a figure somebody is reading. */
 export async function seedDemoOrders(): Promise<number> {
   const client = await pool.connect()
   try {
@@ -46,13 +42,11 @@ export async function seedDemoOrders(): Promise<number> {
       const day = new Date()
       day.setUTCDate(day.getUTCDate() - back)
       const weekend = day.getUTCDay() === 0 || day.getUTCDay() === 6
-      // Trade grows a little over the window, and weekends are quiet, which is what a small
-      // studio's week actually looks like.
+      // Trade grows a little over the window and weekends are quiet, like a small studio's week.
       const growth = 0.6 + (1 - back / DAYS) * 0.8
       const howMany = Math.floor(roll() * (weekend ? 2 : 4) * growth)
 
-      // The traffic those orders came out of. Sessions land where a small shop's do: most
-      // look at nothing, a third open a product, a few fill a cart, fewer reach Stripe.
+      // Sessions land where a small shop's do: most look at nothing, a few fill a cart, fewer reach Stripe.
       const sessions = Math.round((8 + roll() * 22) * growth)
       for (let visit = 0; visit < sessions; visit++) {
         const session = `seed-${back}-${visit}-${Math.floor(roll() * 1e6)}`
@@ -105,8 +99,7 @@ export async function seedDemoOrders(): Promise<number> {
         }))
         const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 
-        // Most went through. A few stalled and a few were called off, so the status filters
-        // and the "awaiting payment" path have something real to show.
+        // A few stalled and a few were called off, so the status filters have something to show.
         const fate = roll()
         const status = fate < 0.86 ? 'paid' : fate < 0.95 ? 'pending' : 'canceled'
 
