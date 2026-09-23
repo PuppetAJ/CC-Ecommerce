@@ -29,6 +29,7 @@ export default defineRailway(() => {
       // The running app connects as the restricted role the migrations create; only its password is a secret.
       APP_DATABASE_URL:
         'postgresql://wicken_app:${{Wicken.APP_DATABASE_PASSWORD}}@${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}',
+      // Letters and digits only: it is spliced into the URL above, where + and / break parsing.
       APP_DATABASE_PASSWORD: preserve(),
       // Set in the dashboard and never in this file; listed so applying does not delete them.
       BETTER_AUTH_SECRET: preserve(),
