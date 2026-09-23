@@ -16,7 +16,7 @@ export default defineRailway(() => {
     deploy: {
       healthcheckPath: '/api/health',
       healthcheckTimeout: 100,
-      // Stops when idle and wakes on the next request; idle time is billed.
+      // Stops after ten idle minutes and wakes on the next request, so idle hours are not billed.
       sleepApplication: true,
       numReplicas: 1,
     },
