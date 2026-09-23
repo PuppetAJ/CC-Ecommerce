@@ -1,6 +1,6 @@
 -- Up Migration
 
--- The running app connects as this role. Migrations and the nightly reset keep using the owner.
+-- The running app connects as this role. Migrating and seeding keep using the owner.
 -- Roles are cluster-wide, so the test database's migration finds it already there.
 DO $$
 BEGIN
@@ -11,11 +11,11 @@ END
 $$;
 
 GRANT USAGE ON SCHEMA public TO wicken_app;
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public TO wicken_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO wicken_app;
 GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO wicken_app;
 
 -- Tables a later migration adds get the same grants without that migration having to repeat them.
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLES TO wicken_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO wicken_app;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO wicken_app;
 
 -- Down Migration

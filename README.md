@@ -95,8 +95,8 @@ Postgres database, the app, and a nightly cron that migrates and reseeds, becaus
 for real and somebody has to put the shop back.
 
 The app migrates on boot and seeds itself only if the catalog is empty, so a fresh environment comes
-up populated rather than waiting for the small hours. Migrations run as the database owner; the app
-itself connects as `wicken_app`, a role the migrations create that can change rows but not the
+up populated rather than waiting for the small hours. Migrating and seeding run as the database owner; the
+app itself connects as `wicken_app`, a role the migrations create that can change rows but not the
 schema. Each environment gives that role a password, and the browser suite runs the app under it so
 a missing grant fails the pull request rather than the deploy. `railway config plan` is worth running first;
 the file is authoritative, so a variable it does not mention is a variable it will delete. The

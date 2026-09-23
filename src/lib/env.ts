@@ -26,7 +26,7 @@ const parsed = schema.safeParse({
   DATABASE_URL:
     process.env.NODE_ENV === 'test'
       ? process.env.TEST_DATABASE_URL
-      : (process.env.APP_DATABASE_URL ?? process.env.DATABASE_URL),
+      : (blankIsAbsent(process.env.APP_DATABASE_URL) ?? process.env.DATABASE_URL),
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID: blankIsAbsent(process.env.GOOGLE_CLIENT_ID),
   GOOGLE_CLIENT_SECRET: blankIsAbsent(process.env.GOOGLE_CLIENT_SECRET),
