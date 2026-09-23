@@ -32,6 +32,18 @@ export function adminHref(path: string, filters: Record<string, string | undefin
   return pageHref(path, filters, 1)
 }
 
+/** Clicking the active column flips it; any other column starts in its own natural direction. */
+export function sortHref<Key extends string>(
+  path: string,
+  filters: Record<string, string | undefined>,
+  key: Key,
+  active: { sort: Key; dir: 'asc' | 'desc' },
+  defaults: Record<Key, 'asc' | 'desc'>,
+): string {
+  const dir = key === active.sort ? (active.dir === 'asc' ? 'desc' : 'asc') : defaults[key]
+  return adminHref(path, { ...filters, sort: key, dir })
+}
+
 export const adminSearchSchema = z.object({
   range: z.enum(ranges).default('30').catch('30'),
 })

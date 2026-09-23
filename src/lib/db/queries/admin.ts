@@ -51,17 +51,44 @@ const orderWithItems = (extra = '') => `
 
 type AdminOrder = Order & { customer_name: string; customer_email: string }
 
+export const orderSorts = ['order', 'placed', 'status', 'items', 'total'] as const
+export type OrderSort = (typeof orderSorts)[number]
+export type SortDirection = 'asc' | 'desc'
+
+/** The direction a column starts in when it is first clicked: newest, biggest, or A to Z. */
+export const orderSortDefaults: Record<OrderSort, SortDirection> = {
+  order: 'desc',
+  placed: 'desc',
+  status: 'asc',
+  items: 'desc',
+  total: 'desc',
+}
+
+// Only these fragments ever reach ORDER BY; the sort key is looked up here, never interpolated.
+const orderSortColumns: Record<OrderSort, string> = {
+  order: 'o.id',
+  placed: 'o.created_at',
+  status: 'o.status',
+  items: 'COALESCE(sum(oi.quantity), 0)',
+  total: 'o.total_cents',
+}
+
+type OrderFilters = { status?: OrderStatus; q?: string; page?: number; sort?: OrderSort; dir?: SortDirection }
+
 export async function listAdminOrders({
   status,
   q,
   page = 1,
-}: { status?: OrderStatus; q?: string; page?: number } = {}): Promise<Page<AdminOrder>> {
+  sort = 'placed',
+  dir = orderSortDefaults[sort],
+}: OrderFilters = {}): Promise<Page<AdminOrder>> {
+  const direction = dir === 'asc' ? 'ASC' : 'DESC'
   const { rows } = await pool.query<AdminOrder & { total_rows: string }>(
     `${orderWithItems(`, ${withTotal}`)}
       WHERE ($1::text IS NULL OR o.status = $1)
         AND ($2::text IS NULL OR u.name ILIKE '%' || $2 || '%' OR u.email ILIKE '%' || $2 || '%')
       GROUP BY o.id, u.name, u.email
-      ORDER BY o.created_at DESC, o.id DESC
+      ORDER BY ${orderSortColumns[sort]} ${direction}, o.id DESC
       LIMIT $3 OFFSET $4`,
     [status ?? null, q ? searchTerm(q) : null, perPage, (page - 1) * perPage],
   )
