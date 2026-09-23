@@ -13,11 +13,14 @@ export function SearchFilters({
   placeholder,
   defaults,
   selects = [],
+  hidden = {},
 }: {
   action: string
   placeholder: string
   defaults: { q?: string }
   selects?: { name: string; label: string; value?: string; options: { value: string; label: string }[] }[]
+  // Carried along unchanged, so filtering does not drop a sort the list is already in.
+  hidden?: Record<string, string | undefined>
 }) {
   const form = useRef<HTMLFormElement>(null)
   const [, start] = useTransition()
@@ -54,6 +57,9 @@ export function SearchFilters({
 
   return (
     <form ref={form} action={action} onSubmit={apply} className="flex flex-wrap items-center gap-3">
+      {Object.entries(hidden).map(([name, value]) =>
+        value ? <input key={name} type="hidden" name={name} value={value} /> : null,
+      )}
       <input
         type="search"
         name="q"

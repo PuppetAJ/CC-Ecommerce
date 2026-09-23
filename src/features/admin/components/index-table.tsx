@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react'
+import Link from 'next/link'
+import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from 'lucide-react'
 import { Scroller } from '@/components/elements/scroller'
 import { perPage } from '@/lib/db/queries/paging'
 import { Skeleton } from '@/components/ui/skeleton'
+
+/** A heading with an href sorts the list; `sorted` marks the column the list is sorted by now. */
+export type Column = string | { label: string; href: string; sorted?: 'asc' | 'desc' }
+
+const labelOf = (column: Column) => (typeof column === 'string' ? column : column.label)
 
 /** Shopify's resource index: one column, so the row keeps its horizontal space for data. */
 export function IndexTable({
@@ -9,7 +16,7 @@ export function IndexTable({
   children,
   empty,
 }: {
-  columns: string[]
+  columns: Column[]
   children: ReactNode
   empty?: ReactNode
 }) {
@@ -27,17 +34,36 @@ export function IndexTable({
       <table className="w-full min-w-3xl border-collapse text-sm">
         <thead>
           <tr className="border-b border-olive-950/10 dark:border-white/10">
-            {columns.map((column, index) => (
-              <th
-                key={column}
-                scope="col"
-                className={`px-4 py-3 font-medium text-olive-600 dark:text-olive-400 ${
-                  index === 0 ? 'text-left' : index === columns.length - 1 ? 'text-right' : 'text-left'
-                }`}
-              >
-                {column}
-              </th>
-            ))}
+            {columns.map((column, index) => {
+              const last = index === columns.length - 1
+              const sorted = typeof column === 'string' ? undefined : column.sorted
+              return (
+                <th
+                  key={labelOf(column)}
+                  scope="col"
+                  aria-sort={sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : undefined}
+                  className={`px-4 py-3 font-medium text-olive-600 dark:text-olive-400 ${last ? 'text-right' : 'text-left'}`}
+                >
+                  {typeof column === 'string' ? (
+                    column
+                  ) : (
+                    <Link
+                      href={column.href}
+                      className={`group inline-flex items-center gap-1 hover:text-olive-950 dark:hover:text-white ${last ? 'flex-row-reverse' : ''}`}
+                    >
+                      {column.label}
+                      {sorted === 'asc' ? (
+                        <ArrowUpIcon className="size-3.5" aria-hidden />
+                      ) : sorted === 'desc' ? (
+                        <ArrowDownIcon className="size-3.5" aria-hidden />
+                      ) : (
+                        <ArrowUpDownIcon className="size-3.5 opacity-40 group-hover:opacity-100" aria-hidden />
+                      )}
+                    </Link>
+                  )}
+                </th>
+              )
+            })}
           </tr>
         </thead>
         <tbody className="divide-y divide-olive-950/10 dark:divide-white/10">{children}</tbody>

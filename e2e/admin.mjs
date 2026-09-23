@@ -96,6 +96,31 @@ section('Admin lists')
   check('and can be filtered by status', canceled > 0 && canceled < allOrders, `${canceled} of ${allOrders}`)
   check('showing only that status', !/Awaiting payment|\bPaid\b/.test(await admin.locator('tbody').innerText()))
 
+  // The headings sort; the arrow and aria-sort say which way, and the totals prove it.
+  const totals = async () =>
+    (await admin.locator('tbody tr td:last-child').allInnerTexts()).map((t) => Number(t.replace(/[^0-9.]/g, '')))
+  await open(admin, `/admin/orders?sort=total&dir=desc`)
+  const descending = await totals()
+  check(
+    'orders sort by total, largest first',
+    descending.every((v, i) => i === 0 || v <= descending[i - 1]),
+    descending.slice(0, 4).join(' '),
+  )
+  check('and the heading says so', (await admin.locator('th[aria-sort="descending"]').innerText()).includes('Total'))
+  await admin.locator('th a', { hasText: 'Total' }).click()
+  await admin.waitForURL(/sort=total&dir=asc/)
+  const ascending = await totals()
+  check(
+    'clicking it again flips the direction',
+    ascending.every((v, i) => i === 0 || v >= ascending[i - 1]),
+    ascending.slice(0, 4).join(' '),
+  )
+  await open(admin, `/admin/orders?sort=total&dir=asc&status=paid`)
+  check(
+    'and a filter keeps the sort',
+    /sort=total&dir=asc/.test(admin.url()) && /\bPaid\b/.test(await admin.locator('tbody').innerText()),
+  )
+
   await open(admin, `/admin/products?stock=out`)
   check('sold-out products can be found', (await rows()) > 0, `${await rows()} sold out`)
 
