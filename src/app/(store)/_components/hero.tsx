@@ -27,9 +27,10 @@ export function LandingHero() {
       }
       subheadline={
         <Enter delay={0.2}>
-          <p>
+          <p className="lg:max-w-[90%]">
             Wicken is a small studio working in clay and wood. What we don't make ourselves comes from a short list of
-            makers we've bought from for years. Nothing here is made in a quantity we can't check by hand.
+            makers we've bought from for years. Nothing is ever made in amounts too large for us to inspect each piece
+            by hand.
           </p>
         </Enter>
       }
