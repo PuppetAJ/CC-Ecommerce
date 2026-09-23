@@ -225,13 +225,14 @@ section('The newsletter keeps what it is given')
   const email = `reader${Date.now()}@wicken.test`
   await footer.getByLabel('Email').fill(email)
   await submitted(visitor, () => footer.getByRole('button', { name: 'Subscribe' }).click())
+  await waitForText(visitor, /write when the next batch/i)
   check('signing up says thanks', /write when the next batch/i.test(await footer.innerText()))
 
   await visitor.goto(`${BASE}/help`, { waitUntil: 'networkidle' })
   const again = visitor.getByRole('contentinfo')
   await again.getByLabel('Email').fill(email.toUpperCase())
   await again.getByRole('button', { name: 'Subscribe' }).click()
-  await visitor.waitForTimeout(1500)
+  await waitForText(visitor, /already on the list/i)
   check('and the same address, however it is typed, is one row', /already on the list/i.test(await again.innerText()))
   await context.close()
 
