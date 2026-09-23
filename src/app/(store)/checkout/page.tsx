@@ -63,9 +63,9 @@ export default async function Page() {
       </div>
 
       <aside className="flex h-fit flex-col gap-5 rounded-xl border border-olive-950/10 p-6 lg:sticky lg:top-24 dark:border-white/10">
-        <div className="flex justify-between text-sm text-olive-600 dark:text-olive-400">
+        <div className="flex flex-wrap justify-between gap-x-3 text-sm text-olive-600 dark:text-olive-400">
           <span>Signed in as</span>
-          <span className="truncate text-olive-950 dark:text-white">{user.email}</span>
+          <span className="break-all text-olive-950 dark:text-white">{user.email}</span>
         </div>
         <OrderBreakdown subtotal={total} categories={items.map((item) => item.category)} />
 

@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { Cell, IndexTable, IndexTableSkeleton, Row } from '@/features/admin/components/index-table'
+import { Cell, IndexTable, IndexTableSkeleton } from '@/features/admin/components/index-table'
+import { LinkRow } from '@/features/admin/components/link-row'
 import { Pagination } from '@/features/admin/components/pagination'
 import { SearchFilters } from '@/features/admin/components/search-filters'
 import { adminListSearch, pageHref } from '@/features/admin/schemas'
@@ -66,7 +67,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
     <>
       <IndexTable columns={['Product', 'Price', 'Stock', 'Featured', '']} empty="No products match that.">
         {products.map((product) => (
-          <Row key={product.id}>
+          <LinkRow key={product.id} href={`/admin/products/${product.id}`}>
             <Cell>
               <div className="flex items-center gap-3">
                 <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-tile">
@@ -119,7 +120,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
                 Edit
               </Link>
             </Cell>
-          </Row>
+          </LinkRow>
         ))}
       </IndexTable>
       <Pagination

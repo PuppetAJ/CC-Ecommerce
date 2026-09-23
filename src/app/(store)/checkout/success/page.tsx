@@ -5,7 +5,8 @@ import { Text } from '@/components/elements/text'
 import { ButtonLink } from '@/components/elements/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { requireUser } from '@/lib/auth/session'
-import { getOrderByStripeSession } from '@/lib/db/queries/orders'
+import { getOrderByStripeSession, markOrderPaid } from '@/lib/db/queries/orders'
+import { stripe } from '@/lib/stripe'
 import { OrderSummary } from '@/features/checkout/components/order-summary'
 import { TrackPurchase } from '@/components/analytics'
 
@@ -26,10 +27,17 @@ export default async function Page({ searchParams }: PageProps<'/checkout/succes
   )
 }
 
-// Reads only: payment is granted by the webhook, so this page never invents a paid order.
+// Payment is granted by the webhook or by asking Stripe directly; nothing here trusts the browser.
 async function Confirmation({ sessionId }: { sessionId?: string }) {
   const user = await requireUser()
-  const order = sessionId ? await getOrderByStripeSession(sessionId, user.id) : null
+  let order = sessionId ? await getOrderByStripeSession(sessionId, user.id) : null
+
+  if (order?.status === 'pending' && sessionId && stripe) {
+    const session = await stripe.checkout.sessions.retrieve(sessionId).catch(() => null)
+    if (session?.payment_status === 'paid' && (await markOrderPaid(sessionId))) {
+      order = await getOrderByStripeSession(sessionId, user.id)
+    }
+  }
 
   if (!order) {
     return (
