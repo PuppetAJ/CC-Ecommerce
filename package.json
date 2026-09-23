@@ -12,10 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PuppetAJ/CC-Ecommerce.git"
+    "url": "git+https://github.com/PuppetAJ/Wicken.git"
   },
   "bugs": {
-    "url": "https://github.com/PuppetAJ/CC-Ecommerce/issues"
+    "url": "https://github.com/PuppetAJ/Wicken/issues"
   },
   "scripts": {
     "dev": "next dev",

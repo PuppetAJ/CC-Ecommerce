@@ -7,17 +7,23 @@ database.
 
 It is a portfolio project. No order is fulfilled and no card is ever charged.
 
-**Live:** https://wicken.up.railway.app
+**Live: [wicken.up.railway.app](https://wicken.up.railway.app)** — log in with the **Demo shopper**
+or **Demo admin** button and pay with `4242 4242 4242 4242`.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/home-dark.webp">
+  <img src=".github/screenshots/home-light.webp" alt="The Wicken landing page: the headline Made slowly, to be kept, beside a photograph of teaware in window light, with the six categories underneath" width="100%">
+</picture>
 
 ## What it is built on
 
 Next.js 16 on the App Router, with Cache Components and partial prerendering: a page's shell is
 prerendered and the parts that depend on who is asking stream in behind Suspense. React 19,
 TypeScript, Tailwind 4, Postgres talked to directly through `pg` rather than an ORM, Better Auth for
-sessions, Stripe for checkout, Motion for the reveals.
+sessions with email or Google, Stripe for checkout, Motion for the reveals.
 
-Tooling follows the same repository's siblings: pnpm, oxlint instead of ESLint, Node's own test
-runner instead of Jest, and Playwright driven from plain scripts instead of `@playwright/test`.
+Tooling: pnpm, oxlint instead of ESLint, Node's own test runner instead of Jest, and Playwright
+driven from plain scripts instead of `@playwright/test`.
 
 ## Running it
 
@@ -49,7 +55,8 @@ pnpm test:a11y   # axe over every page, signed out and signed in
 The browser suites need the app running and the database seeded. They default to
 `http://localhost:3000` and print which server they are using; point them elsewhere with
 `E2E_BASE_URL`. They are split into five areas and `pnpm test:e2e` runs them in order, or
-`node e2e/run.mjs admin` runs one. In CI each area gets its own runner.
+`node e2e/run.mjs admin` runs one. In CI each area gets its own runner, and the app runs under the
+same restricted database role it uses in production.
 
 ## How the code is arranged
 
@@ -63,7 +70,7 @@ src/features     a folder per slice: actions, schemas, and the components that u
 src/components   elements and sections shared across features, plus vendored shadcn in ui/
 src/lib          database queries, auth, formatting, environment
 e2e              Playwright suites, one file per area
-scripts          seed, demo data, and the image pipeline
+scripts          the seed and its demo data, and the test database setup
 migrations       SQL, applied with node-pg-migrate
 ```
 
@@ -71,6 +78,11 @@ Every server action returns the same shape, `{ error?: string; ok?: number }`, w
 timestamp so a second success is distinguishable from the first.
 
 ## Notes worth knowing
+
+**Payment is confirmed two ways.** An order is created as pending and priced from the products table
+before Stripe is involved. Stripe's webhook marks it paid, and so does the success page by asking
+Stripe directly, so a missed webhook never strands an order. Both go through one `UPDATE … WHERE
+status = 'pending'`, so whichever arrives second changes nothing.
 
 **The database is the source of truth for vocabularies.** Categories, colors, materials, order
 statuses and makers are `CHECK` constraints, and the TypeScript unions in `src/lib/db/types.ts`
@@ -92,12 +104,15 @@ prerendered shell leaves the router's segment prefetch of `/` open indefinitely.
 
 Railway, described in code in `.railway/railway.ts` and applied with `railway config apply`: a
 Postgres database, the app, and a nightly cron that migrates and reseeds, because the admin writes
-for real and somebody has to put the shop back.
+for real and somebody has to put the shop back. The app sleeps after ten idle minutes and wakes on
+the next request.
 
 The app migrates on boot and seeds itself only if the catalog is empty, so a fresh environment comes
-up populated rather than waiting for the small hours. Migrating and seeding run as the database owner; the
-app itself connects as `wicken_app`, a role the migrations create that can change rows but not the
-schema. Each environment gives that role a password, and the browser suite runs the app under it so
-a missing grant fails the pull request rather than the deploy. `railway config plan` is worth running first;
-the file is authoritative, so a variable it does not mention is a variable it will delete. The
-secrets live in the dashboard and appear here as `preserve()` for exactly that reason.
+up populated rather than waiting for the small hours. Migrating and seeding run as the database
+owner; the app itself connects as `wicken_app`, a role the migrations create that can change rows
+but not the schema. Each environment gives that role a password, and the browser suite runs the app
+under it so a missing grant fails the pull request rather than the deploy.
+
+`railway config plan` is worth running first; the file is authoritative, so a variable it does not
+mention is a variable it will delete. The secrets live in the dashboard and appear here as
+`preserve()` for exactly that reason.

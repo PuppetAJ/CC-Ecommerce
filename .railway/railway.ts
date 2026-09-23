@@ -3,7 +3,7 @@ import { defineRailway, github, postgres, preserve, project, service } from 'rai
 /** Every service must be listed and named as the dashboard names it: an omission reads as a deletion. */
 export default defineRailway(() => {
   // Deploy only once GitHub's checks have passed.
-  const repository = github('PuppetAJ/CC-Ecommerce', { checkSuites: true })
+  const repository = github('PuppetAJ/Wicken', { checkSuites: true })
 
   const database = postgres('Postgres')
 
