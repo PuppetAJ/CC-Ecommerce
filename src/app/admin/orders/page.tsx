@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { OrderStatus } from '@/components/elements/order-status'
-import { Cell, IndexTable, IndexTableSkeleton, Row } from '@/features/admin/components/index-table'
+import { Cell, IndexTable, IndexTableSkeleton } from '@/features/admin/components/index-table'
+import { LinkRow } from '@/features/admin/components/link-row'
 import { Pagination } from '@/features/admin/components/pagination'
 import { SearchFilters } from '@/features/admin/components/search-filters'
 import { adminListSearch, pageHref } from '@/features/admin/schemas'
@@ -55,7 +56,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
     <>
       <IndexTable columns={['Order', 'Placed', 'Status', 'Items', 'Total']} empty="No orders match that.">
         {orders.map((order) => (
-          <Row key={order.id}>
+          <LinkRow key={order.id} href={`/admin/orders/${order.id}`}>
             <Cell>
               {/* Primary, with the customer as the kicker above it. */}
               <span className="block text-xs text-olive-600 dark:text-olive-400">{order.customer_name}</span>
@@ -76,7 +77,7 @@ async function Rows({ filters }: { filters: z.infer<typeof search> }) {
             <Cell align="right" className="font-medium text-olive-950 tabular-nums dark:text-white">
               {formatPrice(order.total_cents)}
             </Cell>
-          </Row>
+          </LinkRow>
         ))}
       </IndexTable>
       <Pagination

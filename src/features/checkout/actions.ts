@@ -1,16 +1,18 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { attachStripeSession, createPendingOrder, getOrderForUser } from '@/lib/db/queries/orders'
+import { attachStripeSession, createPendingOrder, getOrderForUser, markOrderPaid } from '@/lib/db/queries/orders'
 import { getCartIdForUser } from '@/lib/db/queries/cart'
 import { requireUser } from '@/lib/auth/session'
 import { env } from '@/lib/env'
 import { stripe } from '@/lib/stripe'
 import type { Order } from '@/lib/db/types'
 import type Stripe from 'stripe'
-import type { ActionState } from '@/lib/action-state'
+import { succeeded, type ActionState } from '@/lib/action-state'
 
-export type CheckoutState = ActionState
+// `settled` says whether this call was the one that marked the order paid.
+export type CheckoutState = ActionState<{ settled?: boolean }>
 
 export async function startCheckout(): Promise<CheckoutState> {
   const user = await requireUser()
@@ -81,8 +83,12 @@ export async function resumePayment(orderId: number): Promise<CheckoutState> {
   try {
     if (order.stripe_session_id) {
       const old = await stripe.checkout.sessions.retrieve(order.stripe_session_id)
-      // The webhook may simply be behind; making a second page would invite a double charge.
-      if (old.payment_status === 'paid') return { error: 'That payment went through. Give it a moment to show.' }
+      // Already paid at Stripe: settle it here rather than wait on the webhook, and never open a second page.
+      if (old.payment_status === 'paid') {
+        const settled = await markOrderPaid(order.stripe_session_id)
+        revalidatePath('/', 'layout')
+        return { ...succeeded(), settled }
+      }
       // Expired, so the abandoned tab cannot pay for an order this new session now covers.
       if (old.status === 'open') await stripe.checkout.sessions.expire(order.stripe_session_id)
     }

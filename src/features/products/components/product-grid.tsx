@@ -21,12 +21,11 @@ export function ProductGrid({
     // Server-rendered tiles handed to a client wrapper, so only the wrapper ships.
     <Stagger className={grid}>
       {products.map((product, i) => (
-        // The rows behind the first are fetched early so no tile is still loading when its reveal plays.
+        // Only the first row is preloaded; preloading eager tiles left the optimizer holding some responses open.
         <ProductCard
           key={product.id}
           product={product}
           priority={i < 4}
-          eager={i < 12}
           from={from}
           actions={actions?.(product)}
           rating={rating?.(product)}

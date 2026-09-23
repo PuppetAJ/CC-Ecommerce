@@ -38,7 +38,7 @@ export default async function Page({ params }: PageProps<'/admin/orders/[id]'>) 
           ['Customer', order.customer_name],
           ['Email', order.customer_email],
           ['Placed', formatDateLong(order.created_at)],
-          ['Paid', order.paid_at ? formatDateLong(order.paid_at) : 'Not yet'],
+          ['Paid', order.paid_at ? formatDateLong(order.paid_at) : 'Pending'],
         ].map(([label, value]) => (
           <div
             key={label}
