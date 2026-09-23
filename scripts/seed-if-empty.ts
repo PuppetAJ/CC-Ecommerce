@@ -15,5 +15,7 @@ if (Number(rows[0].count) > 0) {
   console.log(`${rows[0].count} products already; leaving the catalog alone`)
 } else {
   console.log('No products yet, seeding')
-  execFileSync('pnpm', ['db:seed'], { stdio: 'inherit' })
+  // The seed resets sequences, which only the owner may do, so it does not inherit the app's role.
+  const { APP_DATABASE_URL: _, ...owner } = process.env
+  execFileSync('pnpm', ['db:seed'], { stdio: 'inherit', env: owner })
 }

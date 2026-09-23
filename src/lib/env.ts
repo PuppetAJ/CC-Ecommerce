@@ -22,7 +22,11 @@ const parsed = schema.safeParse({
   NODE_ENV: process.env.NODE_ENV,
   APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   // Tests run against their own database, so a test run cannot truncate dev data.
-  DATABASE_URL: process.env.NODE_ENV === 'test' ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL,
+  // In production the app connects as a role that can change rows but not the schema.
+  DATABASE_URL:
+    process.env.NODE_ENV === 'test'
+      ? process.env.TEST_DATABASE_URL
+      : (blankIsAbsent(process.env.APP_DATABASE_URL) ?? process.env.DATABASE_URL),
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID: blankIsAbsent(process.env.GOOGLE_CLIENT_ID),
   GOOGLE_CLIENT_SECRET: blankIsAbsent(process.env.GOOGLE_CLIENT_SECRET),
